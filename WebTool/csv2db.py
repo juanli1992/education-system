@@ -139,15 +139,25 @@ def Finance2db():
         Finance.objects.get_or_create(StuID=contents[0], School=contents[1], FinanceType=contents[2])
     print("Finance Done!")
 
-# def Health2db():
-#     from web.models import 
-#     f = open('Data/_200.csv', encoding='utf-8')
-#     lines = f.readlines()
-#     f.close()
-#     for line in lines:
-#         contents = lines.strip('\n').split('\t')
-#         .objects.create(StuID=contents[0])
-#     print("Done!")
+def Health2db():
+    print("Health")
+    from web.models import Health
+    f = open('Data/health_200.csv', encoding='utf-8')
+    lines = f.readlines()
+    f.close()
+    for line in lines:
+        contents = line.strip('\n').split('\t')
+        Health.objects.get_or_create(StuID=contents[0], Height=contents[1], 
+            Weight=contents[2], HWScore=contents[3], HWLevel=contents[4], 
+            LungVolume=contents[5], LungScore=contents[6], LungLevel=contents[7], 
+            Meter50=contents[8], Meter50Score=contents[9], Meter50Level=contents[10], 
+            Crook=contents[11], CrookScore=contents[12], CrookLevel=contents[13], 
+            Jump=contents[14], JumpScore=contents[15], JumpLevel=contents[16], 
+            Strength=contents[17], StrengthScore=contents[18], StrengthLevel=contents[19], 
+            Meter8001000=contents[20], Meter8001000Score=contents[21], 
+            Meter8001000Level=contents[22], TotalScore=contents[23], 
+            TotalLevel=contents[24], Semester=contents[25])
+    print("Health Done!")
 
 def main():
     # Basic2db()
@@ -161,7 +171,8 @@ def main():
     # HosReg2db()
     # HosBX2db()
     # Finance2db()
-    Dorm2db()
+    # Dorm2db()
+    Health2db()
 
 if __name__ == "__main__":
     main()
