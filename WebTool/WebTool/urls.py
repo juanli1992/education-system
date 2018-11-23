@@ -19,5 +19,5 @@ from web import urls as web_url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', include(web_url, namespace='web')),
+    path('web/', include(web_url, namespace='web')),
 ]
