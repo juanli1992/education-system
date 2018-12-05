@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="Dashboard">
   <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
-  <title>Dashio - Bootstrap Admin Template</title>
+  <title>学生成长分析平台管理系统</title>
 
   <!-- Favicons -->
   <link href="img/favicon.png" rel="icon">
@@ -17,9 +17,12 @@
   <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <!--external css-->
   <link href="lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="css/zabuto_calendar.css">
+  <link rel="stylesheet" type="text/css" href="lib/gritter/css/jquery.gritter.css" />
   <!-- Custom styles for this template -->
   <link href="css/style.css" rel="stylesheet">
   <link href="css/style-responsive.css" rel="stylesheet">
+  <script src="lib/chart-master/Chart.js"></script>
 
   <!-- =======================================================
     Template Name: Dashio
@@ -42,7 +45,7 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
       </div>
       <!--logo start-->
-      <a href="index.html" class="logo"><b>学生成长分析平台</b></a>
+      <a href="index.html" class="logo"><b>学生成长分析平台管理系统</b></a>
       <!--logo end-->
       <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
@@ -246,66 +249,54 @@
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
           <h5 class="centered">您好，李娟！</h5>
-          <li class="mt">
-            <a href="index.html">
-              <i class="fa fa-dashboard"></i>
-              <span>公告栏</span>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-book"></i>
+              <span>注册审核</span>
               </a>
+            <ul class="sub">
+              <li><a href="blank.html">Blank Page</a></li>
+              <li><a href="login.html">Login</a></li>
+              <li><a href="lock_screen.html">Lock Screen</a></li>
+              <li><a href="profile.html">Profile</a></li>
+              <li><a href="invoice.html">Invoice</a></li>
+              <li><a href="pricing_table.html">Pricing Table</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="404.html">404 Error</a></li>
+              <li><a href="500.html">500 Error</a></li>
+            </ul>
           </li>
           <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>数据导入/导出</span>
+              <span>系统管理</span>
               </a>
             <ul class="sub">
-              <li><a  href="/templates/servermaterial/dbImport.html">数据库导入</a></li>
-              <li><a  href="/templates/servermaterial/fileImport.html">文件导入</a></li>
-              <li><a  href="/templates/servermaterial/dataExport.html">数据导出</a></li>
+              <li><a href="general.html">教师管理</a></li>
+              <li><a href="buttons.html">专家管理</a></li>
             </ul>
           </li>
           <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-cogs"></i>
-              <span>学生信息查询</span>
-              </a>
-            <ul class="sub">
-              <li><a  href="/templates/servermaterial/calendar.html">Calendar</a></li>
-              <li><a  href="/templates/servermaterial/gallery.html">Gallery</a></li>
-              <li><a  href="/templates/servermaterial/todo_list.html">Todo List</a></li>
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a class="active" href="javascript:;">
-              <i class="fa fa-book"></i>
               <span>指标体系</span>
-              </a>
+            </a>
             <ul class="sub">
-              <li><a  href="/templates/servermaterial/basic_table.html">体系简介</a></li>
-              <li><a  href="/templates/servermaterial/index_definition.html">指标自定义</a></li>
-              <li><a  href="/templates/servermaterial/index_computation.html">指标计算</a></li>
+              <li><a href="index_introduction_manage.html">指标体系</a></li>
+              <li><a href="todo_list.html">指标自定义</a></li>
+              <li><a href="index_modification_manage.html">指标修改</a></li>
             </ul>
           </li>
           <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-tasks"></i>
-              <span>学生成长监测</span>
+              <span>专家意见</span>
               </a>
             <ul class="sub">
-              <li><a href="form_component.html">Form Components</a></li>
-              <li><a href="advanced_form_components.html">Advanced Components</a></li>
-              <li><a href="form_validation.html">Form Validation</a></li>
+              <li><a href="form_component.html">专家意见收集</a></li>
+              <li><a href="advanced_form_components.html">结果反馈</a></li>
+              <li><a href="form_validation.html">历史意见查询</a></li>
               <li><a href="contactform.html">Contact Form</a></li>
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-th"></i>
-              <span>学生成长干预</span>
-              </a>
-            <ul class="sub">
-              <li><a href="basic_table.html">Basic Table</a></li>
-              <li><a href="responsive_table.html">Responsive Table</a></li>
-              <li><a href="advanced_table.html">Advanced Table</a></li>
             </ul>
           </li>
         </ul>
@@ -354,38 +345,64 @@
                                 <td rowspan="3">1</td>
                                 <td rowspan="3">学业水平</td>
                                 <td>专业课平均成绩</td>
-                                <td></td>
+                                <td>
+                                  <span class="label label-success label-mini">删除</span>
+                                  <span class="label label-warning label-mini">修改</span>
+                                  <span class="label label-warning label-mini">后台管理员协助</span>
+                                </td>
                             </tr>
                             <tr>
                                 <td>综合平均成绩（自定义）</td>
                                 <td>
                                   <span class="label label-success label-mini">删除</span>
                                   <span class="label label-warning label-mini">修改</span>
+                                  <span class="label label-warning label-mini">后台管理员协助</span>
                                 </td>
                             </tr>
                             <tr>
                                 <td>专业比赛次数</td>
-                                <td></td>
+                                <td>
+                                  <span class="label label-success label-mini">删除</span>
+                                  <span class="label label-warning label-mini">修改</span>
+                                  <span class="label label-warning label-mini">后台管理员协助</span>
+                                </td>
+
                             </tr>
                             <tr>
                                 <td rowspan="1">2</td>
                                 <td rowspan="1">品德发展</td>
                                 <td>爱心文体活动/组织次数</td>
-                                <td></td>
+                                <td>
+                                  <span class="label label-success label-mini">删除</span>
+                                  <span class="label label-warning label-mini">修改</span>
+                                  <span class="label label-warning label-mini">后台管理员协助</span>
+                                </td>
                             </tr>
                             <tr>
                                 <td rowspan="3">3</td>
                                 <td rowspan="3">身体健康</td>
                                 <td>校医院就诊次数</td>
-                                <td></td>
+                                <td>
+                                  <span class="label label-success label-mini">删除</span>
+                                  <span class="label label-warning label-mini">修改</span>
+                                  <span class="label label-warning label-mini">后台管理员协助</span>
+                                </td>
                             </tr>
                             <tr>
                                 <td>转诊次数</td>
-                                <td></td>
+                                <td>
+                                  <span class="label label-success label-mini">删除</span>
+                                  <span class="label label-warning label-mini">修改</span>
+                                  <span class="label label-warning label-mini">后台管理员协助</span>
+                                </td>
                             </tr>
                             <tr>
                                 <td>体质健康测试</td>
-                                <td></td>
+                                <td>
+                                  <span class="label label-success label-mini">删除</span>
+                                  <span class="label label-warning label-mini">修改</span>
+                                  <span class="label label-warning label-mini">后台管理员协助</span>
+                                </td>
                             </tr>
                           </tbody>
                         </table>
@@ -412,20 +429,29 @@
                             <tr>
                               <td>1</td>
                               <td>三好学生</td>
-                              <td></td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>学业优秀奖学金评选指标（自定义）</td>
                               <td>
                                 <span class="label label-success label-mini">删除</span>
                                 <span class="label label-warning label-mini">修改</span>
+                                <span class="label label-warning label-mini">后台管理员协助</span>
                               </td>
                             </tr>
                             <tr>
-                              <td>3</td>
-                              <td>不及格科目</td>   
-                              <td></td>
+                              <td>2</td>
+                              <td>学业优秀奖学金评选指标</td>
+                              <td>
+                                <span class="label label-success label-mini">删除</span>
+                                <span class="label label-warning label-mini">修改</span>
+                                <span class="label label-warning label-mini">后台管理员协助</span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>退学</td>
+                              <td>
+                                <span class="label label-success label-mini">删除</span>
+                                <span class="label label-warning label-mini">修改</span>
+                                <span class="label label-warning label-mini">后台管理员协助</span>
+                              </td>
                             </tr>
                           </tbody>
                         </table>
