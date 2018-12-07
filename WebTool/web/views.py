@@ -15,3 +15,6 @@ def study_well(request):
 
 def study_poor(request):
     return render_to_response('servermaterial/study_poor.html')
+
+def first(request):
+    return render_to_response('servermaterial/first.html')
