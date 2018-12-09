@@ -18,3 +18,6 @@ def study_poor(request):
 
 def admin(request):
     return render_to_response('servermaterial/admin_index.html')
+
+def first(request):
+    return render_to_response('servermaterial/first.html')
