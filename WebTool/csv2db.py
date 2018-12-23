@@ -2,13 +2,14 @@
 
 import os
 import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "WebTool.settings")
+os.environ["DJANGO_SETTING_MODULE"] = "WebTool.settings"
 django.setup()
-os.environ["DJANGO_SETTING_MODULE"]="WebTool.settings"
 
-def Basic2db():
+def Basic2db(filepath):
     print("Basic")
     from web.models import Basic
-    f = open('Data/basic_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -16,10 +17,10 @@ def Basic2db():
         Basic.objects.get_or_create(StuID=stuId, School=school, Major=major, BirthYear=birthYear, Country=country, National=nation, Entrance=entrance, Province=province, Gender=gender, State=state, Type=stuType, Year=year)
     print("Basic Done!")
 
-def Book2db():
+def Book2db(filepath):
     print("Book")
     from web.models import Book
-    f = open('Data/books_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -27,10 +28,10 @@ def Book2db():
         Book.objects.get_or_create(StuID=contents[0], BookID=contents[1], Date=contents[2], OperType=contents[3], StuType=contents[4], Department=contents[5])
     print("Book Done!")
 
-def Card2db():
+def Card2db(filepath):
     print("Card")
     from web.models import Card
-    f = open('Data/card_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -38,10 +39,10 @@ def Card2db():
         Card.objects.get_or_create(StuID=contents[0], DateTime=contents[1], Cost=contents[2], POS=contents[3], Meal=contents[4])
     print("Card Done!")
 
-def Aid2db():
+def Aid2db(filepath):
     print("Aid")
     from web.models import Aid
-    f = open('Data/aid_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -49,10 +50,10 @@ def Aid2db():
         Aid.objects.get_or_create(StuID=contents[0], PTJob=contents[1], Loan=contents[2], Aid=contents[3], Scholorship=contents[4], Year=contents[5])
     print("Aid Done!")
 
-def Score2db():
+def Score2db(filepath):
     print("Score")
     from web.models import Score
-    f = open('Data/score_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -60,10 +61,10 @@ def Score2db():
         Score.objects.get_or_create(StuID=contents[0], School=contents[1], Semester=contents[2], CourseNum=contents[3], Credits=contents[4], AveScore=contents[5], Lowest=contents[6], Highest=contents[7], Up90=contents[8], Up80=contents[9], Up70=contents[10], Up60=contents[11], Low60=contents[12], Num0=contents[13])
     print("Score Done!")
 
-def Moral2db():
+def Moral2db(filepath):
     print("Moral")
     from web.models import Moral
-    f = open('Data/moral_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -71,10 +72,10 @@ def Moral2db():
         Moral.objects.get_or_create(StuID=contents[0], Level1=contents[1], Level2=contents[2], ItemID=contents[3], ItemName=contents[4], Semester=contents[5], Prize=contents[6], State=contents[7], PrizeType=contents[8], ActivityLevel=contents[9], Note=contents[10])
     print("Moral Done!")
 
-def Lib2db():
+def Lib2db(filepath):
     print("Lib")
     from web.models import Lib
-    f = open('Data/lib_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -82,10 +83,10 @@ def Lib2db():
         Lib.objects.get_or_create(StuID=contents[0], DateTime=contents[2], Gate=contents[3])
     print("Lib Done!")
 
-def HosTrans2db():
+def HosTrans2db(filepath):
     print("HosTrans")
     from web.models import HosTrans
-    f = open('Data/hos_trans_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -93,10 +94,10 @@ def HosTrans2db():
         HosTrans.objects.get_or_create(StuID=contents[0], SchoolHos=contents[1], DateTime=contents[2], Hospital=contents[3], Department=contents[4], SchDepart=contents[5])
     print("HosTrans Done!")
 
-def HosReg2db():
+def HosReg2db(filepath):
     print("HosReg")
     from web.models import HosReg
-    f = open('Data/hos_reg_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -104,10 +105,10 @@ def HosReg2db():
         HosReg.objects.get_or_create(StuID=contents[0], SchoolHos=contents[1], CostType=contents[2], DateTime=contents[3], Department=contents[4], RegCost=contents[5])
     print("HosReg Done!")
 
-def HosBX2db():
+def HosBX2db(filepath):
     print("HosBX")
     from web.models import HosBX
-    f = open('Data/hos_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -118,7 +119,7 @@ def HosBX2db():
 def Dorm2db():
     print("Dorm")
     from web.models import Dorm
-    files = ['Data/dorm1_200.csv', 'Data/dorm2_200.csv', 'Data/dorm3_200.csv', 'Data/dorm4_200.csv']
+    files = ['F:/dorm1_200_new.csv', 'F:/dorm2_200_new.csv', 'F:/dorm3_200_new.csv', 'F:/dorm4_200_new.csv']
     for file in files:
         f = open(file, encoding='utf-8')
         lines = f.readlines()
@@ -128,10 +129,10 @@ def Dorm2db():
             Dorm.objects.get_or_create(StuID=contents[0], DateTime=contents[1])
     print("Dorm Done!")
 
-def Finance2db():
+def Finance2db(filepath):
     print("Finance")
     from web.models import Finance
-    f = open('Data/finance_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -139,10 +140,10 @@ def Finance2db():
         Finance.objects.get_or_create(StuID=contents[0], School=contents[1], FinanceType=contents[2])
     print("Finance Done!")
 
-def Health2db():
+def Health2db(filepath):
     print("Health")
     from web.models import Health
-    f = open('Data/health_200.csv', encoding='utf-8')
+    f = open(filepath, encoding='utf-8')
     lines = f.readlines()
     f.close()
     for line in lines:
@@ -160,19 +161,19 @@ def Health2db():
     print("Health Done!")
 
 def main():
-    # Basic2db()
-    # Book2db()
-    # Card2db()
-    # Aid2db()
-    # Score2db()
-    # Moral2db()
-    # Lib2db()
-    # HosTrans2db()
-    # HosReg2db()
-    # HosBX2db()
-    # Finance2db()
-    # Dorm2db()
-    Health2db()
+    # Basic2db('F:/basic200_new.csv')
+    # Book2db('F:/book200_new.csv')
+    # Card2db('F:/card200_new.csv')
+    # Aid2db('F:/aid200_new.csv')
+    # Score2db('F:/score200_new.csv')
+    # Moral2db('F:/moral200_new.csv')
+    # Lib2db('F:/lib200_new.csv')
+    # HosTrans2db('F:/hOSTRANS200_new.csv')
+    # HosReg2db('F:/reg200_new.csv')
+    HosBX2db('F:/camp_hos200_new.csv')
+    # Finance2db('F:/finance200_new.csv')
+    Dorm2db()
+    # Health2db('F:/health200_new.csv')
 
 if __name__ == "__main__":
     main()

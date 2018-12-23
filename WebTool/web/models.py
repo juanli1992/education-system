@@ -176,3 +176,27 @@ class Finance(models.Model):
 
     def __unicode__(self):
         return self.StuID
+
+class Intervene(models.Model):
+    StuName = models.TextField()
+    StuID = models.CharField(max_length=20)
+    School = models.TextField()
+    Major = models.TextField()
+    Grade = models.CharField(max_length=5)
+    Class = models.CharField(max_length=15)
+    Status = models.TextField()
+    Guidance = models.TextField()
+    Type = models.CharField(max_length=5)
+    Time = models.CharField(max_length=15)
+
+class Register(models.Model):
+    UserName = models.CharField(max_length=20)
+    Name = models.TextField()
+    Password = models.CharField(max_length=20)
+    Job = models.TextField()
+    Department = models.TextField()
+    School = models.TextField()
+    Major = models.TextField()
+    Grade = models.TextField()
+    Reg = models.CharField(max_length=5)
+    Login = models.CharField(max_length=15)
