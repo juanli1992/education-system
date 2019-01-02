@@ -33,55 +33,70 @@
 
 	<div id="login-page">
 	  <div class="container">
-	  	<form class="form-login" action="index.html">
+	  	<form class="form-login" action="/web/register/" method="post">
 		  <h2 class="form-login-heading">注册</h2>
 		  <div class="login-wrap">
-		    <input type="text" class="form-control" placeholder="用户名" autofocus>
+            <label for="username">用户名：</label>
+		    <input type="text" name="username" class="form-control" placeholder="用户名" id="username">
             <br>
-		    <input type="text" class="form-control" placeholder="姓名">
+            <label for="name">姓名：</label>
+		    <input type="text" name="name" class="form-control" placeholder="姓名" id="name">
             <br>
-            <input type="text" class="form-control" placeholder="职务">
+              <label for="email">邮箱：</label>
+              <input type="text" name="email" class="form-control" placeholder="邮箱" id="email">
             <br>
+              <label for="job">职务：</label>
+            <input type="text" name="job" class="form-control" placeholder="职务" id="job">
+            <br>
+              <label for="department">所属部门：</label>
             <div class="form-group">
-              <select class="form-control">
-                <option value="b1">校级部门</option>
-                <option value="b1">院级部门</option>
-                <option value="b1">院内部门</option>
+              <select class="form-control" name="department" id="department">
+                <option value="校级部门">校级部门</option>
+                <option value="院级部门">院级部门</option>
+                <option value="院内部门">院内部门</option>
               </select>
             </div>
+              <label for="school">管理学院：</label>
             <div class="form-group">
-              <select class="form-control">
-                <option value="b1">All</option>
-                <option value="b1">机械与动力工程学院</option>
-                <option value="b1">电子信息与电器工程学院</option>
-                <option value="b1">数学科学学院</option>
-                <option value="b1">人文学院</option>
-                <option value="b1">媒体与设计学院</option>
+              <select class="form-control" id="school" name="school">
+                <option value="all">All</option>
+                <option value="机械与动力工程学院">机械与动力工程学院</option>
+                <option value="电子信息与电器工程学院">电子信息与电器工程学院</option>
+                <option value="数学科学学院">数学科学学院</option>
+                <option value="人文学院">人文学院</option>
+                <option value="媒体与设计学院">媒体与设计学院</option>
               </select>
             </div>
+              <label for="major">管理专业：</label>
             <div class="form-group">
-              <select class="form-control">
-                <option value="b1">All</option>
-                <option value="b1">电子系</option>
-                <option value="b1">仪器系</option>
-                <option value="b1">计算机系</option>
+              <select class="form-control" id="major" name="major">
+                <option value="all">All</option>
+                <option value="电子系">电子系</option>
+                <option value="仪器系">仪器系</option>
+                <option value="计算机系">计算机系</option>
               </select>
             </div>
+              <label for="grade">管理年级：</label>
             <div class="form-group">
-              <select class="form-control">
+              <select class="form-control" id="grade" name="grade">
                 <option value="b1">All</option>
                 <option value="b1">本科一年级</option>
-                <option value="b1">本科二年级</option>
-                <option value="b1">本科三年级</option>
-                <option value="b1">本科四年级</option>
+                <option value="b2">本科二年级</option>
+                <option value="b3">本科三年级</option>
+                <option value="b4">本科四年级</option>
               </select>
             </div>
-		    <input type="password" class="form-control" placeholder="密码">
+              <label for="password">请输入密码：</label>
+		    <input type="password" class="form-control" placeholder="密码" id="password" name="password">
             <br>
-            <input type="password" class="form-control" placeholder="确认密码">
+              <label for="repassword">请确认密码：</label>
+            <input type="password" class="form-control" placeholder="确认密码" id="repassword" name="repassword">
             <br>
-		    <button class="btn btn-theme btn-block" href="index.html" type="submit"><i class="fa fa-lock"></i>提交注册信息</button>
+		    <button class="btn btn-theme btn-block" type="submit" id="submit"><i class="fa fa-lock"></i>提交注册信息</button>
           </div>
+          {% if message %}
+          <div class="alert alert-warning">{{ message }}</div>
+          {% endif %}
         </form>
 
 	  	</div>
