@@ -110,3 +110,6 @@ def register(request):
                                            Department=department, School=school, Major=major, Grade=grade, Reg=0,
                                            Login=date, Authority=authority, Email=email)
     return render(request, 'servermaterial/login.html', {'message': '新用户创建成功'})
+
+def base(request):
+    return render_to_response('servermaterial/base.html')
