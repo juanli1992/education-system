@@ -13,5 +13,6 @@ urlpatterns = [
     path('login/', login),
     path('register/', register),
     path('reset/', reset),
-    path('base/', base),
+    path('inquiry/', inquiry),
+    path('base/', base)
 ]
