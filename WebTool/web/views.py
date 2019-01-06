@@ -110,3 +110,10 @@ def register(request):
                                            Department=department, School=school, Major=major, Grade=grade, Reg=0,
                                            Login=date, Authority=authority, Email=email)
     return render(request, 'servermaterial/login.html', {'message': '新用户创建成功'})
+
+
+def inquiry(request):
+        print(1)
+        time = request.GET['time']
+        print(2)
+        return HttpResponse(time)
