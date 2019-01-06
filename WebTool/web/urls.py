@@ -14,4 +14,5 @@ urlpatterns = [
     path('register/', register),
     path('reset/', reset),
     path('inquiry/', inquiry)
+    path('base/', base)
 ]
