@@ -9,8 +9,8 @@ import json
 import time
 
 # Create your views here.
-def homepage(request):
-    return render_to_response('servermaterial/index.html')
+def home(request):
+    return render_to_response('servermaterial/home.html')
 
 def monitor_all(request):
     return render_to_response('servermaterial/monitor_all.html')
