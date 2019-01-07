@@ -120,6 +120,8 @@ def inquiry(request):
     score_good = list(Score.objects.filter(Semester=time, School=school, AveScore__gte=threshold).values_list('AveScore', flat=True))
     score_bad = list(Score.objects.filter(Semester=time, School=school, AveScore__lt=threshold).values_list('AveScore', flat=True))
 
+
+    #all
     x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     cdfall=[]
     for i in x:
@@ -144,8 +146,57 @@ def inquiry(request):
 
     ratio=[len(score_good),len(score_bad)]
 
-    #print('pdfall',pdfall)
-    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ratio': ratio}
+
+    #good
+    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cdfgood=[]
+    for i in x:
+        cdfgood.append( sum(float(j)<i for j in score_good)/len(score_good) )
+
+    x=[-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
+    pdfgood=[]
+    i=1
+    while i<=11:
+        pdfgood.append( sum( (x[i-1]+x[i])/2<float(j)<(x[i]+x[i+1])/2 for j in score_good)/len(score_good) )
+        i=i+1
+
+    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    numgood=[]
+    i=1
+    while i<=10:
+        if i==10:
+            numgood.append( sum( x[i-1]<=float(j)<=x[i] for j in score_good) )
+        else:
+            numgood.append( sum( x[i-1]<=float(j)<x[i] for j in score_good) )
+        i=i+1
+
+
+
+    #bad
+    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cdfbad=[]
+    for i in x:
+        cdfbad.append( sum(float(j)<i for j in score_bad)/len(score_bad) )
+
+    x=[-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
+    pdfbad=[]
+    i=1
+    while i<=11:
+        pdfbad.append( sum( (x[i-1]+x[i])/2<float(j)<(x[i]+x[i+1])/2 for j in score_bad)/len(score_bad) )
+        i=i+1
+
+    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    numbad=[]
+    i=1
+    while i<=10:
+        if i==10:
+            numbad.append( sum( x[i-1]<=float(j)<=x[i] for j in score_bad) )
+        else:
+            numbad.append( sum( x[i-1]<=float(j)<x[i] for j in score_bad) )
+        i=i+1
+
+
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ratio': ratio, 'cdfgood':cdfgood, 'pdfgood':pdfgood, 'numgood':numgood, 'cdfbad':cdfbad, 'pdfbad':pdfbad, 'numbad':numbad  }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 def base(request):
