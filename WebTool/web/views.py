@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import HttpResponse
 from django.shortcuts import render
 from web import models
+from web.models import Score
 import json
 import time
 
@@ -112,10 +113,43 @@ def register(request):
     return render(request, 'servermaterial/login.html', {'message': '新用户创建成功'})
 
 def inquiry(request):
-        print(1)
-        time = request.GET['time']
-        print(2)
-        return HttpResponse(time)
+    school = request.POST.get('school')
+    time = request.POST.get('time')
+    threshold= request.POST.get('threshold')
+    score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
+    score_good = list(Score.objects.filter(Semester=time, School=school, AveScore__gte=threshold).values_list('AveScore', flat=True))
+    score_bad = list(Score.objects.filter(Semester=time, School=school, AveScore__lt=threshold).values_list('AveScore', flat=True))
+
+    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cdfall=[]
+    for i in x:
+        cdfall.append( sum(float(j)<i for j in score_all)/len(score_all) )
+
+    x=[-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
+    pdfall=[]
+    i=1
+    while i<=11:
+        pdfall.append( sum( (x[i-1]+x[i])/2<float(j)<(x[i]+x[i+1])/2 for j in score_all)/len(score_all) )
+        i=i+1
+
+    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    num=[]
+    i=1
+    while i<=10:     
+        if i==10:
+            num.append( sum( x[i-1]<=float(j)<=x[i] for j in score_all) )
+        else:
+            num.append( sum( x[i-1]<=float(j)<x[i] for j in score_all) )
+        i=i+1
+
+    ratio=[len(score_good),len(score_bad)]
+
+    #print('pdfall',pdfall)
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ratio': ratio}
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 def base(request):
     return render_to_response('servermaterial/base.html')
+
+def supervision(request):
+    return render_to_response('servermaterial/supervision.html')
