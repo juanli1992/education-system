@@ -8,6 +8,8 @@ from web import models
 from web.models import Score
 import json
 import time
+import xlrd
+import xlwt
 
 # Create your views here.
 def home(request):
@@ -137,7 +139,7 @@ def inquiry(request):
     x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     num=[]
     i=1
-    while i<=10:     
+    while i<=10:
         if i==10:
             num.append( sum( x[i-1]<=float(j)<=x[i] for j in score_all) )
         else:
@@ -204,3 +206,70 @@ def base(request):
 
 def supervision(request):
     return render_to_response('servermaterial/supervision.html')
+
+def data_import_export(request):
+    return render_to_response('servermaterial/data_import_export.html')
+
+def intervene(request):
+    return render_to_response('servermaterial/intervene.html')
+
+def CheckData(request):
+    if request.method == "POST":
+        f = request.FILES['inputFile']
+        db_type = request.POST['db_type']
+        file_type = f.name.split('.')[1]
+        return_data = []
+        message = '文件解析成功！'
+        if file_type=='xlsx':
+            wb = xlrd.open_workbook(filename=None, file_contents=f.read())  # 关键点在于这里
+            table = wb.sheets()[0]
+            nrows = table.nrows
+            try:
+                with transaction.atomic():
+                    if db_type == '图书馆借阅记录':
+                        for i in range(1, nrows):
+                            rowValues = table.row_values(i)
+                            models.Book.objects.get_or_create(StuID=rowValues[0], BookID=rowValues[1], Date=rowValues[2], OperType=rowValues[3], StuType=rowValues[4], Department=rowValues[5])
+                            return_data.append(rowValues)
+            except Exception as e:
+                message = '文件读取出现错误'
+        else:
+            message = '请上传excel文件！'
+        # ret = {'message': message, 'data': return_data, 'data_type': db_type}
+        # return HttpResponse(json.dumps(ret), content_type='application/json')
+        return render(request, "servermaterial/data_import_export.html", {'message': message, 'data': return_data, 'data_type': db_type})
+
+def download(request):
+    if request.method == 'POST':
+        db_type = request.POST['db_type']
+        if db_type == '图书馆借阅记录':
+            contents = models.Book.objects.all()
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=export_data.xls'  # 返回下载文件的名称(activity.xls)
+            workbook = xlwt.Workbook(encoding='utf-8')  # 创建工作簿
+            mysheet = workbook.add_sheet(u'图书馆借阅记录')  # 创建工作页
+            rows = contents
+            cols = 6  # 每行的列
+            aaa = ['学号', '图书编号', '时间', '操作类型', '学生类型', '部门']  # 表头名
+            for c in range(len(aaa)):
+                mysheet.write(0, c, aaa[c])
+            for r in range(0, len(rows)):  # 对行进行遍历
+                mysheet.write(r + 1, 0, str(rows[r].StuID))
+                mysheet.write(r + 1, 1, str(rows[r].BookID))
+                mysheet.write(r + 1, 2, str(rows[r].Date))
+                mysheet.write(r + 1, 3, str(rows[r].OperType))
+                mysheet.write(r + 1, 4, str(rows[r].StuType))
+                mysheet.write(r + 1, 5, str(rows[r].Department))
+            response = HttpResponse(content_type='application/vnd.ms-excel')  # 这里响应对象获得了一个特殊的mime类型,告诉浏览器这是个excel文件不是html
+            response['Content-Disposition'] = 'attachment; filename=export_data.xls'  # 这里响应对象获得了附加的Content-Disposition协议头,它含有excel文件的名称,文件名随意,当浏览器访问它时,会以"另存为"对话框中使用它.
+            workbook.save(response)
+            return response
+
+def View(request):
+    if request.method == "POST":
+        db_type = request.POST['db']
+        if db_type == "图书馆借阅记录":
+            contents = models.Book.objects.all()
+            lines = [c.as_dict() for c in contents]
+            # ret = {'lines': lines}
+            return HttpResponse(json.dumps({'lines':lines}), content_type='application/json')

@@ -32,6 +32,16 @@ class Book(models.Model):
     def __unicode__(self):
         return self.StuID
 
+    def as_dict(self):
+        return{
+            'StuID': self.StuID,
+            'BookID': self.BookID,
+            'Date': self.Date,
+            'OperType': self.OperType,
+            'StuType': self.StuType,
+            'Department': self.Department
+        }
+
 class Card(models.Model):
     StuID = models.CharField(max_length=20)
     DateTime = models.CharField(max_length=30)

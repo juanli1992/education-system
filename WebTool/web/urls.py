@@ -15,5 +15,10 @@ urlpatterns = [
     path('reset/', reset),
     path('inquiry/', inquiry),
     path('base/', base),
-    path('supervision/', supervision)
+    path('supervision/', supervision),
+    path('data_import_export/', data_import_export),
+    path('intervene/', intervene),
+    path('CheckData/', CheckData),
+    path('View/', View),
+    path('download/', download)
 ]
