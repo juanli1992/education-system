@@ -57,8 +57,8 @@ def Score2db(filepath):
     lines = f.readlines()
     f.close()
     for line in lines:
-        contents = line.strip('\n').split('\t')
-        Score.objects.get_or_create(StuID=contents[0], School=contents[1], Semester=contents[2], CourseNum=contents[3], Credits=contents[4], AveScore=contents[5], Lowest=contents[6], Highest=contents[7], Up90=contents[8], Up80=contents[9], Up70=contents[10], Up60=contents[11], Low60=contents[12], Num0=contents[13])
+        contents = line.split(',')
+        Score.objects.get_or_create(StuID=contents[0], School=contents[1], Semester=contents[2], CourseNum=contents[3], Credits=contents[4], AveScore=contents[5], Lowest=contents[6], Highest=contents[7], Up90=contents[8], Up80=contents[9], Up70=contents[10], Up60=contents[11], Low60=contents[12], Num0=contents[13], Grade=contents[14])
     print("Score Done!")
 
 def Moral2db(filepath):
@@ -165,14 +165,14 @@ def main():
     # Book2db('F:/book200_new.csv')
     # Card2db('F:/card200_new.csv')
     # Aid2db('F:/aid200_new.csv')
-    # Score2db('F:/score200_new.csv')
+     Score2db('E:/score111.csv')
     # Moral2db('F:/moral200_new.csv')
     # Lib2db('F:/lib200_new.csv')
     # HosTrans2db('F:/hOSTRANS200_new.csv')
     # HosReg2db('F:/reg200_new.csv')
-    HosBX2db('F:/camp_hos200_new.csv')
+    #HosBX2db('F:/camp_hos200_new.csv')
     # Finance2db('F:/finance200_new.csv')
-    Dorm2db()
+    #Dorm2db()
     # Health2db('F:/health200_new.csv')
 
 if __name__ == "__main__":
