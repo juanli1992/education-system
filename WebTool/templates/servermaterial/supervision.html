@@ -1137,9 +1137,7 @@
         var school = $("#school").val();
         var time = $("#time").val();
         var threshold = $("#threshold").val();
-
         $.post("/web/inquiry/",{'school':school, 'time':time, 'threshold':threshold}, function(ret){
-
             //累积分布函数
             var myChart = echarts.init(document.getElementById('chart-1'));
             option = {
@@ -1181,8 +1179,6 @@
               ]
             };
             myChart.setOption(option);
-
-
             //概率密度函数
             var myChart = echarts.init(document.getElementById('chart-2'));
             option = {
@@ -1235,7 +1231,6 @@
               ]
             };
             myChart.setOption(option);
-
             //各个成绩段的人数
             var myChart = echarts.init(document.getElementById('chart-3'));
             option = {
@@ -1289,7 +1284,6 @@
               ]
             };
             myChart.setOption(option);
-
             //表现良好和表现不好的比例
             var myChart = echarts.init(document.getElementById('chart-4'));
             option = {
@@ -1339,8 +1333,6 @@
               ]
             };
             myChart.setOption(option);
-
-
             //good累积分布函数
             var myChart = echarts.init(document.getElementById('chart-good-1'));
             option = {
@@ -1382,8 +1374,6 @@
               ]
             };
             myChart.setOption(option);
-
-
             //good概率密度函数
             var myChart = echarts.init(document.getElementById('chart-good-2'));
             option = {
@@ -1436,7 +1426,6 @@
               ]
             };
             myChart.setOption(option);
-
             //good各个成绩段的人数
             var myChart = echarts.init(document.getElementById('chart-good-3'));
             option = {
@@ -1490,9 +1479,6 @@
               ]
             };
             myChart.setOption(option);
-
-
-
             //bad累积分布函数
             var myChart = echarts.init(document.getElementById('chart-bad-1'));
             option = {
@@ -1534,8 +1520,6 @@
               ]
             };
             myChart.setOption(option);
-
-
             //bad概率密度函数
             var myChart = echarts.init(document.getElementById('chart-bad-2'));
             option = {
@@ -1588,7 +1572,6 @@
               ]
             };
             myChart.setOption(option);
-
             //bad各个成绩段的人数
             var myChart = echarts.init(document.getElementById('chart-bad-3'));
             option = {
@@ -1642,19 +1625,12 @@
               ]
             };
             myChart.setOption(option);
-
-
-
         });
-
-
       }
     </script>
 
     <script type="text/javascript">
-
       var myChart = echarts.init(document.getElementById('chart-1'));
-
       option = {
         title: {
             text: '概率密度函数',
@@ -1704,16 +1680,12 @@
             },
         ]
       };
-
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
-
     </script>
 
     <script type="text/javascript">
-
       var myChart = echarts.init(document.getElementById('chart-2'));
-
       option = {
         title: {
             text: '累积分布函数',
@@ -1763,16 +1735,13 @@
             },
         ]
       };
-
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
-
     </script>
 
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('chart-3'));
-
         // 指定图表的配置项和数据
         var option = {
             title: {
@@ -1792,7 +1761,6 @@
                 data: [5, 20, 36, 10, 10, 20]
             }]
         };
-
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
     </script>
@@ -1850,9 +1818,7 @@
 
 
    <script type="text/javascript">
-
       var myChart = echarts.init(document.getElementById('chart-good-1'));
-
       option = {
         title: {
             text: '概率密度函数',
@@ -1902,16 +1868,12 @@
             },
         ]
       };
-
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
-
     </script>
 
     <script type="text/javascript">
-
       var myChart = echarts.init(document.getElementById('chart-good-2'));
-
       option = {
         title: {
             text: '累积分布函数',
@@ -1961,16 +1923,13 @@
             },
         ]
       };
-
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
-
     </script>
 
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('chart-good-3'));
-
         // 指定图表的配置项和数据
         var option = {
             title: {
@@ -1990,15 +1949,12 @@
                 data: [5, 20, 36, 10, 10, 20]
             }]
         };
-
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
     </script>
 
   <script type="text/javascript">
-
       var myChart = echarts.init(document.getElementById('chart-bad-1'));
-
       option = {
         title: {
             text: '概率密度函数',
@@ -2048,16 +2004,12 @@
             },
         ]
       };
-
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
-
     </script>
 
     <script type="text/javascript">
-
       var myChart = echarts.init(document.getElementById('chart-bad-2'));
-
       option = {
         title: {
             text: '累积分布函数',
@@ -2107,16 +2059,13 @@
             },
         ]
       };
-
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
-
     </script>
 
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('chart-bad-3'));
-
         // 指定图表的配置项和数据
         var option = {
             title: {
@@ -2136,7 +2085,6 @@
                 data: [5, 20, 36, 10, 10, 20]
             }]
         };
-
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
     </script>
