@@ -80,6 +80,7 @@ class Score(models.Model):
     Up60 = models.CharField(max_length=2)
     Low60 = models.CharField(max_length=2)
     Num0 = models.CharField(max_length=2)
+    Grade = models.CharField(max_length=10)
 
     def __unicode__(self):
         return self.StuID
