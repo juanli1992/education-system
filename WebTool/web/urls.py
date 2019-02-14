@@ -16,6 +16,7 @@ urlpatterns = [
     path('inquiry/', inquiry),
     path('base/', base),
     path('supervision/', supervision),
+    path('result/', result),
     path('data_import_export/', data_import_export),
     path('intervene/', intervene),
     path('CheckData/', CheckData),
