@@ -207,6 +207,9 @@ def base(request):
 def supervision(request):
     return render_to_response('servermaterial/supervision.html')
 
+def result(request):
+    return render_to_response('servermaterial/result.html')
+
 def data_import_export(request):
     return render_to_response('servermaterial/data_import_export.html')
 
