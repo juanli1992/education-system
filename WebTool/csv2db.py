@@ -147,7 +147,7 @@ def Health2db(filepath):
     lines = f.readlines()
     f.close()
     for line in lines:
-        contents = line.strip('\n').split('\t')
+        contents = line.split(',')
         Health.objects.get_or_create(StuID=contents[0], Height=contents[1], 
             Weight=contents[2], HWScore=contents[3], HWLevel=contents[4], 
             LungVolume=contents[5], LungScore=contents[6], LungLevel=contents[7], 
@@ -157,7 +157,7 @@ def Health2db(filepath):
             Strength=contents[17], StrengthScore=contents[18], StrengthLevel=contents[19], 
             Meter8001000=contents[20], Meter8001000Score=contents[21], 
             Meter8001000Level=contents[22], TotalScore=contents[23], 
-            TotalLevel=contents[24], Semester=contents[25])
+            TotalLevel=contents[24], School=contents[25], Grade=contents[26])
     print("Health Done!")
 
 def main():
@@ -166,14 +166,14 @@ def main():
     # Card2db('F:/card200_new.csv')
     # Aid2db('F:/aid200_new.csv')
      #Score2db('E:/score111.csv')
-    Moral2db('E:/moral200.csv')
+     #Moral2db('E:/moral200.csv')
     # Lib2db('F:/lib200_new.csv')
     # HosTrans2db('F:/hOSTRANS200_new.csv')
     # HosReg2db('F:/reg200_new.csv')
     #HosBX2db('F:/camp_hos200_new.csv')
     # Finance2db('F:/finance200_new.csv')
     #Dorm2db()
-    # Health2db('F:/health200_new.csv')
+     Health2db('E:/health111.csv')
 
 if __name__ == "__main__":
     main()
