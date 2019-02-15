@@ -17,6 +17,7 @@ urlpatterns = [
     path('base/', base),
     path('supervision/', supervision),
     path('result/', result),
+    path('query/', query),
     path('data_import_export/', data_import_export),
     path('intervene/', intervene),
     path('CheckData/', CheckData),
