@@ -211,6 +211,7 @@ def result(request):
     print('here')
     return render_to_response('servermaterial/result.html')
 
+##查询
 def query(request):
     if request.method == 'POST':
         # 关键内容
@@ -222,11 +223,16 @@ def query(request):
 
         objs = Moral.objects.filter(StuID=stuid)
         res2 = [obj.as_dict() for obj in objs]
-        retu = {'res1':res1, 'res2':res2}
+
+        objs = Health.objects.filter(StuID=stuid)
+        res3 = [obj.as_dict() for obj in objs]
+
+        retu = {'res1':res1, 'res2':res2, 'res3':res3}
         #print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
+##分析
 def query1(request):
     if request.method == 'POST':
         # 关键内容
