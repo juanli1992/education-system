@@ -243,13 +243,20 @@ def query1(request):
             numm = sum(float(score)>=float(j) for j in score_)
             dd.append(numm/len(score_))
         #print(dd)
-        ret1 = {'xx':xx, 'dd':dd}
+        #ret1 = {'xx':xx, 'dd':dd}
 
-        xx2 = list(Moral.objects.filter(StuID=stuid).values_list('Semester', flat=True))
+
+        morallist = list(Moral.objects.filter(StuID=stuid).values_list('Semester', flat=True))
+        xx2 = sorted(set(morallist),key=morallist.index)
         print(xx2)
+        dd2 = []
+        for i in xx2:
+            dd2.append(morallist.count(i))
+        print(dd2)
 
 
-        return HttpResponse(json.dumps(ret1), content_type="application/json")
+        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2}
+        return HttpResponse(json.dumps(ret4charts), content_type="application/json")
 
 def data_import_export(request):
     return render_to_response('servermaterial/data_import_export.html')
