@@ -314,8 +314,8 @@ $("#searchlog").click(function(){
 });
 
 $("#analyselog").click(function(){
-    //echarts
-    $.post("/web/query1/",{'stuid':stuid}, function(ret1){
+    //echarts1
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
     var myChart = echarts.init(document.getElementById('chart-1'));
             option = {
               title : {
@@ -337,7 +337,7 @@ $("#analyselog").click(function(){
               xAxis : [
                   {
                       type : 'category',
-                      data : ret1['xx']
+                      data : ret4charts['xx']
                   }
               ],
               yAxis : [
@@ -349,13 +349,60 @@ $("#analyselog").click(function(){
                   {
                       name:'比例',
                       type:'bar',
-                      data:ret1['dd'],
+                      data:ret4charts['dd'],
 
                   }
               ]
             };
             myChart.setOption(option);
      });
+
+    //echarts2
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    var myChart2 = echarts.init(document.getElementById('chart-2'));
+            option = {
+              title : {
+                  text: '各学年参与德育相关活动次数统计',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      magicType : {show: true, type: ['line', 'bar']},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis : [
+                  {
+                      type : 'category',
+                      data : ret4charts['xx2']
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : [
+                  {
+                      name:'次数',
+                      type:'bar',
+                      data:ret4charts['dd2'],
+
+                  }
+              ]
+            };
+            myChart2.setOption(option);
+     });
+
+
+
+
 
 });
 
