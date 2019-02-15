@@ -24,6 +24,9 @@
     <link href="/templates/servermaterial/css/style.css" rel="stylesheet">
     <link href="/templates/servermaterial/css/style-responsive.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- =======================================================
         Template Name: Dashio
         Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
@@ -129,41 +132,27 @@
 
                 <!-- /德育 -->
                 <div id="moral" class="tab-pane">
-                  <div class="col-lg-12 mt">
-                      <div class="row">
-                        <div class="col-md-6">
-                            <h4>计算结果</h4>
-                            <div class="adv-table">
-                              <table cellpadding="0" cellspacing="0" border="0" class="display table table-bordered" id="hidden-table-info">
-                                <thead>
-                                  <tr>
-                                    <th>学号</th>
-                                    <th>姓名</th>
-                                    <th class="hidden-phone">院系</th>
-                                    <th class="hidden-phone">年级</th>
-                                    <th class="hidden-phone">班级</th>
-                                    <th class="hidden-phone">指标</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr class="gradeX">
-                                    <td>E37092800</td>
-                                    <td>CC</td>
-                                    <td class="hidden-phone">电院</td>
-                                    <td class="hidden-phone">五年级</td>
-                                    <td class="hidden-phone">A1403391</td>
-                                    <td class="center hidden-phone">X</td>
-                                  </tr>
+                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable2">
+                      <thead>
+                          <tr>
+                              <th>学号 </th>
+                              <th>德育相关活动名称</th>
+                              <th>学年</th>
+                              <th>奖项</th>
+                              <th>奖项类型</th>
+                              <th>学院</th>
+                              <th>年级</th>
+                          </tr>
+                      </thead>
+                      <tbody>
 
-                                </tbody>
-                              </table>
-                            </div>
-                            <!-- /table -->
-                        </div>
-                        <!-- /col-md-6 -->
+                      </tbody>
+                  </table>
 
-                        <!-- /col-md-6 -->
-                      </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-3 detailed">
+                      <div id="chart-2" style="width: 450px;height:400px;"></div>
+                    </div>
                   </div>
                 </div>
 
@@ -208,9 +197,10 @@
                 </div>
 
                 <!-- /画像 -->
-                <div id="basi" class="tab-pane active">
+                <div id="basi" class="tab-pane">
 
 
+              </div>
               </div>
               <!-- /tab-content -->
             </div>
@@ -261,15 +251,16 @@
 $("#searchlog").click(function(){
     stuid = $("#stuid").val();
 
-    //datatable
-    var table = $('#logtable').DataTable().clear().draw();
-    table.clear().draw();
+    //datatable1
+    var table1 = $('#logtable').DataTable().clear().draw();
+    table1.clear().draw();
     $.ajax({
         url:"/web/query/",
         type:'POST',
         data:{'stuid':stuid},
         success: function(arg){
-            ret = eval(arg);
+            retu = eval(arg);
+            ret = retu["res1"]
             for(j = 0,len = ret.length; j < len; j++) {
                 StuID = ret[j]["StuID"];
                 //alert(StuID);
@@ -286,10 +277,40 @@ $("#searchlog").click(function(){
                 Low60 = ret[j]["Low60"];
                 Grade = ret[j]["Grade"];
 
-                table.row.add([StuID,School,Semester,CourseNum,Credits,AveScore,Up90,Up80,Up70,Up60,Low60,Grade]).draw();
+                table1.row.add([StuID,School,Semester,CourseNum,Credits,AveScore,Up90,Up80,Up70,Up60,Low60,Grade]).draw();
             }
         }
     });
+
+    //datatable2
+    var table2 = $('#logtable2').DataTable().clear().draw();
+    table2.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res2"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                School = ret[j]["School"];
+                ItemName = ret[j]["ItemName"];
+                Semester = ret[j]["Semester"];
+                Prize = ret[j]["Prize"];
+                PrizeType = ret[j]["PrizeType"];
+                School = ret[j]["School"];
+                Grade = ret[j]["Grade"];
+
+                table2.row.add([StuID,ItemName,Semester,Prize,PrizeType,School,Grade]).draw();
+            }
+        }
+    });
+
+
+
 });
 
 $("#analyselog").click(function(){
