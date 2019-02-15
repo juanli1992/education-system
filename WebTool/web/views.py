@@ -218,10 +218,14 @@ def query(request):
         #print(stuid)
         #没有判空
         objs = Score.objects.filter(StuID=stuid)
-        ret = [obj.as_dict() for obj in objs]
-        print(ret)
+        res1 = [obj.as_dict() for obj in objs]
 
-        return HttpResponse(json.dumps(ret), content_type="application/json")
+        objs = Moral.objects.filter(StuID=stuid)
+        res2 = [obj.as_dict() for obj in objs]
+        retu = {'res1':res1, 'res2':res2}
+        #print(retu)
+
+        return HttpResponse(json.dumps(retu), content_type="application/json")
 
 def query1(request):
     if request.method == 'POST':
@@ -229,7 +233,7 @@ def query1(request):
         stuid = request.POST.get('stuid')
 
         xx = list(Score.objects.filter(StuID=stuid).values_list('Semester', flat=True))
-        print(xx)
+        #print(xx)
         dd=[]
         Grade = list(Score.objects.filter(StuID=stuid).values_list('Grade', flat=True))[0]
         School = list(Score.objects.filter(StuID=stuid).values_list('School', flat=True))[0]
@@ -238,8 +242,11 @@ def query1(request):
             score_ = list(Score.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('AveScore', flat=True))
             numm = sum(float(score)>=float(j) for j in score_)
             dd.append(numm/len(score_))
-        print(dd)
+        #print(dd)
         ret1 = {'xx':xx, 'dd':dd}
+
+        xx2 = list(Moral.objects.filter(StuID=stuid).values_list('Semester', flat=True))
+        print(xx2)
 
 
         return HttpResponse(json.dumps(ret1), content_type="application/json")
