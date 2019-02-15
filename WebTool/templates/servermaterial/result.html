@@ -98,7 +98,17 @@
                       <thead>
                           <tr>
                               <th> 学号 </th>
-
+                              <th>学院</th>
+                              <th>学期</th>
+                              <th>课程数</th>
+                              <th>学分</th>
+                              <th>平均成绩</th>
+                              <th>不低于90的课程数</th>
+                              <th>不低于80的课程数</th>
+                              <th>不低于70的课程数</th>
+                              <th>不低于60的课程数</th>
+                              <th>低于60的课程数</th>
+                              <th>年级</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -303,9 +313,21 @@ $("#searchlog").click(function(){
             ret = eval(arg);
             for(j = 0,len = ret.length; j < len; j++) {
                 StuID = ret[j]["StuID"];
-                alert(StuID);
+                //alert(StuID);
 
-                table.row.add([StuID]).draw();
+                School = ret[j]["School"];
+                Semester = ret[j]["Semester"];
+                CourseNum = ret[j]["CourseNum"];
+                Credits = ret[j]["Credits"];
+                AveScore = ret[j]["AveScore"];
+                Up90 = ret[j]["Up90"];
+                Up80 = ret[j]["Up80"];
+                Up70 = ret[j]["Up70"];
+                Up60 = ret[j]["Up60"];
+                Low60 = ret[j]["Low60"];
+                Grade = ret[j]["Grade"];
+
+                table.row.add([StuID,School,Semester,CourseNum,Credits,AveScore,Up90,Up80,Up70,Up60,Low60,Grade]).draw();
             }
         }
     });
