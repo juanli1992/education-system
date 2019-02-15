@@ -85,6 +85,22 @@ class Score(models.Model):
     def __unicode__(self):
         return self.StuID
 
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "School": self.School,
+            "Semester" : self.Semester,
+            "CourseNum" : self.CourseNum,
+            "Credits" : self.Credits,
+            "AveScore" : self.AveScore,
+            "Up90" : self.Up90,
+            "Up80": self.Up80,
+            "Up70": self.Up70,
+            "Up60": self.Up60,
+            "Low60": str(int(self.Low60.__str__())+int(self.Num0.__str__())),
+            "Grade": self.Grade
+        }
+
 class Moral(models.Model):
     StuID = models.CharField(max_length=20)
     Level1 = models.CharField(max_length=2)
