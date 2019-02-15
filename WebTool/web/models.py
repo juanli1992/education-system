@@ -197,10 +197,42 @@ class Health(models.Model):
     Meter8001000Level = models.TextField()
     TotalScore = models.CharField(max_length=3)
     TotalLevel = models.TextField()
-    Semester = models.CharField(max_length=8)
+    School = models.TextField()
+    Grade = models.CharField(max_length=10)
 
     def __unicode__(self):
         return self.StuID
+
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "Height": self.Height,
+            "Weight": self.Weight,
+            "HWScore": self.HWScore,
+            "HWLevel": self.HWLevel,
+            "LungVolume": self.LungVolume,
+            "LungScore": self.LungScore,
+            "LungLevel": self.LungLevel,
+            "Meter50": self.Meter50,
+            "Meter50Score": self.Meter50Score,
+            "Meter50Level": self.Meter50Level,
+            "Crook": self.Crook,
+            "CrookScore": self.CrookScore,
+            "CrookLevel": self.CrookLevel,
+            "Jump": self.Jump,
+            "JumpScore": self.JumpScore,
+            "JumpLevel": self.JumpLevel,
+            "Strength": self.Strength,
+            "StrengthScore": self.StrengthScore,
+            "StrengthLevel": self.StrengthLevel,
+            "Meter8001000": self.Meter8001000,
+            "Meter8001000Score": self.Meter8001000Score,
+            "Meter8001000Level": self.Meter8001000Level,
+            "TotalScore": self.TotalScore,
+            "TotalLevel": self.TotalLevel,
+            "School": self.School,
+            "Grade": self.Grade
+        }
 
 class Dorm(models.Model):
     StuID = models.CharField(max_length=20)
