@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import HttpResponse
 from django.shortcuts import render
 from web import models
-from web.models import Score
+from web.models import *
 import json
 import time
 import xlrd
@@ -208,7 +208,20 @@ def supervision(request):
     return render_to_response('servermaterial/supervision.html')
 
 def result(request):
+    print('here')
     return render_to_response('servermaterial/result.html')
+
+def query(request):
+    if request.method == 'POST':
+        # 关键内容
+        stuid = request.POST.get('stuid')
+        print(stuid)
+        #没有判空
+        objs = Score.objects.filter(StuID=stuid)
+        ret = [obj.as_dict() for obj in objs]
+        print(ret)
+
+        return HttpResponse(json.dumps(ret), content_type="application/json")
 
 def data_import_export(request):
     return render_to_response('servermaterial/data_import_export.html')
