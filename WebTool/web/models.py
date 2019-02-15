@@ -113,9 +113,22 @@ class Moral(models.Model):
     PrizeType = models.TextField()
     ActivityLevel = models.CharField(max_length=2)
     Note = models.TextField()
+    School = models.TextField()
+    Grade = models.CharField(max_length=10)
 
     def __unicode__(self):
         return self.StuID
+
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "ItemName": self.ItemName,
+            "Semester": self.Semester,
+            "Prize": self.Prize,
+            "PrizeType": self.PrizeType,
+            "School": self.School,
+            "Grade": self.Grade
+        }
 
 class Lib(models.Model):
     StuID = models.CharField(max_length=20)
