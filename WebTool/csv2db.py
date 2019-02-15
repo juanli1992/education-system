@@ -69,7 +69,7 @@ def Moral2db(filepath):
     f.close()
     for line in lines:
         contents = line.split(',')
-        Moral.objects.get_or_create(StuID=contents[0], Level1=contents[1], Level2=contents[2], ItemID=contents[3], ItemName=contents[4], Semester=contents[5], Prize=contents[6], State=contents[7], PrizeType=contents[8], ActivityLevel=contents[9], Note=contents[10], Grade=contents[11])
+        Moral.objects.get_or_create(StuID=contents[0], Level1=contents[1], Level2=contents[2], ItemID=contents[3], ItemName=contents[4], Semester=contents[5], Prize=contents[6], State=contents[7], PrizeType=contents[8], ActivityLevel=contents[9], Note=contents[10], Grade=contents[11], School=contents[12])
     print("Moral Done!")
 
 def Lib2db(filepath):
@@ -166,7 +166,7 @@ def main():
     # Card2db('F:/card200_new.csv')
     # Aid2db('F:/aid200_new.csv')
      #Score2db('E:/score111.csv')
-    Moral2db('E:/moral111.csv')
+    Moral2db('E:/moral200.csv')
     # Lib2db('F:/lib200_new.csv')
     # HosTrans2db('F:/hOSTRANS200_new.csv')
     # HosReg2db('F:/reg200_new.csv')
