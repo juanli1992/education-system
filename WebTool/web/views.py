@@ -215,13 +215,34 @@ def query(request):
     if request.method == 'POST':
         # 关键内容
         stuid = request.POST.get('stuid')
-        print(stuid)
+        #print(stuid)
         #没有判空
         objs = Score.objects.filter(StuID=stuid)
         ret = [obj.as_dict() for obj in objs]
         print(ret)
 
         return HttpResponse(json.dumps(ret), content_type="application/json")
+
+def query1(request):
+    if request.method == 'POST':
+        # 关键内容
+        stuid = request.POST.get('stuid')
+
+        xx = list(Score.objects.filter(StuID=stuid).values_list('Semester', flat=True))
+        print(xx)
+        dd=[]
+        Grade = list(Score.objects.filter(StuID=stuid).values_list('Grade', flat=True))[0]
+        School = list(Score.objects.filter(StuID=stuid).values_list('School', flat=True))[0]
+        for sem in xx:
+            score = Score.objects.get(StuID=stuid, Semester=sem).AveScore
+            score_ = list(Score.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('AveScore', flat=True))
+            numm = sum(float(score)>=float(j) for j in score_)
+            dd.append(numm/len(score_))
+        print(dd)
+        ret1 = {'xx':xx, 'dd':dd}
+
+
+        return HttpResponse(json.dumps(ret1), content_type="application/json")
 
 def data_import_export(request):
     return render_to_response('servermaterial/data_import_export.html')
