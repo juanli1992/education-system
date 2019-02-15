@@ -163,10 +163,22 @@
                       <thead>
                           <tr>
                               <th>学号 </th>
-                              <th>德育相关活动名称</th>
-                              <th>学年</th>
-                              <th>奖项</th>
-                              <th>奖项类型</th>
+                              <th>身高</th>
+                              <th>体重</th>
+                              <th>高重比分数</th>
+                              <th>肺活量</th>
+                              <th>肺活量分数</th>
+                              <th>50米</th>
+                              <th>50米分数</th>
+                              <th>坐位体前屈</th>
+                              <th>坐位体前屈分数</th>
+                              <th>跳远</th>
+                              <th>跳远分数</th>
+                              <th>俯卧撑/仰卧起坐</th>
+                              <th>俯卧撑/仰卧起坐分数</th>
+                              <th>800/1000米</th>
+                              <th>800/1000米分数</th>
+                              <th>体质总评分数</th>
                               <th>学院</th>
                               <th>年级</th>
                           </tr>
@@ -296,6 +308,45 @@ $("#searchlog").click(function(){
             }
         }
     });
+
+    //datatable3
+    var table3 = $('#logtable3').DataTable().clear().draw();
+    table3.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res3"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                Height = ret[j]["Height"];
+                Weight = ret[j]["Weight"];
+                HWScore = ret[j]["HWScore"];
+                LungVolume = ret[j]["LungVolume"];
+                LungScore = ret[j]["LungScore"];
+                Meter50 = ret[j]["Meter50"];
+                Meter50Score = ret[j]["Meter50Score"];
+                Crook = ret[j]["Crook"];
+                CrookScore = ret[j]["CrookScore"];
+                Jump = ret[j]["Jump"];
+                JumpScore = ret[j]["JumpScore"];
+                Strength = ret[j]["Strength"];
+                StrengthScore = ret[j]["StrengthScore"];
+                Meter8001000 = ret[j]["Meter8001000"];
+                Meter8001000Score = ret[j]["Meter8001000Score"];
+                TotalScore = ret[j]["TotalScore"];
+                School = ret[j]["School"];
+                Grade = ret[j]["Grade"];
+
+                table3.row.add([StuID,Height,Weight,HWScore,LungVolume,LungScore,Meter50,Meter50Score,Crook,CrookScore,Jump,JumpScore,Strength,StrengthScore,Meter8001000,Meter8001000Score,TotalScore,School,Grade]).draw();
+            }
+        }
+    });
+
 
 
 
