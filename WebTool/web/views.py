@@ -227,7 +227,10 @@ def query(request):
         objs = Health.objects.filter(StuID=stuid)
         res3 = [obj.as_dict() for obj in objs]
 
-        retu = {'res1':res1, 'res2':res2, 'res3':res3}
+        objs = Basic.objects.filter(StuID=stuid)
+        res4 = [obj.as_dict() for obj in objs]
+
+        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4}
         #print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
