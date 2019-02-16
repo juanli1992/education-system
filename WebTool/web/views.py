@@ -274,6 +274,7 @@ def query1(request):
             dd3.append(numm/len(score_))
         print(dd3)
 
+
         ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3}
         return HttpResponse(json.dumps(ret4charts), content_type="application/json")
 
