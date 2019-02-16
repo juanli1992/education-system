@@ -181,6 +181,7 @@
                               <th>体质总评分数</th>
                               <th>学院</th>
                               <th>年级</th>
+                              <th>年份</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -341,8 +342,9 @@ $("#searchlog").click(function(){
                 TotalScore = ret[j]["TotalScore"];
                 School = ret[j]["School"];
                 Grade = ret[j]["Grade"];
+                Semester = ret[j]["Semester"];
 
-                table3.row.add([StuID,Height,Weight,HWScore,LungVolume,LungScore,Meter50,Meter50Score,Crook,CrookScore,Jump,JumpScore,Strength,StrengthScore,Meter8001000,Meter8001000Score,TotalScore,School,Grade]).draw();
+                table3.row.add([StuID,Height,Weight,HWScore,LungVolume,LungScore,Meter50,Meter50Score,Crook,CrookScore,Jump,JumpScore,Strength,StrengthScore,Meter8001000,Meter8001000Score,TotalScore,School,Grade,Semester]).draw();
             }
         }
     });
@@ -358,7 +360,7 @@ $("#analyselog").click(function(){
     var myChart = echarts.init(document.getElementById('chart-1'));
             option = {
               title : {
-                  text: '超过同年级同学院学生比例',
+                  text: '平均成绩超过同年级同学院学生比例',
               },
               tooltip : {
                   trigger: 'axis'
@@ -438,6 +440,50 @@ $("#analyselog").click(function(){
             };
             myChart2.setOption(option);
      });
+
+    //echarts3
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    var myChart3 = echarts.init(document.getElementById('chart-3'));
+            option = {
+              title : {
+                  text: '体质总评分数超过同年级同学院学生比例',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      magicType : {show: true, type: ['line', 'bar']},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis : [
+                  {
+                      type : 'category',
+                      data : ret4charts['xx3']
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : [
+                  {
+                      name:'比例',
+                      type:'bar',
+                      data:ret4charts['dd3'],
+
+                  }
+              ]
+            };
+            myChart3.setOption(option);
+     });
+
 
 
 
