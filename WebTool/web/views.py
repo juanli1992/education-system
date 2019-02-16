@@ -254,14 +254,24 @@ def query1(request):
 
         morallist = list(Moral.objects.filter(StuID=stuid).values_list('Semester', flat=True))
         xx2 = sorted(set(morallist),key=morallist.index)
-        print(xx2)
+        #print(xx2)
         dd2 = []
         for i in xx2:
             dd2.append(morallist.count(i))
-        print(dd2)
+        #print(dd2)
 
 
-        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2}
+        xx3 = list(Health.objects.filter(StuID=stuid).values_list('Semester', flat=True)) #Grade and School donnot change
+        print(xx3)
+        dd3=[]
+        for sem in xx3:
+            score = Health.objects.get(StuID=stuid, Semester=sem).TotalScore
+            score_ = list(Health.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('TotalScore', flat=True))
+            numm = sum(float(score)>=float(j) for j in score_)
+            dd3.append(numm/len(score_))
+        print(dd3)
+
+        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3}
         return HttpResponse(json.dumps(ret4charts), content_type="application/json")
 
 def data_import_export(request):
