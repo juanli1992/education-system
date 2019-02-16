@@ -199,6 +199,7 @@ class Health(models.Model):
     TotalLevel = models.TextField()
     School = models.TextField()
     Grade = models.CharField(max_length=10)
+    Semester = models.TextField()
 
     def __unicode__(self):
         return self.StuID
@@ -231,7 +232,8 @@ class Health(models.Model):
             "TotalScore": self.TotalScore,
             "TotalLevel": self.TotalLevel,
             "School": self.School,
-            "Grade": self.Grade
+            "Grade": self.Grade,
+            "Semester": self.Semester
         }
 
 class Dorm(models.Model):
