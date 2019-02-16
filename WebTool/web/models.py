@@ -11,14 +11,29 @@ class Basic(models.Model):
     National = models.TextField()
     Entrance = models.CharField(max_length=20)
     Province = models.TextField()
-    Gender = models.CharField(max_length=5)
+    Gender = models.TextField()
     State = models.TextField()
     Type = models.TextField()
     Year = models.CharField(max_length=5)
 
-
     def __unicode__(self):
         return self.StuID
+
+    def as_dict(self):
+        return{
+            'StuID': self.StuID,
+            'School': self.School,
+            'Major': self.Major,
+            'BirthYear': self.BirthYear,
+            'Country': self.Country,
+            'National': self.National,
+            'Entrance': self.Entrance,
+            'Province': self.Province,
+            'Gender': self.Gender,
+            'State': self.State,
+            'Type': self.Type,
+            'Year': self.Year
+        }
 
 class Book(models.Model):
     """docstring for Book"""
