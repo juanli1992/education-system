@@ -540,6 +540,41 @@ $("#analyselog").click(function(){
             myChart3.setOption(option);
      });
 
+    //echarts4
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    var myChart4 = echarts.init(document.getElementById('chart-4'));
+
+          option = {
+              title: {
+                  text: '字符云',
+              },
+              tooltip: {
+                  show: true
+              },
+              series: [{
+                  type: 'wordCloud',
+                  size: ['80%', '80%'],
+                  textRotation : [0, 45, 90, -45],
+                  textPadding: 0,
+                  autoSize: {
+                      enable: true,
+                      minSize: 14
+                  },
+                  data:[
+              {
+                  name: "程序猿",
+                  value: 10000,
+                  itemStyle: {
+                      normal: {
+                          color: 'black'
+                      }
+                  }
+              }]
+              }]
+          };
+          myChart4.setOption(option);
+
+     });
 
 
 
