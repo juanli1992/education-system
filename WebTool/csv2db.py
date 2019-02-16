@@ -13,7 +13,7 @@ def Basic2db(filepath):
     lines = f.readlines()
     f.close()
     for line in lines:
-        stuId, school, major, birthYear, country, nation, entrance, province, gender, state, stuType, year = line.strip('\n').split('\t')
+        stuId, school, major, birthYear, country, nation, entrance, province, gender, state, stuType, year = line.split(',')
         Basic.objects.get_or_create(StuID=stuId, School=school, Major=major, BirthYear=birthYear, Country=country, National=nation, Entrance=entrance, Province=province, Gender=gender, State=state, Type=stuType, Year=year)
     print("Basic Done!")
 
@@ -161,7 +161,7 @@ def Health2db(filepath):
     print("Health Done!")
 
 def main():
-    # Basic2db('F:/basic200_new.csv')
+    Basic2db('E:/basic111.csv')
     # Book2db('F:/book200_new.csv')
     # Card2db('F:/card200_new.csv')
     # Aid2db('F:/aid200_new.csv')
@@ -173,7 +173,7 @@ def main():
     #HosBX2db('F:/camp_hos200_new.csv')
     # Finance2db('F:/finance200_new.csv')
     #Dorm2db()
-     Health2db('E:/health111.csv')
+     #Health2db('E:/health111.csv')
 
 if __name__ == "__main__":
     main()
