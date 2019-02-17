@@ -10,6 +10,7 @@ import json
 import time
 import xlrd
 import xlwt
+import numpy as np
 
 # Create your views here.
 def home(request):
@@ -221,17 +222,22 @@ def query(request):
         objs = Score.objects.filter(StuID=stuid)
         res1 = [obj.as_dict() for obj in objs]
 
-        objs = Moral.objects.filter(StuID=stuid)
-        res2 = [obj.as_dict() for obj in objs]
+        objs2 = Moral.objects.filter(StuID=stuid)
+        res2 = [obj.as_dict() for obj in objs2]
 
-        objs = Health.objects.filter(StuID=stuid)
-        res3 = [obj.as_dict() for obj in objs]
+        objs3 = Health.objects.filter(StuID=stuid)
+        res3 = [obj.as_dict() for obj in objs3]
 
-        objs = Basic.objects.filter(StuID=stuid)
-        res4 = [obj.as_dict() for obj in objs]
+        objs4 = Basic.objects.filter(StuID=stuid)
+        res4 = [obj.as_dict() for obj in objs4]
+        FinanceType = '无'
+        if Finance.objects.filter(StuID=stuid):
+            FinanceType = Finance.objects.filter(StuID=stuid)[0].FinanceType
+        res4[0].update({'FinanceType':FinanceType})#res4就一个字典元素
+
 
         retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4}
-        #print(retu)
+        print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
@@ -265,17 +271,79 @@ def query1(request):
 
 
         xx3 = list(Health.objects.filter(StuID=stuid).values_list('Semester', flat=True)) #Grade and School donnot change
-        print(xx3)
+        #print(xx3)
         dd3=[]
         for sem in xx3:
             score = Health.objects.get(StuID=stuid, Semester=sem).TotalScore
             score_ = list(Health.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('TotalScore', flat=True))
             numm = sum(float(score)>=float(j) for j in score_)
             dd3.append(numm/len(score_))
-        print(dd3)
+        #print(dd3)
 
 
-        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3}
+        ###画像
+        str0 = str(stuid)
+        ##学业
+        str1 = ""
+        str11 = ""
+        if Score.objects.filter(StuID=stuid):
+            lis = list(Score.objects.filter(StuID=stuid))
+            scoreO = lis[-1]
+            if (float(scoreO.AveScore) <= 65.) | (int(scoreO.Low60) > 0) | (int(scoreO.Num0) > 0):
+                str1 = "学业需要特别照顾"
+
+            ascore = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
+            ascore = list(map(float,ascore))
+            #print(ascore)
+            ascoree = np.mean(ascore)#平均成绩
+            str11 = "累计平均成绩" + str(("%.2f" %ascoree))
+            stulist = list(Score.objects.filter(Grade=Grade, School=School).values_list('StuID', flat=True))
+            stulist = sorted(set(stulist), key=stulist.index)
+            #print(stulist)
+            stuscorlist = []
+            for stu in stulist:
+                ascore_ = list(Score.objects.filter(StuID=stu).values_list('AveScore', flat=True))
+                ascore_ = list(map(float, ascore_))
+                ascoree_ = np.mean(ascore_)
+                stuscorlist.append(ascoree_)
+            #print(stuscorlist)
+            numm = sum(ascoree >= j for j in stuscorlist)
+            rat = numm/len(stuscorlist)
+            if rat >= 0.8:
+                str1 = "学霸"
+        #print(str1)
+
+        ##体质
+        str2 = str3 = str4 = str5 = str6 = str7 = ""
+        if Health.objects.filter(StuID=stuid):
+            lis = list(Health.objects.filter(StuID=stuid))
+            healthO = lis[-1]
+            str2 = "身材" + healthO.HWLevel
+            str3 = "体质" + healthO.TotalLevel
+            if healthO.Meter50Level == "优秀":
+                str4 = "短跑健将"
+            if healthO.CrookLevel == "优秀":
+                str5 = "柔韧性高"
+            if healthO.JumpLevel == "优秀":
+                str6 = "跳远健将"
+            if healthO.Meter8001000Level == "优秀":
+                str7 = "长跑健将"
+
+        cloud = [
+            {"name": str0, "value": "100"},
+            {"name": str11, "value": "100"},
+            {"name": str1, "value": "100"},
+            {"name": str2, "value": "100"},
+            {"name": str3, "value": "100"},
+            {"name": str4, "value": "100"},
+            {"name": str5, "value": "100"},
+            {"name": str6, "value": "100"},
+            {"name": str7, "value": "100"}
+        ]
+        print(cloud)
+
+
+        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud}
         return HttpResponse(json.dumps(ret4charts), content_type="application/json")
 
 def data_import_export(request):
