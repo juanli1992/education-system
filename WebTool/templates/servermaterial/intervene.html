@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -16,466 +16,294 @@
     <!-- Bootstrap core CSS -->
     <link href="/templates/servermaterial/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!--external css-->
-    <link href="/templates/servermaterial/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="/templates/servermaterial/lib/font-awesome/css/font-awesome.css" rel="stylesheet"/>
     <!-- Custom styles for this template -->
     <link href="/templates/servermaterial/css/style.css" rel="stylesheet">
     <link href=/templates/servermaterial/"css/style-responsive.css" rel="stylesheet">
-      <script src="/templates/servermaterial/lib/tasks.js"></script>
+    <script src="/templates/servermaterial/lib/tasks.js"></script>
+    <script src="/templates/servermaterial/js/jquery-1.7.2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#query_option").change(function () {
+                {#alert($('#query_option').val());#}
+                if ($(this).val() == 'student') {
+                    $(".cls").hide();
+                    $("#stuNo_query").show();
+                    $("#query_hint").empty();
+                    $("#query_hint").append("学生查询");
+                } else {
+                    $("#stuNo_query").hide();
+                    $(".cls").show();
+                    $("#query_hint").empty();
+                    $("#query_hint").append("班级查询");
+                }
+            });
+        });
+    </script>
+    <!-- =======================================================
+        Template Name: Dashio
+        Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+        Author: TemplateMag.com
+        License: https://templatemag.com/license/
+    ======================================================= -->
+</head>
+<body>
+<!-- **********************************************************************************************************************************************************
+  TOP BAR CONTENT & NOTIFICATIONS
+  *********************************************************************************************************************************************************** -->
+<!--header start-->
+{% include 'servermaterial/header.html' %}
+<!--header end-->
 
-      <!-- =======================================================
-          Template Name: Dashio
-          Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
-          Author: TemplateMag.com
-          License: https://templatemag.com/license/
-      ======================================================= -->
-  </head>
-  <body>
-    <!-- **********************************************************************************************************************************************************
-      TOP BAR CONTENT & NOTIFICATIONS
-      *********************************************************************************************************************************************************** -->
-    <!--header start-->
-    {% include 'servermaterial/header.html' %}
-    <!--header end-->
+<!--sidebar start-->
+{% include 'servermaterial/sidebar.html' %}
+<!--sidebar end-->
 
-    <!--sidebar start-->
-    {% include 'servermaterial/sidebar.html' %}
-    <!--sidebar end-->
-
-    <!-- **********************************************************************************************************************************************************
-    MAIN CONTENT
-    *********************************************************************************************************************************************************** -->
-    <!--main content start-->
-    <section id="main-content">
-      <section class="wrapper site-min-height">
+<!-- **********************************************************************************************************************************************************
+MAIN CONTENT
+*********************************************************************************************************************************************************** -->
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper site-min-height">
         <div class="col-lg-12 mt">
-          <div class="row content-panel">
-            <h4>学生查询</h4>
-            <div class="col-lg-12 detailed">
-              <h4>学生查询</h4>
-              <form role="form" class="form-horizontal">
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">学院</label>
-                  <div class="col-lg-8">
-                    <select class="form-control">
-                      <option value="volvo">电子信息与电气工程学院</option>
-                      <option value="volvo">机械与动力工程学院</option>
-                      <option value="saab">人文学院</option>
-                      <option value="mercedes">数学科学学院</option>
-                    </select>
-                  </div>
+            <div class="row content-panel">
+                <h4>查询选项</h4>
+                <div class="col-lg-12 detailed">
+                    <form role="form" class="form-horizontal">
+                        <div class="form-group col-lg-4">
+                            <label class="col-lg-4 control-label text-info" style="font-size: 17px"><strong>查询类别</strong></label>
+                            <div class="col-lg-8">
+                                <select class="form-control" id="query_option">
+                                    <option value="class">班级查询</option>
+                                    <option value="student">学生查询</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">专业</label>
-                  <div class="col-lg-8">
-                    <select class="form-control">
-                      <option value="volvo">电子系</option>
-                      <option value="volvo">仪器系</option>
-                      <option value="saab">计算机系</option>
-                      <option value="mercedes">自动化系</option>
-                    </select>
-                  </div>
+                <div class="col-lg-12 detailed">
+                    <h4 id="query_hint">班级查询</h4>
+                    <form role="form" class="form-horizontal">
+                        <div class="cls form-group col-lg-4">
+                            <label class="col-lg-3 control-label">学院</label>
+                            <div class="col-lg-8">
+                                <select class="form-control">
+                                    <option value="volvo">电子信息与电气工程学院</option>
+                                    <option value="volvo">机械与动力工程学院</option>
+                                    <option value="saab">人文学院</option>
+                                    <option value="mercedes">数学科学学院</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="cls form-group col-lg-4">
+                            <label class="col-lg-3 control-label">专业</label>
+                            <div class="col-lg-8">
+                                <select class="form-control">
+                                    <option value="volvo">电子系</option>
+                                    <option value="volvo">仪器系</option>
+                                    <option value="saab">计算机系</option>
+                                    <option value="mercedes">自动化系</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-4 cls">
+                            <label class="col-lg-3 control-label">年级</label>
+                            <div class="col-lg-8">
+                                <select class="form-control">
+                                    <option value="volvo">本科一年级</option>
+                                    <option value="volvo">本科二年级</option>
+                                    <option value="saab">本科三年级</option>
+                                    <option value="mercedes">本科四年级</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-4 cls">
+                            <label class="col-lg-3 control-label">班级</label>
+                            <div class="col-lg-8">
+                                <select class="form-control">
+                                    <option value="volvo">B13033910</option>
+                                    <option value="volvo">B14033910</option>
+                                    <option value="saab">B15033910</option>
+                                    <option value="mercedes">B16033910</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-4" id="stuNo_query" style="display:none">
+                            <label class="col-lg-3 control-label">学号</label>
+                            <div class="col-lg-8">
+                                <input type="text" id="stuNo" name="stuNo" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <button class="btn btn-theme">查询</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">年级</label>
-                  <div class="col-lg-8">
-                    <select class="form-control">
-                      <option value="volvo">本科一年级</option>
-                      <option value="volvo">本科二年级</option>
-                      <option value="saab">本科三年级</option>
-                      <option value="mercedes">本科四年级</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">班级</label>
-                  <div class="col-lg-8">
-                    <select class="form-control">
-                      <option value="volvo">B13033910</option>
-                      <option value="volvo">B14033910</option>
-                      <option value="saab">B15033910</option>
-                      <option value="mercedes">B16033910</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">时间范围</label>
-                  <div class="col-lg-8">
-                    <select class="form-control">
-                      <option value="volvo">最近一周</option>
-                      <option value="volvo">最近一个月</option>
-                      <option value="saab">最近三个月</option>
-                      <option value="mercedes">最近六个月</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group col-lg-4">
-                  <button class="btn btn-theme">查询</button>
-                </div>
-              </form>
             </div>
-          </div>
         </div>
         <div class="col-lg-12 mt">
             <div class="row content-panel">
-              <h4>成长记录</h4>
-              <div class="panel-heading">
-                <ul class="nav nav-tabs nav-justified">
-                  <li class="active">
-                    <a data-toggle="tab" href="#study">学业水平</a>
-                  </li>
-                  <li>
-                    <a data-toggle="tab" href="#health">身体健康</a>
-                  </li>
-                  <li>
-                    <a data-toggle="tab" href="#moral">品德发展</a>
-                  </li>
-                </ul>
-              </div>
-              <!-- /panel-heading -->
-              <div class="panel-body">
-                <div class="tab-content">
-                  <!-- /学业水平 -->
-                  <div id="study" class="tab-pane active">
-                      <div class="col-lg-12 detailed">
-                        <h4>学生学业水平指导意见</h4>
-                            <table class="table table-bordered table-striped table-condensed">
-                              <thead>
-                                <tr>
-                                  <th>姓名</th>
-                                  <th>学号</th>
-                                  <th>学院</th>
-                                  <th>专业</th>
-                                  <th>年级</th>
-                                  <th>班级</th>
-                                  <th>身体健康情况</th>
-                                  <th>指导意见</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>学业发展情况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>学业发展情况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>学业发展情况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>学业发展情况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>学业发展情况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>学业发展情况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>学业发展情况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                      </div>
-                  </div>
-                  <!-- /身体健康 -->
-                  <div id="health" class="tab-pane">
-                      <div class="col-lg-12 detailed">
-                        <h4>学生身体健康指导意见</h4>
-                            <table class="table table-bordered table-striped table-condensed">
-                              <thead>
-                                <tr>
-                                  <th>姓名</th>
-                                  <th>学号</th>
-                                  <th>学院</th>
-                                  <th>专业</th>
-                                  <th>年级</th>
-                                  <th>班级</th>
-                                  <th>身体健康情况</th>
-                                  <th>指导意见</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>体质健康状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                      </div>
-                  </div>
-                  <!-- /品德发展 -->
-                  <div id="moral" class="tab-pane">
-                      <div class="col-lg-12 detailed">
-                        <h4>学生品德发展指导意见</h4>
-                            <table class="table table-bordered table-striped table-condensed">
-                              <thead>
-                                <tr>
-                                  <th>姓名</th>
-                                  <th>学号</th>
-                                  <th>学院</th>
-                                  <th>专业</th>
-                                  <th>年级</th>
-                                  <th>班级</th>
-                                  <th>品德发展情况</th>
-                                  <th>指导意见</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                                <tr>
-                                  <td>张三</td>
-                                  <td>123456789</td>
-                                  <td>电子信息与电器工程学院</td>
-                                  <td>仪器系</td>
-                                  <td>本科一年级</td>
-                                  <td>123456</td>
-                                  <td>品德发展状况</td>
-                                  <td>指导意见</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                      </div>
-                  </div>
+                <h4>干预意见</h4>
+                {#              <div class="panel-heading">#}
+                {#                <ul class="nav nav-tabs nav-justified">#}
+                {#                  <li>#}
+                {#                    <a data-toggle="tab" href="#health">身体健康</a>#}
+                {#                  </li>#}
+                {#                </ul>#}
+                {#              </div>#}
+                <!-- /panel-heading -->
+                {#              <div class="panel-body">#}
+                <div class="col-lg-12 detailed">
+
+                    <!-- /身体健康 -->
+                    {#                  <div id="health" class="tab-pane">#}
+                    {#                      <div class="col-lg-12 detailed">#}
+                    <h4>学生成长指导意见</h4>
+                    <table class="table table-bordered table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>学号</th>
+                            <th>学院</th>
+                            <th>专业</th>
+                            <th>年级</th>
+                            <th>班级</th>
+                            <th>身体健康情况</th>
+                            <th>指导意见</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        <tr>
+                            <td>张三</td>
+                            <td>123456789</td>
+                            <td>电子信息与电器工程学院</td>
+                            <td>仪器系</td>
+                            <td>本科一年级</td>
+                            <td>123456</td>
+                            <td>体质健康状况</td>
+                            <td>指导意见</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <!-- /tab-content -->
-              </div>
-              <!-- /panel-body -->
             </div>
-            <!-- /col-lg-12 -->
         </div>
-          <!-- /row -->
+        <!-- /tab-content -->
+        <!-- /panel-body -->
+        <!-- /col-lg-12 -->
+        <!-- /row -->
         <!--/div>
         <!-- /container -->
-      </section>
-      <!-- /wrapper -->
     </section>
-    <!-- /MAIN CONTENT -->
-    <!--main content end-->
+    <!-- /wrapper -->
+</section>
+<!-- /MAIN CONTENT -->
+<!--main content end-->
 
-    <!--footer start-->
-    {% include 'servermaterial/footer.html' %}
-    <!--footer end-->
+<!--footer start-->
+{% include 'servermaterial/footer.html' %}
+<!--footer end-->
 
-    <!-- js placed at the end of the document so the pages load faster -->
-    <script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script>
-    <script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script class="include" type="text/javascript" src="/templates/servermaterial/lib/jquery.dcjqaccordion.2.7.js"></script>
-    <script src="/templates/servermaterial/lib/jquery.scrollTo.min.js"></script>
-    <script src="/templates/servermaterial/lib/jquery.nicescroll.js" type="text/javascript"></script>
-    <!--common script for all pages-->
-    <script src="/templates/servermaterial/lib/common-scripts.js"></script>
-    <!--script for this page-->
-    <script src="/templates/servermaterial/lib/jquery-ui-1.9.2.custom.min.js"></script>
-    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/date.js"></script>
-    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
-    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/moment.min.js"></script>
-    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
-    <script src="/templates/servermaterial/lib/advanced-form-components.js"></script>
-  </body>
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script>
+<script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="/templates/servermaterial/lib/jquery.dcjqaccordion.2.7.js"></script>
+<script src="/templates/servermaterial/lib/jquery.scrollTo.min.js"></script>
+<script src="/templates/servermaterial/lib/jquery.nicescroll.js" type="text/javascript"></script>
+<!--common script for all pages-->
+<script src="/templates/servermaterial/lib/common-scripts.js"></script>
+<!--script for this page-->
+<script src="/templates/servermaterial/lib/jquery-ui-1.9.2.custom.min.js"></script>
+<script type="text/javascript"
+        src="/templates/servermaterial/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/date.js"></script>
+<script type="text/javascript"
+        src="/templates/servermaterial/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript"
+        src="/templates/servermaterial/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/moment.min.js"></script>
+<script type="text/javascript"
+        src="/templates/servermaterial/lib/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+<script src="/templates/servermaterial/lib/advanced-form-components.js"></script>
+</body>
 </html>
