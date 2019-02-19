@@ -95,7 +95,7 @@ class Score(models.Model):
     Up60 = models.CharField(max_length=2)
     Low60 = models.CharField(max_length=2)
     Num0 = models.CharField(max_length=2)
-    Grade = models.CharField(max_length=10)
+    Grade = models.CharField(max_length=10, default="")
 
     def __unicode__(self):
         return self.StuID
@@ -128,8 +128,8 @@ class Moral(models.Model):
     PrizeType = models.TextField()
     ActivityLevel = models.CharField(max_length=2)
     Note = models.TextField()
-    School = models.TextField()
-    Grade = models.CharField(max_length=10)
+    School = models.TextField(default="")
+    Grade = models.CharField(max_length=10, default="")
 
     def __unicode__(self):
         return self.StuID
@@ -266,17 +266,32 @@ class Finance(models.Model):
     def __unicode__(self):
         return self.StuID
 
-class Intervene(models.Model):
-    StuName = models.TextField()
-    StuID = models.CharField(max_length=20)
-    School = models.TextField()
-    Major = models.TextField()
-    Grade = models.CharField(max_length=5)
-    Class = models.CharField(max_length=15)
-    Status = models.TextField()
-    Guidance = models.TextField()
-    Type = models.CharField(max_length=5)
-    Time = models.CharField(max_length=15)
+
+class InterveneSuggestion(models.Model):
+    """
+    干预意见Model,存储标签及其对应的干预意见
+    """
+    study_state = models.CharField(max_length=10)   # 学习情况标签
+    is_fail_exam = models.BooleanField()  # 是否挂科
+    body_health_state = models.TextField()
+    treatment_count = models.CharField(max_length=10)  # 就诊次数
+    moral = models.TextField()
+    suggestion = models.TextField()
+
+    def as_dict(self):
+        if self.is_fail_exam:
+            is_fail_exam = '有挂科'
+        else:
+            is_fail_exam = '无挂科'
+        return {
+            "study_state": self.study_state,
+            "is_fail_exam": is_fail_exam,
+            "body_health_state": self.body_health_state,
+            "treatment_count": self.treatment_count,
+            "moral": self.moral,
+            "suggestion": self.suggestion
+        }
+
 
 class Register(models.Model):
     UserName = models.CharField(max_length=20)

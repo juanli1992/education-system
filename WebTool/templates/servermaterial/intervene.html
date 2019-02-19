@@ -26,6 +26,7 @@
         $(document).ready(function () {
             $("#query_option").change(function () {
                 {#alert($('#query_option').val());#}
+                $("tbody").empty();
                 if ($(this).val() == 'student') {
                     $(".cls").hide();
                     $("#stuNo_query").show();
@@ -38,6 +39,82 @@
                     $("#query_hint").append("班级查询");
                 }
             });
+
+            $("#school").change(function () {
+                $.ajax({
+                    url: '/web/query_majors',
+                    type: 'POST',
+                    data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#major").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#major").append(newNode);
+                        }
+                    }
+
+                });
+            });
+
+            $("#query_button").click(function () {
+                /*
+                 按学号查询
+                 */
+                $("tbody").empty();
+                if ($("#query_option").val() == 'student') {
+                    var data = {stuNo: $("#stuNo").val()};
+                    $.ajax({
+                        url: "/web/query_intervene",
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json;charset=utf-8",
+                        data: JSON.stringify(data),
+                        success: function (result) {
+                            if (Object.keys(result).length == 1)
+                                alert(result['info']);
+                            else {
+                                // 查询到对应该学生的干预意见，展示在表格上
+                                var newTableNode = $("<tr>\n" + "<td>" + result['stu_id'] + "</td>\n" + "<td>" + result['school']
+                                    + "</td>\n" + "<td>" + result['study_state'] + "</td>\n" + "<td>" + result['is_fail_exam'] + "</td>\n"
+                                    + "<td>" + result['treatment_count'] + "</td>\n" + "<td>" + result['body_health_state'] + "</td>\n"
+                                    + "<td class='danger'>" + result['suggestion'] + "</td>\n" + "</tr>");
+                                $("tbody").append(newTableNode);
+                            }
+                        }
+                    });
+                } else {
+                    /*
+                     按专业年纪查询
+                     */
+                    var school = $("#school").find("option:selected").text();
+                    var major = $("#major").find("option:selected").text();
+                    var grade = $("#grade").find("option:selected").text();
+                    var post_data = {'school': school, 'major': major, 'grade': grade};
+
+                    $.ajax({
+                        url: '/web/query_intervene',
+                        type: 'POST',
+                        data: JSON.stringify(post_data),
+                        dataType: 'json',
+                        contentType: "application/json;charset=utf-8",
+                        success: function (result) {
+                            if (result.length == 0)
+                                alert('未查询到对应数据');
+                            for (var i = 0; i < result.length; i++) {
+                                var newTableNode = $("<tr>\n" + "<td>" + result[i]['stu_id'] + "</td>\n" + "<td>" + result[i]['school']
+                                    + "</td>\n" + "<td>" + result[i]['study_state'] + "</td>\n" + "<td>" + result[i]['is_fail_exam'] + "</td>\n"
+                                    + "<td>" + result[i]['treatment_count'] + "</td>\n" + "<td>" + result[i]['body_health_state'] + "</td>\n"
+                                    + "<td class='danger'>" + result[i]['suggestion'] + "</td>\n" + "</tr>");
+                                $("tbody").append(newTableNode);
+                            }
+                        },
+                    });
+
+                }
+            });
+
         });
     </script>
     <!-- =======================================================
@@ -71,7 +148,8 @@ MAIN CONTENT
                 <div class="col-lg-12 detailed">
                     <form role="form" class="form-horizontal">
                         <div class="form-group col-lg-4">
-                            <label class="col-lg-4 control-label text-info" style="font-size: 17px"><strong>查询类别</strong></label>
+                            <label class="col-lg-4 control-label text-info"
+                                   style="font-size: 17px"><strong>查询类别</strong></label>
                             <div class="col-lg-8">
                                 <select class="form-control" id="query_option">
                                     <option value="class">班级查询</option>
@@ -87,44 +165,30 @@ MAIN CONTENT
                         <div class="cls form-group col-lg-4">
                             <label class="col-lg-3 control-label">学院</label>
                             <div class="col-lg-8">
-                                <select class="form-control">
-                                    <option value="volvo">电子信息与电气工程学院</option>
-                                    <option value="volvo">机械与动力工程学院</option>
-                                    <option value="saab">人文学院</option>
-                                    <option value="mercedes">数学科学学院</option>
+                                <select class="form-control" id="school">
+                                    {% for school in school_list %}
+                                        <option>{{ school }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <div class="cls form-group col-lg-4">
                             <label class="col-lg-3 control-label">专业</label>
                             <div class="col-lg-8">
-                                <select class="form-control">
-                                    <option value="volvo">电子系</option>
-                                    <option value="volvo">仪器系</option>
-                                    <option value="saab">计算机系</option>
-                                    <option value="mercedes">自动化系</option>
+                                <select class="form-control" id="major">
+                                    {% for major in major_List %}
+                                        <option> {{ major }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <div class="form-group col-lg-4 cls">
                             <label class="col-lg-3 control-label">年级</label>
                             <div class="col-lg-8">
-                                <select class="form-control">
-                                    <option value="volvo">本科一年级</option>
-                                    <option value="volvo">本科二年级</option>
-                                    <option value="saab">本科三年级</option>
-                                    <option value="mercedes">本科四年级</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-4 cls">
-                            <label class="col-lg-3 control-label">班级</label>
-                            <div class="col-lg-8">
-                                <select class="form-control">
-                                    <option value="volvo">B13033910</option>
-                                    <option value="volvo">B14033910</option>
-                                    <option value="saab">B15033910</option>
-                                    <option value="mercedes">B16033910</option>
+                                <select class="form-control" id="grade">
+                                    <option value="volvo">2013</option>
+                                    <option value="volvo">2014</option>
+                                    <option value="saab">2015</option>
                                 </select>
                             </div>
                         </div>
@@ -134,8 +198,10 @@ MAIN CONTENT
                                 <input type="text" id="stuNo" name="stuNo" class="form-control">
                             </div>
                         </div>
-                        <div class="form-group col-lg-4">
-                            <button class="btn btn-theme">查询</button>
+                        <div class="form-group col-lg-12">
+                            <center>
+                                <button type="button" class="btn btn-theme" id="query_button">查询</button>
+                            </center>
                         </div>
                     </form>
                 </div>
@@ -155,114 +221,20 @@ MAIN CONTENT
                 {#              <div class="panel-body">#}
                 <div class="col-lg-12 detailed">
 
-                    <!-- /身体健康 -->
-                    {#                  <div id="health" class="tab-pane">#}
-                    {#                      <div class="col-lg-12 detailed">#}
                     <h4>学生成长指导意见</h4>
-                    <table class="table table-bordered table-striped table-condensed">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                         <tr>
-                            <th>姓名</th>
                             <th>学号</th>
                             <th>学院</th>
-                            <th>专业</th>
-                            <th>年级</th>
-                            <th>班级</th>
-                            <th>身体健康情况</th>
-                            <th>指导意见</th>
+                            <th>学习情况</th>
+                            <th>是否挂科</th>
+                            <th>就诊次数</th>
+                            <th>身体健康</th>
+                            <th>干预意见建议</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
-                        <tr>
-                            <td>张三</td>
-                            <td>123456789</td>
-                            <td>电子信息与电器工程学院</td>
-                            <td>仪器系</td>
-                            <td>本科一年级</td>
-                            <td>123456</td>
-                            <td>体质健康状况</td>
-                            <td>指导意见</td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>

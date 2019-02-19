@@ -1,5 +1,7 @@
 # Create your views here.
 from __future__ import unicode_literals
+
+from django.http import JsonResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.shortcuts import HttpResponse
@@ -350,7 +352,19 @@ def data_import_export(request):
     return render_to_response('servermaterial/data_import_export.html')
 
 def intervene(request):
-    return render_to_response('servermaterial/intervene.html')
+    """
+    干预页面
+    :param request:
+    :return:
+    """
+    # 读取学院信息，显示在下拉框上
+    school_quert_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_quert_list if tmp['School'] != '']))
+    major_quert_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_quert_list if tmp['Major'] != '']))
+    return render_to_response('servermaterial/intervene.html', context={'school_list': school_list,
+                                                                        'major_list': major_list})
+
 
 def CheckData(request):
     if request.method == "POST":
@@ -412,3 +426,60 @@ def View(request):
             lines = [c.as_dict() for c in contents]
             # ret = {'lines': lines}
             return HttpResponse(json.dumps({'lines':lines}), content_type='application/json')
+
+
+def query_majors(request):
+    """
+    查询指定学校的所有专业
+    :param request:
+    :return: 专业list(json数据格式)
+    """
+    data = json.loads(request.body.decode())
+    major_quert_list = Basic.objects.filter(School=data['school']).values('Major')
+    major_set = set([tmp['Major'] for tmp in major_quert_list if tmp['Major'] != ''])
+    return HttpResponse(json.dumps(list(major_set)), content_type='application/json')
+
+
+def query_intervene(request):
+    """
+    查询干预意见接口
+    :param request:
+    :return: 干预意见(json数据格式)
+    """
+    data = json.loads(request.body.decode())
+    objs = InterveneSuggestion.objects
+    # 查询单个学生
+    if len(data) == 1:
+        stu_id = data['stuNo']    # 查询不到该学生
+        if len(Basic.objects.filter(StuID=stu_id)) == 0:
+            return JsonResponse({"info": '查无此人'})
+        school = Basic.objects.filter(StuID=stu_id)[0].School
+        # ------------------------------------------假设暂时有这三个标签，后续应从接口中获取--------------------------------------
+        labels = {'study_state': '学霸', 'is_fail_exam': False, 'body_health_state': '较差'}
+        # -----------------------------------------------------------------------------------------------------------------
+        intervene_suggestion = objs.filter(study_state=labels['study_state'],
+                                           is_fail_exam=labels['is_fail_exam'],
+                                           body_health_state=labels['body_health_state'])
+        dict_intervene = intervene_suggestion[0].as_dict()
+        dict_intervene['school'] = school
+        dict_intervene['stu_id'] = stu_id
+        return JsonResponse(data=dict_intervene)
+    # 查询班级学生
+    else:
+        stu_query_set = Basic.objects.filter(School=data['school'], Major=data['major'],
+                                             Entrance__startswith=data['grade'])
+        stu_id_list = [tmp['StuID'] for tmp in stu_query_set.values('StuID')]
+        list_intervene = []
+        for id in stu_id_list:
+            # ------------------------------------------假设暂时有这三个标签，后续应从接口中获取--------------------------------------
+            labels = {'study_state': '学霸', 'is_fail_exam': False, 'body_health_state': '较差'}
+            # -----------------------------------------------------------------------------------------------------------------
+            intervene_suggestion = objs.filter(study_state=labels['study_state'],
+                                               is_fail_exam=labels['is_fail_exam'],
+                                               body_health_state=labels['body_health_state'])
+            single_intervene = intervene_suggestion[0].as_dict()
+            single_intervene['school'] = data['school']
+            single_intervene['stu_id'] = id
+            list_intervene.append(single_intervene)
+        return HttpResponse(json.dumps(list_intervene), content_type="application/json")
+
