@@ -11,6 +11,7 @@ import time
 import xlrd
 import xlwt
 import numpy as np
+import datetime
 
 # Create your views here.
 def home(request):
@@ -230,16 +231,36 @@ def query(request):
 
         objs4 = Basic.objects.filter(StuID=stuid)
         res4 = [obj.as_dict() for obj in objs4]
-        FinanceType = '无'
-        if Finance.objects.filter(StuID=stuid):
-            FinanceType = Finance.objects.filter(StuID=stuid)[0].FinanceType
-        res4[0].update({'FinanceType':FinanceType})#res4就一个字典元素
+        if Basic.objects.filter(StuID=stuid):
+            FinanceType = '无'
+            if Finance.objects.filter(StuID=stuid):
+                FinanceType = Finance.objects.filter(StuID=stuid)[0].FinanceType
+            res4[0].update({'FinanceType':FinanceType})#res4就一个字典元素
+
+        objs = Lib.objects.filter(StuID=stuid)
+        res5 = [obj.as_dict() for obj in objs]
+
+        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4, 'res5':res5}
+        #print(retu)
+
+        return HttpResponse(json.dumps(retu), content_type="application/json")
+
+def queryY(request):
+    if request.method == 'POST':
+        # 关键内容
+        stuid = request.POST.get('stuid')
+        year = request.POST.get('year')
+        #print(stuid)
+        #没有判空
+        objs = Lib.objects.filter(StuID=stuid, DateTime__year=year)
+        res5 = [obj.as_dict() for obj in objs]
 
 
-        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4}
+        retu = {'res5':res5}
         print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
+
 
 ##分析
 def query1(request):
