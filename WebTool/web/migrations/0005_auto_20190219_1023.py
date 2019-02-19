@@ -11,40 +11,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Health',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('StuID', models.CharField(max_length=20)),
-                ('Height', models.CharField(max_length=8)),
-                ('Weight', models.CharField(max_length=5)),
-                ('HWScore', models.CharField(max_length=3)),
-                ('HWLevel', models.TextField()),
-                ('LungVolume', models.CharField(max_length=5)),
-                ('LungScore', models.CharField(max_length=3)),
-                ('LungLevel', models.TextField()),
-                ('Meter50', models.CharField(max_length=5)),
-                ('Meter50Score', models.CharField(max_length=3)),
-                ('Meter50Level', models.TextField()),
-                ('Crook', models.CharField(max_length=5)),
-                ('CrookScore', models.CharField(max_length=3)),
-                ('CrookLevel', models.TextField()),
-                ('Jump', models.CharField(max_length=3)),
-                ('JumpScore', models.CharField(max_length=3)),
-                ('JumpLevel', models.TextField()),
-                ('Strength', models.CharField(max_length=3)),
-                ('StrengthScore', models.CharField(max_length=3)),
-                ('StrengthLevel', models.TextField()),
-                ('Meter8001000', models.CharField(max_length=5)),
-                ('Meter8001000Score', models.CharField(max_length=3)),
-                ('Meter8001000Level', models.TextField()),
-                ('TotalScore', models.CharField(max_length=3)),
-                ('TotalLevel', models.TextField()),
-                ('School', models.TextField()),
-                ('Grade', models.CharField(max_length=10)),
-                ('Semester', models.TextField()),
-            ],
-        ),
-        migrations.CreateModel(
             name='InterveneSuggestion',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -55,9 +21,6 @@ class Migration(migrations.Migration):
                 ('moral', models.TextField()),
                 ('suggestion', models.TextField()),
             ],
-        ),
-        migrations.DeleteModel(
-            name='Intervene',
         ),
         migrations.AddField(
             model_name='moral',
