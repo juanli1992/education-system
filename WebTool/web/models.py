@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 
@@ -147,11 +148,18 @@ class Moral(models.Model):
 
 class Lib(models.Model):
     StuID = models.CharField(max_length=20)
-    DateTime = models.CharField(max_length=30)
+    #DateTime = models.CharField(max_length=30)
+    DateTime = models.DateTimeField()
     Gate = models.CharField(max_length=2)
 
     def __unicode__(self):
         return self.StuID
+
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "DateTime": self.DateTime.__str__()
+        }
 
 class HosTrans(models.Model):
     StuID = models.CharField(max_length=20)
