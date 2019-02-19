@@ -19,6 +19,7 @@ urlpatterns = [
     path('result/', result),
     path('query/', query),
     path('query1/', query1),
+    path('queryY/', queryY),
     path('data_import_export/', data_import_export),
     path('intervene/', intervene),
     path('CheckData/', CheckData),
