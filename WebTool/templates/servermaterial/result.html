@@ -92,6 +92,9 @@
                 <li>
                   <a data-toggle="tab" href="#basi">画像</a>
                 </li>
+                <li>
+                  <a data-toggle="tab" href="#lib">访问图书馆</a>
+                </li>
               </ul>
             </div>
             <!-- /panel-heading -->
@@ -229,24 +232,29 @@
 
                 </div>
 
-                <!-- /成绩 -->
-                <div id="grade" class="tab-pane active">
+                <!-- /访问图书馆 -->
+                <div id="lib" class="tab-pane">
+                    <div>
 
-                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable">
+                        <div class="form-group col-lg-4">
+                          <label class="col-lg-3 control-label">年度</label>
+                          <div class="col-lg-8">
+                            <input type="text" id="year" class="form-control">
+                          </div>
+                        </div>
+                        <div class="form-group col-lg-1">
+                          <button class="btn btn-theme" id="searchlog4lib" type="button">查询</button>
+                        </div>
+                        <!--<div >-->
+                          <!--<button class="btn btn-theme" id="analyselog" type="button">分析</button>-->
+                        <!--</div>-->
+                    </div>
+
+                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable5">
                       <thead>
                           <tr>
                               <th>学号 </th>
-                              <th>学院</th>
-                              <th>学期</th>
-                              <th>课程数</th>
-                              <th>学分</th>
-                              <th>平均成绩</th>
-                              <th>不低于90的课程数</th>
-                              <th>不低于80的课程数</th>
-                              <th>不低于70的课程数</th>
-                              <th>不低于60的课程数</th>
-                              <th>低于60的课程数</th>
-                              <th>年级</th>
+                              <th>访问时间</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -256,7 +264,7 @@
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-3 detailed">
-                      <div id="chart-1" style="width: 450px;height:400px;"></div>
+                      <div id="chart-5" style="width: 450px;height:400px;"></div>
                     </div>
                   </div>
 
@@ -441,6 +449,26 @@ $("#searchlog").click(function(){
         }
     });
 
+    //datatable5
+    <!--var table5 = $('#logtable5').DataTable().clear().draw();-->
+    <!--table5.clear().draw();-->
+    <!--$.ajax({-->
+        <!--url:"/web/query/",-->
+        <!--type:'POST',-->
+        <!--data:{'stuid':stuid},-->
+        <!--success: function(arg){-->
+            <!--retu = eval(arg);-->
+            <!--ret = retu["res5"]-->
+            <!--for(j = 0,len = ret.length; j < len; j++) {-->
+                <!--StuID = ret[j]["StuID"];-->
+                <!--//alert(StuID);-->
+
+                <!--DateTime = ret[j]["DateTime"];-->
+
+                <!--table5.row.add([StuID,DateTime]).draw();-->
+            <!--}-->
+        <!--}-->
+    <!--});-->
 
 
 
@@ -616,6 +644,45 @@ $("#analyselog").click(function(){
 
 
 });
+
+
+
+    </script>
+
+    <script>
+$("#searchlog4lib").click(function(){
+    stuid = $("#stuid").val();
+    year = $("#year").val();
+    alert(stuid);
+    alert(year);
+
+
+
+    //datatable5
+    var table5 = $('#logtable5').DataTable().clear().draw();
+    table5.clear().draw();
+    $.ajax({
+        url:"/web/queryY/",
+        type:'POST',
+        data:{'stuid':stuid, 'year':year},
+        success: function(arg){//可以注释掉 进行调试
+            retu = eval(arg);
+            ret = retu["res5"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                DateTime = ret[j]["DateTime"];
+
+                table5.row.add([StuID,DateTime]).draw();
+            }
+        }
+    });
+
+
+
+});
+
 
 
 
