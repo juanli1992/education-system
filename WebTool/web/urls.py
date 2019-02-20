@@ -26,5 +26,6 @@ urlpatterns = [
     path('View/', View),
     path('download/', download),
     path("query_intervene", query_intervene),
-    path('query_majors', query_majors)
+    path('query_majors', query_majors),
+    path('query_class', query_class)
 ]

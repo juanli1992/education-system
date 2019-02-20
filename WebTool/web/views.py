@@ -1,6 +1,8 @@
 # Create your views here.
 from __future__ import unicode_literals
 
+from typing import re
+
 from django.http import JsonResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect
@@ -372,6 +374,7 @@ def query1(request):
 def data_import_export(request):
     return render_to_response('servermaterial/data_import_export.html')
 
+
 def intervene(request):
     """
     干预页面
@@ -379,12 +382,18 @@ def intervene(request):
     :return:
     """
     # 读取学院信息，显示在下拉框上
-    school_quert_list = Basic.objects.values('School')
-    school_list = list(set([tmp['School'] for tmp in school_quert_list if tmp['School'] != '']))
-    major_quert_list = Basic.objects.filter(School=school_list[0]).values('Major')
-    major_list = list(set([tmp['Major'] for tmp in major_quert_list if tmp['Major'] != '']))
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+    class_list = []
+    if major_list.__len__() != 0:
+        class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0].strip(),
+                                                Entrance__startswith='2013').values("classNo")
+        class_list = list(set(tmp['classNo'] for tmp in class_query_list))
     return render_to_response('servermaterial/intervene.html', context={'school_list': school_list,
-                                                                        'major_list': major_list})
+                                                                        'major_list': major_list,
+                                                                        'class_list': class_list})
 
 
 def CheckData(request):
@@ -451,14 +460,29 @@ def View(request):
 
 def query_majors(request):
     """
-    查询指定学校的所有专业
+    查询 指定学校的所有专业
     :param request:
     :return: 专业list(json数据格式)
     """
     data = json.loads(request.body.decode())
-    major_quert_list = Basic.objects.filter(School=data['school']).values('Major')
-    major_set = set([tmp['Major'] for tmp in major_quert_list if tmp['Major'] != ''])
+    print(data)
+    major_query_list = Basic.objects.filter(School=data['school'].strip()).values('Major')
+
+    major_set = set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != ''])
     return HttpResponse(json.dumps(list(major_set)), content_type='application/json')
+
+
+def query_class(request):
+    """
+    给定 学院+专业+年纪 查询所有班级信息
+    :param request: 班级list(json数据格式)
+    :return:
+    """
+    data = json.loads(request.body.decode())      # 浏览器端用ajax传来json字典数据
+    class_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
+                                            Entrance__startswith=data['grade'].strip()).values("classNo")
+    class_list = list(set(tmp['classNo'] for tmp in class_query_list))
+    return HttpResponse(json.dumps(class_list), content_type='application/json')
 
 
 def query_intervene(request):
@@ -487,8 +511,10 @@ def query_intervene(request):
         return JsonResponse(data=dict_intervene)
     # 查询班级学生
     else:
-        stu_query_set = Basic.objects.filter(School=data['school'], Major=data['major'],
-                                             Entrance__startswith=data['grade'])
+        stu_query_set = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
+                                             Entrance__startswith=data['grade'].strip())
+        if data['classNo'] != '所有班级':
+            stu_query_set = stu_query_set.filter(classNo=data['classNo'])
         stu_id_list = [tmp['StuID'] for tmp in stu_query_set.values('StuID')]
         list_intervene = []
         for id in stu_id_list:

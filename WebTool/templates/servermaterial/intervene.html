@@ -24,6 +24,9 @@
     <script src="/templates/servermaterial/js/jquery-1.7.2.min.js"></script>
     <script>
         $(document).ready(function () {
+            /*
+             查询类别选型改变，可选学生查询和班级查询
+             */
             $("#query_option").change(function () {
                 {#alert($('#query_option').val());#}
                 $("tbody").empty();
@@ -40,6 +43,9 @@
                 }
             });
 
+            /*
+             学院下拉框改变
+             */
             $("#school").change(function () {
                 $.ajax({
                     url: '/web/query_majors',
@@ -53,10 +59,41 @@
                             var newNode = $("<option>" + result[i] + "</option>");
                             $("#major").append(newNode);
                         }
+                        changeClassList();
                     }
 
                 });
             });
+
+            function changeClassList() {
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
+                var grade = $("#grade").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_class',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major, "grade": grade}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $('option[value=class1]').remove();
+                        for (var i = 0; i < result.length; i++) {
+                            $("#class").append($("<option value = 'class1'>" + result[i] + "</option>"))
+                        }
+                    }
+                })
+            }
+
+            /*
+             专业下拉框改变
+             */
+            $("#major").change(changeClassList);
+
+            /*
+             年级下拉框改变
+             */
+            $('#grade').change(changeClassList);
+
 
             $("#query_button").click(function () {
                 /*
@@ -91,7 +128,8 @@
                     var school = $("#school").find("option:selected").text();
                     var major = $("#major").find("option:selected").text();
                     var grade = $("#grade").find("option:selected").text();
-                    var post_data = {'school': school, 'major': major, 'grade': grade};
+                    var classNo = $("#class").find("option:selected").text();
+                    var post_data = {'school': school, 'major': major, 'grade': grade, 'classNo': classNo};
 
                     $.ajax({
                         url: '/web/query_intervene',
@@ -176,7 +214,7 @@ MAIN CONTENT
                             <label class="col-lg-3 control-label">专业</label>
                             <div class="col-lg-8">
                                 <select class="form-control" id="major">
-                                    {% for major in major_List %}
+                                    {% for major in major_list %}
                                         <option> {{ major }}</option>
                                     {% endfor %}
                                 </select>
@@ -189,6 +227,18 @@ MAIN CONTENT
                                     <option value="volvo">2013</option>
                                     <option value="volvo">2014</option>
                                     <option value="saab">2015</option>
+                                    <option value="saab">2016</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-4 cls">
+                            <label class="col-lg-3 control-label">班级</label>
+                            <div class="col-lg-8">
+                                <select class="form-control" id="class">
+                                    <option value="saab">所有班级</option>
+                                    {% for classNo in class_list %}
+                                        <option value="class1">{{ classNo }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
