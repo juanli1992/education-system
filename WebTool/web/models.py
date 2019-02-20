@@ -7,6 +7,7 @@ class Basic(models.Model):
     StuID = models.CharField(max_length=20)
     School = models.TextField()
     Major = models.TextField()
+    classNo = models.CharField(max_length=20, default='')
     BirthYear = models.CharField(max_length=5)
     Country = models.TextField()
     National = models.TextField()
@@ -33,7 +34,8 @@ class Basic(models.Model):
             'Gender': self.Gender,
             'State': self.State,
             'Type': self.Type,
-            'Year': self.Year
+            'Year': self.Year,
+            'classNo': self.classNo
         }
 
 class Book(models.Model):
