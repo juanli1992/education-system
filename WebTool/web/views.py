@@ -460,7 +460,7 @@ def View(request):
 
 def query_majors(request):
     """
-    查询指定学校的所有专业
+    查询 指定学校的所有专业
     :param request:
     :return: 专业list(json数据格式)
     """
@@ -482,7 +482,7 @@ def query_class(request):
     class_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
                                             Entrance__startswith=data['grade'].strip()).values("classNo")
     class_list = list(set(tmp['classNo'] for tmp in class_query_list))
-    return HttpResponse(json.dumps(class_list))
+    return HttpResponse(json.dumps(class_list), content_type='application/json')
 
 
 def query_intervene(request):
