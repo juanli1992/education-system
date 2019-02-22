@@ -161,12 +161,12 @@ def Health2db(filepath):
     print("Health Done!")
 
 def main():
-    Basic2db('E:/basic111.csv')
+    #Basic2db('E:/basic111.csv')
     # Book2db('F:/book200_new.csv')
     # Card2db('F:/card200_new.csv')
     # Aid2db('F:/aid200_new.csv')
-     #Score2db('E:/score111.csv')
-     #Moral2db('E:/moral200.csv')
+     #Score2db('D:/score111.csv')
+     Moral2db('D:/moral200.csv')
     # Lib2db('F:/lib200_new.csv')
     # HosTrans2db('F:/hOSTRANS200_new.csv')
     # HosReg2db('F:/reg200_new.csv')

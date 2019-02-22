@@ -241,10 +241,8 @@ def query(request):
                 FinanceType = Finance.objects.filter(StuID=stuid)[0].FinanceType
             res4[0].update({'FinanceType':FinanceType})#res4就一个字典元素
 
-        objs = Lib.objects.filter(StuID=stuid)
-        res5 = [obj.as_dict() for obj in objs]
 
-        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4, 'res5':res5}
+        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4}
         #print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
