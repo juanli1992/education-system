@@ -93,7 +93,7 @@
                   <a data-toggle="tab" href="#basi">画像</a>
                 </li>
                 <li>
-                  <a data-toggle="tab" href="#lib">访问图书馆</a>
+                  <a data-toggle="tab" href="#oth">其他信息</a>
                 </li>
               </ul>
             </div>
@@ -232,41 +232,111 @@
 
                 </div>
 
-                <!-- /访问图书馆 -->
-                <div id="lib" class="tab-pane">
-                    <div>
+                <!-- /其他 -->
+                <div id="oth" class="tab-pane">
+                    <!--<div>-->
 
+                        <!--<div class="form-group col-lg-4">-->
+                          <!--<label class="col-lg-3 control-label">年度</label>-->
+                          <!--<div class="col-lg-8">-->
+                            <!--<input type="text" id="year" class="form-control">-->
+                          <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="form-group col-lg-1">-->
+                          <!--<button class="btn btn-theme" id="searchlog4lib" type="button">查询</button>-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash;<div >&ndash;&gt;-->
+                          <!--&lt;!&ndash;<button class="btn btn-theme" id="analyselog" type="button">分析</button>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--</div>-->
+
+                  <!--<table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable5">-->
+                      <!--<thead>-->
+                          <!--<tr>-->
+                              <!--<th>学号 </th>-->
+                              <!--<th>访问时间</th>-->
+                          <!--</tr>-->
+                      <!--</thead>-->
+                      <!--<tbody>-->
+
+                      <!--</tbody>-->
+                  <!--</table>-->
+
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-5" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-6" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-7" style="width: 450px;height:400px;"></div>
+                    </div>
+
+                  </div>
+
+
+                   <div>
                         <div class="form-group col-lg-4">
-                          <label class="col-lg-3 control-label">年度</label>
+                          <label class="col-lg-3 control-label">医院相关记录</label>
                           <div class="col-lg-8">
-                            <input type="text" id="year" class="form-control">
+                            <input type="text" id="year" class="form-control" placeholder="输入想要查询的年度">
                           </div>
                         </div>
                         <div class="form-group col-lg-1">
-                          <button class="btn btn-theme" id="searchlog4lib" type="button">查询</button>
+                          <button class="btn btn-theme" id="searchlog4hos" type="button">查询</button>
                         </div>
                         <!--<div >-->
                           <!--<button class="btn btn-theme" id="analyselog" type="button">分析</button>-->
                         <!--</div>-->
                     </div>
 
-                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable5">
+                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable6">
                       <thead>
                           <tr>
                               <th>学号 </th>
-                              <th>访问时间</th>
+                              <th>校机构</th>
+                              <th>收费类型</th>
+                              <th>收费时间</th>
+                              <th>科室</th>
+                              <th>金额</th>
                           </tr>
                       </thead>
                       <tbody>
-
                       </tbody>
                   </table>
 
-                  <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-3 detailed">
-                      <div id="chart-5" style="width: 450px;height:400px;"></div>
-                    </div>
-                  </div>
+                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable7">
+                      <thead>
+                          <tr>
+                              <th>学号 </th>
+                              <th>校机构</th>
+                              <th>转诊时间</th>
+                              <th>转诊医院</th>
+                              <th>转诊科室</th>
+                              <th>校医院科室</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                  </table>
+
+                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable8">
+                      <thead>
+                          <tr>
+                              <th>学号 </th>
+                              <th>校机构</th>
+                              <th>疾病诊断</th>
+                              <th>报销金额</th>
+                              <th>总金额</th>
+                              <th>报销时间</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                  </table>
 
                 </div>
               </div>
@@ -610,7 +680,7 @@ $("#analyselog").click(function(){
 
           option = {
               title: {
-                  text: '学生画像',
+                  text: '学生画像（根据最近学期的情况）',
               },
               tooltip: {
                   show: true
@@ -639,6 +709,110 @@ $("#analyselog").click(function(){
 
      });
 
+    //echarts5
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    var myChart5 = echarts.init(document.getElementById('chart-5'));
+
+            option = {
+              title : {
+                  text: '最近一学期访问图书馆次数一览',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis: {
+                  scale: true
+              },
+              yAxis: {
+                  scale: true
+              },
+              series: [{
+                  type: 'scatter',
+                  data:ret4charts['dd5'],
+
+                  }
+              ]
+            };
+            myChart5.setOption(option);
+     });
+
+    //echarts6
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    var myChart6 = echarts.init(document.getElementById('chart-6'));
+
+            option = {
+              title : {
+                  text: '最近一学期回寝室刷卡次数一览',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis: {
+                  scale: true
+              },
+              yAxis: {
+                  scale: true
+              },
+              series: [{
+                  type: 'scatter',
+                  data:ret4charts['dd6'],
+
+                  }
+              ]
+            };
+            myChart6.setOption(option);
+     });
+
+    //echarts7
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    var myChart7 = echarts.init(document.getElementById('chart-7'));
+
+            option = {
+              title : {
+                  text: '最近一学期刷卡消费金额一览',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis: {
+                  scale: true
+              },
+              yAxis: {
+                  scale: true
+              },
+              series: [{
+                  type: 'scatter',
+                  data:ret4charts['dd7'],
+
+                  }
+              ]
+            };
+            myChart7.setOption(option);
+     });
 
 
 
@@ -650,7 +824,7 @@ $("#analyselog").click(function(){
     </script>
 
     <script>
-$("#searchlog4lib").click(function(){
+$("#searchlog4hos").click(function(){
     stuid = $("#stuid").val();
     year = $("#year").val();
     alert(stuid);
@@ -658,85 +832,109 @@ $("#searchlog4lib").click(function(){
 
 
 
-    //datatable5
-    var table5 = $('#logtable5').DataTable().clear().draw();
-    table5.clear().draw();
+    <!--//datatable5-->
+    <!--var table5 = $('#logtable5').DataTable().clear().draw();-->
+    <!--table5.clear().draw();-->
+    <!--$.ajax({-->
+        <!--url:"/web/queryY/",-->
+        <!--type:'POST',-->
+        <!--data:{'stuid':stuid, 'year':year},-->
+        <!--success: function(arg){//可以注释掉 进行调试-->
+            <!--retu = eval(arg);-->
+            <!--ret = retu["res5"]-->
+            <!--for(j = 0,len = ret.length; j < len; j++) {-->
+                <!--StuID = ret[j]["StuID"];-->
+                <!--//alert(StuID);-->
+
+                <!--DateTime = ret[j]["DateTime"];-->
+
+                <!--table5.row.add([StuID,DateTime]).draw();-->
+            <!--}-->
+        <!--}-->
+    <!--});-->
+
+
+    //datatable6
+    var table6 = $('#logtable6').DataTable().clear().draw();
+    table6.clear().draw();
     $.ajax({
         url:"/web/queryY/",
         type:'POST',
         data:{'stuid':stuid, 'year':year},
         success: function(arg){//可以注释掉 进行调试
             retu = eval(arg);
-            ret = retu["res5"]
+            ret = retu["res6"]
             for(j = 0,len = ret.length; j < len; j++) {
                 StuID = ret[j]["StuID"];
                 //alert(StuID);
 
+                SchoolHos = ret[j]["SchoolHos"];
+                CostType = ret[j]["CostType"];
                 DateTime = ret[j]["DateTime"];
+                Department = ret[j]["Department"];
+                RegCost = ret[j]["RegCost"];
 
-                table5.row.add([StuID,DateTime]).draw();
+                table6.row.add([StuID,SchoolHos,CostType,DateTime,Department,RegCost]).draw();
             }
         }
     });
 
+    //datatable7
+    var table7 = $('#logtable7').DataTable().clear().draw();
+    table7.clear().draw();
+    $.ajax({
+        url:"/web/queryY/",
+        type:'POST',
+        data:{'stuid':stuid, 'year':year},
+        success: function(arg){//可以注释掉 进行调试
+            retu = eval(arg);
+            ret = retu["res7"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                SchoolHos = ret[j]["SchoolHos"];
+                DateTime = ret[j]["DateTime"];
+                Hospital = ret[j]["Hospital"];
+                Department = ret[j]["Department"];
+                SchDepart = ret[j]["SchDepart"];
+
+                table7.row.add([StuID,SchoolHos,DateTime,Hospital,Department,SchDepart]).draw();
+            }
+        }
+    });
+
+    //datatable8
+    var table8 = $('#logtable8').DataTable().clear().draw();
+    table8.clear().draw();
+    $.ajax({
+        url:"/web/queryY/",
+        type:'POST',
+        data:{'stuid':stuid, 'year':year},
+        success: function(arg){//可以注释掉 进行调试
+            retu = eval(arg);
+            ret = retu["res8"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                SchoolHos = ret[j]["SchoolHos"];
+                Cause = ret[j]["Cause"];
+                BX = ret[j]["BX"];
+                OriginCost = ret[j]["OriginCost"];
+                DateTime = ret[j]["DateTime"];
+
+                table8.row.add([StuID,SchoolHos,Cause,BX,OriginCost,DateTime]).draw();
+            }
+        }
+    });
 
 
 });
 
 
 
-<!--$("#analyselog").click(function(){-->
 
-    <!--//echarts3-->
-    <!--$.post("/web/query1/",{'stuid':stuid}, function(ret4charts){-->
-    <!--var myChart3 = echarts.init(document.getElementById('chart-3'));-->
-            <!--option = {-->
-              <!--title : {-->
-                  <!--text: '体质总评分数超过同年级同学院学生比例',-->
-              <!--},-->
-              <!--tooltip : {-->
-                  <!--trigger: 'axis'-->
-              <!--},-->
-              <!--toolbox: {-->
-                  <!--show : true,-->
-                  <!--feature : {-->
-                      <!--dataView : {show: true, readOnly: false},-->
-                      <!--magicType : {show: true, type: ['line', 'bar']},-->
-                      <!--restore : {show: true},-->
-                      <!--saveAsImage : {show: true}-->
-                  <!--}-->
-              <!--},-->
-              <!--calculable : true,-->
-              <!--xAxis : [-->
-                  <!--{-->
-                      <!--type : 'category',-->
-                      <!--data : ret4charts['xx3']-->
-                  <!--}-->
-              <!--],-->
-              <!--yAxis : [-->
-                  <!--{-->
-                      <!--type : 'value'-->
-                  <!--}-->
-              <!--],-->
-              <!--series : [-->
-                  <!--{-->
-                      <!--name:'比例',-->
-                      <!--type:'bar',-->
-                      <!--data:ret4charts['dd3'],-->
-
-                  <!--}-->
-              <!--]-->
-            <!--};-->
-            <!--myChart3.setOption(option);-->
-     <!--});-->
-
-  <!---->
-
-
-
-
-
-<!--});-->
 
 
     </script>

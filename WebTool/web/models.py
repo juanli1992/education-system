@@ -150,8 +150,8 @@ class Moral(models.Model):
 
 class Lib(models.Model):
     StuID = models.CharField(max_length=20)
-    #DateTime = models.CharField(max_length=30)
-    DateTime = models.DateTimeField()
+    DateTime = models.CharField(max_length=30)
+    #DateTime = models.DateTimeField()
     Gate = models.CharField(max_length=2)
 
     def __unicode__(self):
@@ -166,35 +166,68 @@ class Lib(models.Model):
 class HosTrans(models.Model):
     StuID = models.CharField(max_length=20)
     SchoolHos = models.TextField()
-    DateTime = models.CharField(max_length=30)
+    DateTime = models.DateTimeField()
     Hospital = models.TextField()
     Department = models.TextField()
     SchDepart = models.TextField()
 
+
     def __unicode__(self):
         return self.StuID
+
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "SchoolHos": self.SchoolHos,
+            "DateTime": self.DateTime.__str__(),
+            "Hospital": self.Hospital,
+            "Department": self.Department,
+            "SchDepart": self.SchDepart
+        }
 
 class HosReg(models.Model):
     StuID = models.CharField(max_length=20)
     SchoolHos = models.TextField()
     CostType = models.TextField()
-    DateTime = models.CharField(max_length=30)
+    #DateTime = models.CharField(max_length=30)
+    DateTime = models.DateTimeField()
     Department = models.TextField()
     RegCost = models.CharField(max_length=5)
 
     def __unicode__(self):
         return self.StuID
 
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "SchoolHos": self.SchoolHos,
+            "CostType": self.CostType,
+            "DateTime": self.DateTime.__str__(),
+            "Department": self.Department,
+            "RegCost": self.RegCost,
+        }
+
 class HosBX(models.Model):
     StuID = models.CharField(max_length=20)
     SchoolHos = models.TextField()
     Cause = models.TextField()
-    DateTime = models.CharField(max_length=30)
+    #DateTime = models.CharField(max_length=30)
+    DateTime = models.DateTimeField()
     BX = models.CharField(max_length=10)
     OriginCost = models.CharField(max_length=10)
 
     def __unicode__(self):
         return self.StuID
+
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "SchoolHos": self.SchoolHos,
+            "Cause": self.Cause,
+            "DateTime": self.DateTime.__str__(),
+            "BX": self.BX,
+            "OriginCost": self.OriginCost,
+        }
 
 class Health(models.Model):
     StuID = models.CharField(max_length=20)
@@ -264,6 +297,7 @@ class Health(models.Model):
 class Dorm(models.Model):
     StuID = models.CharField(max_length=20)
     DateTime = models.CharField(max_length=30)
+    #DateTime = models.DateTimeField()
 
     def __unicode__(self):
         return self.StuID

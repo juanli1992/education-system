@@ -254,12 +254,20 @@ def queryY(request):
         year = request.POST.get('year')
         #print(stuid)
         #没有判空
-        objs = Lib.objects.filter(StuID=stuid, DateTime__year=year)
-        res5 = [obj.as_dict() for obj in objs]
+        # objs = Lib.objects.filter(StuID=stuid, DateTime__year=year)
+        # res5 = [obj.as_dict() for obj in objs]
 
+        objs = HosReg.objects.filter(StuID=stuid, DateTime__year=year)
+        res6 = [obj.as_dict() for obj in objs]
 
-        retu = {'res5':res5}
-        print(retu)
+        objs = HosTrans.objects.filter(StuID=stuid, DateTime__year=year)
+        res7 = [obj.as_dict() for obj in objs]
+
+        objs = HosBX.objects.filter(StuID=stuid, DateTime__year=year)
+        res8 = [obj.as_dict() for obj in objs]
+
+        retu = {'res6':res6, 'res7':res7, 'res8':res8}
+        #print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
@@ -366,7 +374,57 @@ def query1(request):
         print(cloud)
 
 
-        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud}
+        ###访问lib
+        dd5 = []
+        dtlist = list(Lib.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        if len(dtlist) != 0:
+            nlist = np.zeros(126)
+            for item in dtlist:
+                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
+                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                    delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                    nlist[delta] += 1
+            #print(nlist)
+            for i in range(126):
+                dd5.append([i+1,nlist[i]])
+            #print(dd5)
+        print('ok')
+
+
+        ###访问dorm
+        dd6 = []
+        dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        if len(dtlist) != 0:
+            nlist = np.zeros(126)
+            for item in dtlist:
+                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                    delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                    nlist[delta] += 1
+            #print(nlist)
+            for i in range(126):
+                dd6.append([i+1,nlist[i]])
+            #print(dd6)
+
+        ###消费
+        dd7 = []
+        dtlist = list(Card.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        costlist = list(Card.objects.filter(StuID=stuid).values_list('Cost', flat=True))
+        if len(dtlist) != 0:
+            nlist = np.zeros(126)
+            for item in range(len(dtlist)):
+                nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
+                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                    delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                    if float(costlist[item])<0:
+                        nlist[delta] += float(costlist[item])
+            #print(nlist)
+            for i in range(126):
+                dd7.append([i+1,nlist[i]])
+            #print(dd7)
+
+
+        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud, 'dd5':dd5, 'dd6':dd6, 'dd7':dd7}
         return HttpResponse(json.dumps(ret4charts), content_type="application/json")
 
 def data_import_export(request):
