@@ -93,6 +93,9 @@
                   <a data-toggle="tab" href="#basi">画像</a>
                 </li>
                 <li>
+                  <a data-toggle="tab" href="#aid">奖助勤工信息</a>
+                </li>
+                <li>
                   <a data-toggle="tab" href="#oth">其他信息</a>
                 </li>
               </ul>
@@ -227,6 +230,32 @@
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-3 detailed">
                       <div id="chart-4" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- /奖助勤工 -->
+                <div id="aid" class="tab-pane">
+                  <table class="table table-striped table-bordered table-hover table-checkable order-column" id="logtable9">
+                      <thead>
+                          <tr>
+                              <th>学号 </th>
+                              <th>勤工助学等级</th>
+                              <th>助学贷款</th>
+                              <th>助学金等级</th>
+                              <th>奖学金等级</th>
+                              <th>学年</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+
+                      </tbody>
+                  </table>
+
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-3 detailed">
+                      <div id="chart-8" style="width: 450px;height:400px;"></div>
                     </div>
                   </div>
 
@@ -540,6 +569,32 @@ $("#searchlog").click(function(){
         <!--}-->
     <!--});-->
 
+    //datatable9
+    var table9 = $('#logtable9').DataTable().clear().draw();
+    table9.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res9"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                PTJob = ret[j]["PTJob"];
+                Loan = ret[j]["Loan"];
+                Aid = ret[j]["Aid"];
+                Scholorship = ret[j]["Scholorship"];
+                Year = ret[j]["Year"];
+
+                table9.row.add([StuID,PTJob,Loan,Aid,Scholorship,Year]).draw();
+            }
+        }
+    });
+
+
 
 
 });
@@ -813,6 +868,50 @@ $("#analyselog").click(function(){
             };
             myChart7.setOption(option);
      });
+
+    //echarts8
+    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    var myChart8 = echarts.init(document.getElementById('chart-8'));
+            option = {
+              title : {
+                  text: '各学年获奖助学金次数统计',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      magicType : {show: true, type: ['line', 'bar']},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis : [
+                  {
+                      type : 'category',
+                      data : ret4charts['xx8']
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : [
+                  {
+                      name:'次数',
+                      type:'bar',
+                      data:ret4charts['dd8'],
+
+                  }
+              ]
+            };
+            myChart8.setOption(option);
+     });
+
 
 
 

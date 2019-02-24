@@ -82,6 +82,17 @@ class Aid(models.Model):
     def __unicode__(self):
         return self.StuID
 
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "PTJob": self.PTJob,
+            "Loan" : self.Loan,
+            "Aid" : self.Aid,
+            "Scholorship" : self.Scholorship,
+            "Year" : self.Year
+        }
+
+
 class Score(models.Model):
     """docstring for Score"""
     StuID = models.CharField(max_length=20)

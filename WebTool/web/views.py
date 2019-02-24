@@ -241,8 +241,11 @@ def query(request):
                 FinanceType = Finance.objects.filter(StuID=stuid)[0].FinanceType
             res4[0].update({'FinanceType':FinanceType})#res4就一个字典元素
 
+        objs = Aid.objects.filter(StuID=stuid)
+        res9 = [obj.as_dict() for obj in objs]
 
-        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4}
+
+        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4, 'res9':res9}
         #print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
@@ -265,6 +268,7 @@ def queryY(request):
 
         objs = HosBX.objects.filter(StuID=stuid, DateTime__year=year)
         res8 = [obj.as_dict() for obj in objs]
+
 
         retu = {'res6':res6, 'res7':res7, 'res8':res8}
         #print(retu)
@@ -312,70 +316,9 @@ def query1(request):
         #print(dd3)
 
 
-        ###画像
-        str0 = str(stuid)
-        ##学业
-        str1 = ""
-        str11 = ""
-        if Score.objects.filter(StuID=stuid):
-            lis = list(Score.objects.filter(StuID=stuid))
-            scoreO = lis[-1]
-            if (float(scoreO.AveScore) <= 65.) | (int(scoreO.Low60) > 0) | (int(scoreO.Num0) > 0):
-                str1 = "学业需要特别照顾"
-
-            ascore = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
-            ascore = list(map(float,ascore))
-            #print(ascore)
-            ascoree = np.mean(ascore)#平均成绩
-            str11 = "累计平均成绩" + str(("%.2f" %ascoree))
-            stulist = list(Score.objects.filter(Grade=Grade, School=School).values_list('StuID', flat=True))
-            stulist = sorted(set(stulist), key=stulist.index)
-            #print(stulist)
-            stuscorlist = []
-            for stu in stulist:
-                ascore_ = list(Score.objects.filter(StuID=stu).values_list('AveScore', flat=True))
-                ascore_ = list(map(float, ascore_))
-                ascoree_ = np.mean(ascore_)
-                stuscorlist.append(ascoree_)
-            #print(stuscorlist)
-            numm = sum(ascoree >= j for j in stuscorlist)
-            rat = numm/len(stuscorlist)
-            if rat >= 0.8:
-                str1 = "学霸"
-        #print(str1)
-
-        ##体质
-        str2 = str3 = str4 = str5 = str6 = str7 = ""
-        if Health.objects.filter(StuID=stuid):
-            lis = list(Health.objects.filter(StuID=stuid))
-            healthO = lis[-1]
-            str2 = "身材" + healthO.HWLevel
-            str3 = "体质" + healthO.TotalLevel
-            if healthO.Meter50Level == "优秀":
-                str4 = "短跑健将"
-            if healthO.CrookLevel == "优秀":
-                str5 = "柔韧性高"
-            if healthO.JumpLevel == "优秀":
-                str6 = "跳远健将"
-            if healthO.Meter8001000Level == "优秀":
-                str7 = "长跑健将"
-
-        cloud = [
-            {"name": str0, "value": "100"},
-            {"name": str11, "value": "100"},
-            {"name": str1, "value": "100"},
-            {"name": str2, "value": "100"},
-            {"name": str3, "value": "100"},
-            {"name": str4, "value": "100"},
-            {"name": str5, "value": "100"},
-            {"name": str6, "value": "100"},
-            {"name": str7, "value": "100"}
-        ]
-        print(cloud)
-
-
         ###访问lib
         dd5 = []
+        ccc = 0 #为了画像
         dtlist = list(Lib.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
         if len(dtlist) != 0:
             nlist = np.zeros(126)
@@ -388,6 +331,8 @@ def query1(request):
             for i in range(126):
                 dd5.append([i+1,nlist[i]])
             #print(dd5)
+            nlist = list(nlist)
+            ccc = 126-nlist.count(0)
         print('ok')
 
 
@@ -424,7 +369,96 @@ def query1(request):
             #print(dd7)
 
 
-        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud, 'dd5':dd5, 'dd6':dd6, 'dd7':dd7}
+        xx8mid = []
+        aidlist = Aid.objects.filter(StuID=stuid)
+        for i in range(len(aidlist)):
+            if aidlist[i].Aid != '':
+                xx8mid.append(aidlist[i].Year)
+            if aidlist[i].Scholorship != '':
+                xx8mid.append(aidlist[i].Year)
+        xx8 = sorted(set(xx8mid),key=xx8mid.index)
+        #print(xx2)
+        dd8 = []
+        for i in xx8:
+            dd8.append(xx8mid.count(i))
+        #print(dd2)
+
+        ###画像
+        str0 = str(stuid)
+        ##学业
+        str1 = ""
+        str11 = ""
+        if Score.objects.filter(StuID=stuid):
+            lis = list(Score.objects.filter(StuID=stuid))
+            scoreO = lis[-1]
+            if (float(scoreO.AveScore) <= 65.) or (int(scoreO.Low60) > 0) or (int(scoreO.Num0) > 0):
+                str1 = "学业需要特别照顾"
+
+            ascore = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
+            ascore = list(map(float, ascore))
+            # print(ascore)
+            ascoree = np.mean(ascore)  # 平均成绩
+            str11 = "累计平均成绩" + str(("%.2f" % ascoree))
+            stulist = list(Score.objects.filter(Grade=Grade, School=School).values_list('StuID', flat=True))
+            stulist = sorted(set(stulist), key=stulist.index)
+            # print(stulist)
+            stuscorlist = []
+            for stu in stulist:
+                ascore_ = list(Score.objects.filter(StuID=stu).values_list('AveScore', flat=True))
+                ascore_ = list(map(float, ascore_))
+                ascoree_ = np.mean(ascore_)
+                stuscorlist.append(ascoree_)
+            # print(stuscorlist)
+            numm = sum(ascoree >= j for j in stuscorlist)
+            rat = numm / len(stuscorlist)
+            if rat >= 0.8:
+                str1 = "学霸"
+        # print(str1)
+
+        ##体质
+        str2 = str3 = str4 = str5 = str6 = str7 = ""
+        if Health.objects.filter(StuID=stuid):
+            lis = list(Health.objects.filter(StuID=stuid))
+            healthO = lis[-1]
+            str2 = "身材" + healthO.HWLevel
+            str3 = "体质" + healthO.TotalLevel
+            if healthO.Meter50Level == "优秀":
+                str4 = "短跑健将"
+            if healthO.CrookLevel == "优秀":
+                str5 = "柔韧性高"
+            if healthO.JumpLevel == "优秀":
+                str6 = "跳远健将"
+            if healthO.Meter8001000Level == "优秀":
+                str7 = "长跑健将"
+
+        ##奖助学金
+        str8 = ""
+        if len(xx8) >= 2016-int(Grade):
+            str8 = "奖助学金达人"
+
+        ##lib
+        str9 = ""
+        if ccc>=126/2:
+            str9 = "常驻图书馆"
+        if ccc<=5:
+            str9 = "几乎未去过图书馆"
+
+        cloud = [
+            {"name": str0, "value": "100"},
+            {"name": str11, "value": "100"},
+            {"name": str1, "value": "100"},
+            {"name": str2, "value": "100"},
+            {"name": str3, "value": "100"},
+            {"name": str4, "value": "100"},
+            {"name": str5, "value": "100"},
+            {"name": str6, "value": "100"},
+            {"name": str7, "value": "100"},
+            {"name": str8, "value": "100"},
+            {"name": str9, "value": "100"}
+        ]
+        print(cloud)
+
+        ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud, 'dd5':dd5, 'dd6':dd6, 'dd7':dd7, 'xx8':xx8, 'dd8':dd8}
         return HttpResponse(json.dumps(ret4charts), content_type="application/json")
 
 def data_import_export(request):
