@@ -136,6 +136,7 @@
                     </div>
                   </div>
 
+
                 </div>
 
                 <!-- /成绩 -->
@@ -394,8 +395,8 @@
 
     <!-- js placed at the end of the document so the pages load faster -->
 
-    <script type="text/javascript" language="javascript" src="/templates/servermaterial/lib/advanced-datatable/js/jquery.js"></script>
-    <script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>
+    <!--<script type="text/javascript" language="javascript" src="/templates/servermaterial/lib/advanced-datatable/js/jquery.js"></script>-->
+    <!--<script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>-->
 
 
     <!--common script for all pages-->
@@ -417,14 +418,13 @@
     <!--script for charts-->
 
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
-    <script src="/templates/servermaterial/lib/echarts.min.js"></script>
-    <script src="/templates/servermaterial/lib/worldcloud.js"></script>
+    <script src="/templates/servermaterial/lib/echarts.js"></script>
+    <script src="/templates/servermaterial/lib/wordcloud.js"></script>
 
 
     <script>
 $("#searchlog").click(function(){
     stuid = $("#stuid").val();
-
     //datatable1
     var table1 = $('#logtable').DataTable().clear().draw();
     table1.clear().draw();
@@ -765,6 +765,8 @@ $("#searchlog").click(function(){
 
                   data:retu['cloud']
               }]
+
+
           };
           myChart4.setOption(option);
 
@@ -1049,7 +1051,6 @@ $("#searchlog4hos").click(function(){
 
 
     </script>
-
 
 
 

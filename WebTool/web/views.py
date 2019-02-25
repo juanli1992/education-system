@@ -414,19 +414,21 @@ def query(request):
             str9 = "几乎未去过图书馆"
 
         cloud = [
-            {"name": str0, "value": "100"},
-            {"name": str11, "value": "100"},
-            {"name": str1, "value": "100"},
-            {"name": str2, "value": "100"},
-            {"name": str3, "value": "100"},
-            {"name": str4, "value": "100"},
-            {"name": str5, "value": "100"},
-            {"name": str6, "value": "100"},
-            {"name": str7, "value": "100"},
-            {"name": str8, "value": "100"},
-            {"name": str9, "value": "100"}
+            {"name": str0, "value": 100},
+            {"name": str11, "value": 100},
+            {"name": str1, "value": 100},
+            {"name": str2, "value": 100},
+            {"name": str3, "value": 100},
+            {"name": str4, "value": 100},
+            {"name": str5, "value": 100},
+            {"name": str6, "value": 100},
+            {"name": str7, "value": 100},
+            {"name": str8, "value": 100},
+            {"name": str9, "value": 100}
         ]
-        print(cloud)
+
+
+        #print(cloud)
 
         #ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud, 'dd5':dd5, 'dd6':dd6, 'dd7':dd7, 'xx8':xx8, 'dd8':dd8}
 

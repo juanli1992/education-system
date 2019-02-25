@@ -14,8 +14,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4731">
-              <caret line="463" column="0" lean-forward="true" selection-start-line="463" selection-start-column="0" selection-end-line="463" selection-end-column="0" />
+            <state relative-caret-position="-3458">
+              <caret line="216" column="17" lean-forward="true" selection-start-line="216" selection-start-column="17" selection-end-line="216" selection-end-column="17" />
               <folding>
                 <element signature="e#26#65#0" expanded="true" />
               </folding>
@@ -26,7 +26,7 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
+            <state relative-caret-position="114">
               <caret line="84" column="22" lean-forward="false" selection-start-line="84" selection-start-column="22" selection-end-line="84" selection-end-column="22" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
@@ -38,17 +38,29 @@
       <file leaf-file-name="result.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/servermaterial/result.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10526">
-              <caret line="940" column="0" lean-forward="false" selection-start-line="940" selection-start-column="0" selection-end-line="941" selection-end-column="20" />
+            <state relative-caret-position="476">
+              <caret line="1053" column="0" lean-forward="false" selection-start-line="1053" selection-start-column="0" selection-end-line="1053" selection-end-column="0" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#div#1;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#2;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#3;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#div#4;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#6;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#div#6;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#6;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <marker date="1551084388696" expanded="false" signature="10665:10691" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tsttt.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/servermaterial/tsttt.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3705">
+              <caret line="195" column="2" lean-forward="false" selection-start-line="195" selection-start-column="2" selection-end-line="195" selection-end-column="9" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -57,7 +69,7 @@
       <file leaf-file-name="csv2db.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/csv2db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="321">
+            <state relative-caret-position="469">
               <caret line="172" column="39" lean-forward="false" selection-start-line="172" selection-start-column="39" selection-end-line="172" selection-end-column="39" />
               <folding />
             </state>
@@ -78,12 +90,27 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
       <find>res5</find>
       <find>classN</find>
       <find>|</find>
       <find>chart-8</find>
+      <find>echart</find>
+      <find>wordc</find>
+      <find>world</find>
+      <find>word</find>
+      <find>alert</find>
+      <find>ec</find>
+      <find>main</find>
+      <find>resu</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -92,6 +119,7 @@
         <option value="$PROJECT_DIR$/csv2db.py" />
         <option value="$PROJECT_DIR$/web/models.py" />
         <option value="$PROJECT_DIR$/web/urls.py" />
+        <option value="$PROJECT_DIR$/templates/servermaterial/tsttt.html" />
         <option value="$PROJECT_DIR$/templates/servermaterial/result.html" />
         <option value="$PROJECT_DIR$/web/views.py" />
       </list>
@@ -152,6 +180,7 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/step1" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -213,7 +242,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12604167" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32979852" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18769883" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -281,14 +310,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/csv2db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="172" column="39" lean-forward="false" selection-start-line="172" selection-start-column="39" selection-end-line="172" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Desktop/step1/getBasicInfo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -297,13 +318,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/models.py">
+    <entry file="file://$PROJECT_DIR$/templates/servermaterial/supervision.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="84" column="22" lean-forward="false" selection-start-line="84" selection-start-column="22" selection-end-line="84" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="2915">
+          <caret line="1971" column="51" lean-forward="false" selection-start-line="1971" selection-start-column="51" selection-end-line="1971" selection-end-column="51" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -317,35 +336,55 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/servermaterial/supervision.html">
+    <entry file="file://$PROJECT_DIR$/csv2db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2915">
-          <caret line="1971" column="51" lean-forward="false" selection-start-line="1971" selection-start-column="51" selection-end-line="1971" selection-end-column="51" />
+        <state relative-caret-position="469">
+          <caret line="172" column="39" lean-forward="false" selection-start-line="172" selection-start-column="39" selection-end-line="172" selection-end-column="39" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/servermaterial/tsttt.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3705">
+          <caret line="195" column="2" lean-forward="false" selection-start-line="195" selection-start-column="2" selection-end-line="195" selection-end-column="9" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/servermaterial/result.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10526">
-          <caret line="940" column="0" lean-forward="false" selection-start-line="940" selection-start-column="0" selection-end-line="941" selection-end-column="20" />
+        <state relative-caret-position="476">
+          <caret line="1053" column="0" lean-forward="false" selection-start-line="1053" selection-start-column="0" selection-end-line="1053" selection-end-column="0" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#div#1;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
             <element signature="n#div#2;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
             <element signature="n#div#3;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
             <element signature="n#div#4;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="false" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#6;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#div#6;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#6;n#div#0;n#div#1;n#div#0;n#div#1;n#section#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <marker date="1551084388696" expanded="false" signature="10665:10691" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="84" column="22" lean-forward="false" selection-start-line="84" selection-start-column="22" selection-end-line="84" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4731">
-          <caret line="463" column="0" lean-forward="true" selection-start-line="463" selection-start-column="0" selection-end-line="463" selection-end-column="0" />
+        <state relative-caret-position="-3458">
+          <caret line="216" column="17" lean-forward="true" selection-start-line="216" selection-start-column="17" selection-end-line="216" selection-end-column="17" />
           <folding>
             <element signature="e#26#65#0" expanded="true" />
           </folding>
