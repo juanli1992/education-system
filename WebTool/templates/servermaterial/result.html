@@ -68,9 +68,9 @@
                 <div class="form-group col-lg-1">
                   <button class="btn btn-theme" id="searchlog" type="button">查询</button>
                 </div>
-                <div >
-                  <button class="btn btn-theme" id="analyselog" type="button">分析</button>
-                </div>
+                <!--<div >-->
+                  <!--<button class="btn btn-theme" id="analyselog" type="button">分析</button>-->
+                <!--</div>-->
               </div>
             </div>
           </div>
@@ -599,9 +599,9 @@ $("#searchlog").click(function(){
 
 });
 
-$("#analyselog").click(function(){
+$("#searchlog").click(function(){
     //echarts1
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart = echarts.init(document.getElementById('chart-1'));
             option = {
               title : {
@@ -623,7 +623,7 @@ $("#analyselog").click(function(){
               xAxis : [
                   {
                       type : 'category',
-                      data : ret4charts['xx']
+                      data : retu['xx']
                   }
               ],
               yAxis : [
@@ -635,7 +635,7 @@ $("#analyselog").click(function(){
                   {
                       name:'比例',
                       type:'bar',
-                      data:ret4charts['dd'],
+                      data:retu['dd'],
 
                   }
               ]
@@ -644,7 +644,7 @@ $("#analyselog").click(function(){
      });
 
     //echarts2
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart2 = echarts.init(document.getElementById('chart-2'));
             option = {
               title : {
@@ -666,7 +666,7 @@ $("#analyselog").click(function(){
               xAxis : [
                   {
                       type : 'category',
-                      data : ret4charts['xx2']
+                      data : retu['xx2']
                   }
               ],
               yAxis : [
@@ -678,7 +678,7 @@ $("#analyselog").click(function(){
                   {
                       name:'次数',
                       type:'bar',
-                      data:ret4charts['dd2'],
+                      data:retu['dd2'],
 
                   }
               ]
@@ -687,7 +687,7 @@ $("#analyselog").click(function(){
      });
 
     //echarts3
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart3 = echarts.init(document.getElementById('chart-3'));
             option = {
               title : {
@@ -709,7 +709,7 @@ $("#analyselog").click(function(){
               xAxis : [
                   {
                       type : 'category',
-                      data : ret4charts['xx3']
+                      data : retu['xx3']
                   }
               ],
               yAxis : [
@@ -721,7 +721,7 @@ $("#analyselog").click(function(){
                   {
                       name:'比例',
                       type:'bar',
-                      data:ret4charts['dd3'],
+                      data:retu['dd3'],
 
                   }
               ]
@@ -730,7 +730,7 @@ $("#analyselog").click(function(){
      });
 
     //echarts4
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart4 = echarts.init(document.getElementById('chart-4'));
 
           option = {
@@ -757,7 +757,7 @@ $("#analyselog").click(function(){
                       minSize: 14
                   },
 
-                  data:ret4charts['cloud']
+                  data:retu['cloud']
               }]
           };
           myChart4.setOption(option);
@@ -765,7 +765,7 @@ $("#analyselog").click(function(){
      });
 
     //echarts5
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart5 = echarts.init(document.getElementById('chart-5'));
 
             option = {
@@ -791,7 +791,7 @@ $("#analyselog").click(function(){
               },
               series: [{
                   type: 'scatter',
-                  data:ret4charts['dd5'],
+                  data:retu['dd5'],
 
                   }
               ]
@@ -800,7 +800,7 @@ $("#analyselog").click(function(){
      });
 
     //echarts6
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart6 = echarts.init(document.getElementById('chart-6'));
 
             option = {
@@ -826,7 +826,7 @@ $("#analyselog").click(function(){
               },
               series: [{
                   type: 'scatter',
-                  data:ret4charts['dd6'],
+                  data:retu['dd6'],
 
                   }
               ]
@@ -835,7 +835,7 @@ $("#analyselog").click(function(){
      });
 
     //echarts7
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart7 = echarts.init(document.getElementById('chart-7'));
 
             option = {
@@ -861,7 +861,7 @@ $("#analyselog").click(function(){
               },
               series: [{
                   type: 'scatter',
-                  data:ret4charts['dd7'],
+                  data:retu['dd7'],
 
                   }
               ]
@@ -870,7 +870,7 @@ $("#analyselog").click(function(){
      });
 
     //echarts8
-    $.post("/web/query1/",{'stuid':stuid}, function(ret4charts){
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
     var myChart8 = echarts.init(document.getElementById('chart-8'));
             option = {
               title : {
@@ -892,7 +892,7 @@ $("#analyselog").click(function(){
               xAxis : [
                   {
                       type : 'category',
-                      data : ret4charts['xx8']
+                      data : retu['xx8']
                   }
               ],
               yAxis : [
@@ -904,7 +904,7 @@ $("#analyselog").click(function(){
                   {
                       name:'次数',
                       type:'bar',
-                      data:ret4charts['dd8'],
+                      data:retu['dd8'],
 
                   }
               ]
