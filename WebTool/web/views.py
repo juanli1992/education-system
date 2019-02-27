@@ -325,6 +325,7 @@ def query(request):
         dd7 = []
         dtlist = list(Card.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
         costlist = list(Card.objects.filter(StuID=stuid).values_list('Cost', flat=True))
+        totlcos = 0
         if len(dtlist) != 0:
             nlist = np.zeros(126)
             for item in range(len(dtlist)):
@@ -333,10 +334,12 @@ def query(request):
                     delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
                     if float(costlist[item])<0:
                         nlist[delta] += float(costlist[item])
+                        totlcos += float(costlist[item])
             #print(nlist)
             for i in range(126):
                 dd7.append([i+1,nlist[i]])
             #print(dd7)
+            #print(totlcos)
 
 
         xx8mid = []
@@ -413,6 +416,13 @@ def query(request):
         if ccc<=5:
             str9 = "几乎未去过图书馆"
 
+        ##消费
+        totlcos =  round(-totlcos)
+        print(totlcos)
+        str10 = ""
+        if totlcos>0:
+            str10 = "最近一学期总消费约" + str(totlcos) + "元"
+
         cloud = [
             {"name": str0, "value": 100},
             {"name": str11, "value": 100},
@@ -424,7 +434,8 @@ def query(request):
             {"name": str6, "value": 100},
             {"name": str7, "value": 100},
             {"name": str8, "value": 100},
-            {"name": str9, "value": 100}
+            {"name": str9, "value": 100},
+            {"name": str10, "value": 100}
         ]
 
 
