@@ -340,8 +340,9 @@ def query(request):
         dd5 = []
         ccc = 0 #为了画像
         dtlist = list(Lib.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
+                                                                                                         '%Y-%m-%d')).days + 1  ###代替126
         if len(dtlist) != 0:
-            Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days + 1 ###代替126
             nlist = np.zeros(Tdelta)
             for item in dtlist:
                 nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
