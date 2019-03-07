@@ -247,6 +247,12 @@ def query(request):
         stuid = request.POST.get('stuid')
         #print(stuid)
         #没有判空   应该加一个判断，若学号不存在，返回什么
+        nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
+        print(nowTime)
+        pastTime = (datetime.datetime.now() - datetime.timedelta(days=1095)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
+        print(pastTime)
+
+
         """
         table
         """
