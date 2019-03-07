@@ -1,11 +1,9 @@
 # Create your views here.
 from __future__ import unicode_literals
 
-from typing import re
 
 from django.http import JsonResponse
 from django.shortcuts import render_to_response
-from django.shortcuts import redirect
 from django.shortcuts import HttpResponse
 from django.shortcuts import render
 from web import models
@@ -31,8 +29,10 @@ from keras.layers import Masking
 # from sklearn.metrics import mean_squared_error
 # from keras.layers import Bidirectional
 # #from keras.preprocessing.sequence import pad_sequences
-import os
 
+
+from django.db import connection
+from .recommend_util import *
 
 
 # Create your views here.
@@ -606,7 +606,6 @@ def query_class(request):
     class_list = list(set(tmp['classNo'] for tmp in class_query_list))
     return HttpResponse(json.dumps(class_list), content_type='application/json')
 
-
 def query_intervene(request):
     """
     查询干预意见接口
@@ -647,13 +646,57 @@ def query_intervene(request):
                                                is_fail_exam=labels['is_fail_exam'],
                                                body_health_state=labels['body_health_state'])
             single_intervene = intervene_suggestion[0].as_dict()
-            single_intervene['school'] = data['school']
-            single_intervene['stu_id'] = id
+            single_intervene['school'], single_intervene['stu_id']  = data['school'], id
             list_intervene.append(single_intervene)
         return HttpResponse(json.dumps(list_intervene), content_type="application/json")
 
 
+def get_hot_book_list(request):
+    """
+    热门书籍列表
+    :param request:
+    :return:每一本书用一个字典对象(有name属性，values属性，itemStyle属性)
+    """
+    topk_name_list = []
+    with connection.cursor() as cursor:
+        for loc in topk_loc_list:
+            cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
+            row = cursor.fetchone()
+            topk_name_list.append(row[0])
 
+    data = []
+    for i in range(len(topk_name_list)):
+        book = {'name': topk_name_list[i], 'value': topk_count_list[i]}
+        data.append(book)
+    return JsonResponse(data=data, safe=False)
+
+def recommend(request):
+    """
+    推荐页面
+    :param request:
+    :return:
+    """
+    idr = 1
+    stu1_list = get_recommend_list(idr)
+    stu1_loc_list = [book_dict[str(v)].strip() for v in stu1_list]
+    stu1_book_list = []
+    print(stu1_loc_list)
+    with connection.cursor() as cursor:
+        for loc in stu1_loc_list:
+            cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
+            row = cursor.fetchone()
+            stu1_book_list.append(row[0])
+    stu_id = stu_dict[str(idr)]
+    print(stu1_book_list)
+    return render_to_response('servermaterial/recommend.html', context={'book_list': stu1_book_list})
+
+
+def tt(request):
+    with connection.cursor() as cursor:
+        cursor.execute('select * from web_basic')
+        row = cursor.fetchone()
+        print(row[1])
+    return HttpResponse(row)
 
 
 
@@ -719,3 +762,4 @@ def tst(request):
     reeee = model.predict(x_test)
     print(reeee)
     print(reeee.shape)
+

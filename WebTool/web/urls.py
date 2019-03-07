@@ -28,5 +28,8 @@ urlpatterns = [
     path('download/', download),
     path("query_intervene", query_intervene),
     path('query_majors', query_majors),
-    path('query_class', query_class)
+    path('query_class', query_class),
+    path('recommend', recommend),
+    path('hot_book', get_hot_book_list),
+    path('tt', tt)
 ]
