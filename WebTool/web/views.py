@@ -246,7 +246,7 @@ def query(request):
         # 关键内容
         stuid = request.POST.get('stuid')
         #print(stuid)
-        #没有判空
+        #没有判空   应该加一个判断，若学号不存在，返回什么
         """
         table
         """
@@ -267,18 +267,38 @@ def query(request):
                 FinanceType = Finance.objects.filter(StuID=stuid)[0].FinanceType
             res4[0].update({'FinanceType':FinanceType})#res4就一个字典元素
 
+        ##为了下面的画像
+        #print(res4)
+        str12 = ""
+        str13 = ""
+        str14 = ""
+        str15 = ""
+        str16 = ""
+        str17 = ""
+        if res4.__len__()==1:
+            str12 = res4[0]["School"]
+            str13 = res4[0]["Major"]
+            str14 = res4[0]["classNo"] + "班"
+            str15 = "来自" + res4[0]["Province"]
+            str16 = res4[0]["Gender"]
+            if res4[0]["FinanceType"]!="无":
+                str17 = res4[0]["FinanceType"]
+
+
+
         objs = Aid.objects.filter(StuID=stuid)
         res9 = [obj.as_dict() for obj in objs]
 
 
 
         """
-        chart
+        chart 都没判空
         """
         xx = list(Score.objects.filter(StuID=stuid).values_list('Semester', flat=True))
         #print(xx)
         dd=[]
         Grade = list(Score.objects.filter(StuID=stuid).values_list('Grade', flat=True))[0]
+        str18 = str(int(Grade)) + "级"
         School = list(Score.objects.filter(StuID=stuid).values_list('School', flat=True))[0]
         for sem in xx:
             score = Score.objects.get(StuID=stuid, Semester=sem).AveScore
@@ -441,24 +461,34 @@ def query(request):
 
         ##消费
         totlcos =  round(-totlcos)
-        print(totlcos)
+        #print(totlcos)
         str10 = ""
         if totlcos>0:
             str10 = "最近一学期总消费约" + str(totlcos) + "元"
 
         cloud = [
-            {"name": str0, "value": 100},
-            {"name": str11, "value": 100},
-            {"name": str1, "value": 100},
-            {"name": str2, "value": 100},
-            {"name": str3, "value": 100},
-            {"name": str4, "value": 100},
-            {"name": str5, "value": 100},
-            {"name": str6, "value": 100},
-            {"name": str7, "value": 100},
-            {"name": str8, "value": 100},
-            {"name": str9, "value": 100},
-            {"name": str10, "value": 100}
+            {"name": str0, "value": 2500},
+            {"name": str11, "value": 2000},#成绩
+            {"name": str1, "value": 2300},
+            {"name": str2, "value": 2000},#身体
+            {"name": str3, "value": 2000},
+            {"name": str4, "value": 2000},
+            {"name": str5, "value": 2000},
+            {"name": str6, "value": 2000},
+            {"name": str7, "value": 2000},
+            {"name": str8, "value": 2300},#奖助学金
+            {"name": str9, "value": 2000},#lib
+            {"name": str10, "value": 2000},#消费
+            {"name": str12, "value": 2300},#bas
+            {"name": str13, "value": 2300},
+            {"name": str14, "value": 2300},
+            {"name": str15, "value": 2300},
+            {"name": str16, "value": 2300},
+            {"name": str17, "value": 2300},
+            {"name": str18, "value": 2300}
+
+
+
         ]
 
 
