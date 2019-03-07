@@ -39,23 +39,23 @@ from .recommend_util import *
 # Create your views here.
 @login_required
 def home(request):
-    return render_to_response('servermaterial/home.html')
+    return render(request, 'servermaterial/home.html')
 
 @login_required
 def monitor_all(request):
-    return render_to_response('servermaterial/monitor_all.html')
+    return render(request, 'servermaterial/monitor_all.html')
 
 def study_well(request):
-    return render_to_response('servermaterial/study_well.html')
+    return render(request, 'servermaterial/study_well.html')
 
 def study_poor(request):
-    return render_to_response('servermaterial/study_poor.html')
+    return render(request, 'servermaterial/study_poor.html')
 
 def admin(request):
-    return render_to_response('servermaterial/admin_index.html')
+    return render(request, 'servermaterial/admin_index.html')
 
 def first(request):
-    return render_to_response('servermaterial/first.html')
+    return render(request, 'servermaterial/first.html')
 
 def login(request):
     if request.method == 'POST':
@@ -231,14 +231,14 @@ def inquiry(request):
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 def base(request):
-    return render_to_response('servermaterial/base.html')
+    return render(request, 'servermaterial/base.html')
 
 def supervision(request):
-    return render_to_response('servermaterial/supervision.html')
+    return render(request, 'servermaterial/supervision.html')
 
 def result(request):
     print('here')
-    return render_to_response('servermaterial/result.html')
+    return render(request, 'servermaterial/result.html')
 
 ##查询
 def query(request):
@@ -535,7 +535,7 @@ def queryY(request):
 
 
 def data_import_export(request):
-    return render_to_response('servermaterial/data_import_export.html')
+    return render(request, 'servermaterial/data_import_export.html')
 
 
 def intervene(request):
@@ -554,7 +554,7 @@ def intervene(request):
         class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0].strip(),
                                                 Entrance__startswith='2013').values("classNo")
         class_list = list(set(tmp['classNo'] for tmp in class_query_list))
-    return render_to_response('servermaterial/intervene.html', context={'school_list': school_list,
+    return render(request, 'servermaterial/intervene.html', context={'school_list': school_list,
                                                                         'major_list': major_list,
                                                                         'class_list': class_list})
 
@@ -717,19 +717,21 @@ def recommend(request):
     :param request:
     :return:
     """
-    idr = 1
-    stu1_list = get_recommend_list(idr)
-    stu1_loc_list = [book_dict[str(v)].strip() for v in stu1_list]
-    stu1_book_list = []
-    print(stu1_loc_list)
-    with connection.cursor() as cursor:
-        for loc in stu1_loc_list:
-            cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
-            row = cursor.fetchone()
-            stu1_book_list.append(row[0])
-    stu_id = stu_dict[str(idr)]
-    print(stu1_book_list)
-    return render_to_response('servermaterial/recommend.html', context={'book_list': stu1_book_list})
+    recommend_dict = {}
+    for idr in range(0, 10):
+        book_id_list = get_recommend_list(idr)
+        book_loc_list = [book_dict[str(v)].strip() for v in book_id_list]
+        print(book_loc_list)
+        book_name_list = []
+        with connection.cursor() as cursor:
+            for loc in book_loc_list:
+                cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
+                row = cursor.fetchone()
+                book_name_list.append(row[0])
+        stu_id = stu_dict[str(idr)]
+        recommend_dict[stu_id] = book_name_list
+    print(recommend_dict)
+    return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict})
 
 
 def tt(request):
