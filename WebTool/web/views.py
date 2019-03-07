@@ -14,8 +14,27 @@ import time
 import xlrd
 import xlwt
 import numpy as np
+import datetime
+###
+import numpy as np
+import pandas as pd
+# import csv
+# import matplotlib.pyplot as plt
+import keras
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from keras.layers import Masking
+# from sklearn.model_selection import train_test_split
+# from sklearn.preprocessing import MinMaxScaler
+# from sklearn.metrics import mean_squared_error
+# from keras.layers import Bidirectional
+# #from keras.preprocessing.sequence import pad_sequences
+
+
 from django.db import connection
 from .recommend_util import *
+
 
 # Create your views here.
 @login_required
@@ -592,7 +611,6 @@ def query_class(request):
     class_list = list(set(tmp['classNo'] for tmp in class_query_list))
     return HttpResponse(json.dumps(class_list), content_type='application/json')
 
-
 def query_intervene(request):
     """
     查询干预意见接口
@@ -636,6 +654,7 @@ def query_intervene(request):
             single_intervene['school'], single_intervene['stu_id']  = data['school'], id
             list_intervene.append(single_intervene)
         return HttpResponse(json.dumps(list_intervene), content_type="application/json")
+
 
 def get_hot_book_list(request):
     """
@@ -683,3 +702,69 @@ def tt(request):
         row = cursor.fetchone()
         print(row[1])
     return HttpResponse(row)
+
+
+
+
+
+
+def tst(request):
+
+    np.random.seed(1119)
+
+
+    stuolist = Score.objects.all()
+    stulist = []
+    for i in stuolist:
+        if i.StuID not in stulist:
+            stulist.append(i.StuID)
+    #print(stulist)
+
+    # x_test = np.array( pd.read_csv("x_test.csv",header=None) )
+    # x_test = np.reshape(x_test,(x_test.shape[0],7,1))
+    """
+    上面是文件格式
+    下面是一个个学生，list格式
+    """
+    # x_test = np.array([78.86,74.89,-2,-2,-2,-2,-2])
+    # x_test = np.reshape(x_test,(1,7,1))
+
+    scorlists = []
+    for u in stulist:
+        scorlist = list(Score.objects.filter(StuID=u).values_list('AveScore', flat=True))
+        scorlist = list(map(float, scorlist))
+        num = 7-scorlist.__len__()
+        for i in range(num):
+            scorlist.append(-2)
+
+        scorlists.append(scorlist)
+
+    x_test = np.array(scorlists)
+    print(x_test)
+    x_test = np.reshape(x_test, (x_test.shape[0], 7, 1))
+
+
+    batch_size = 32 #超参
+    epochs = 1000 #超参
+    units = 6 #超参 4不行
+
+    keras.backend.clear_session()
+    model = Sequential()
+    model.add(Masking(mask_value=-2., input_shape=(7,1)))
+    model.add(LSTM(units))
+    model.add(Dense(1))
+    print(model.summary())
+    model.compile(loss='mean_squared_error', optimizer='adam',metrics=['mse', 'mape'])
+
+    # filepath = './lstmfc/model-ep{epoch:03d}-mse{mean_squared_error:.3f}-val_mse{val_mean_squared_error:.3f}-val_mape{val_mean_absolute_percentage_error}.h5'
+    # checkpoint = keras.callbacks.ModelCheckpoint(filepath, monitor='val_mean_squared_error', verbose=1, save_best_only=True, mode='min')
+    # model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=1, validation_data=(x_test, y_test), shuffle=True, callbacks=[checkpoint])
+
+    ###predict
+    #model.load_weights('C:\\Users\\ICE\\education-system\\WebTool\\web\\lstmfc\\model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
+    model.load_weights('./web/lstmfc/model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
+    print('load weights...')
+    reeee = model.predict(x_test)
+    print(reeee)
+    print(reeee.shape)
+
