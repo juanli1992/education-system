@@ -249,8 +249,9 @@ def query(request):
         #没有判空   应该加一个判断，若学号不存在，返回什么
         nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
         print(nowTime)
-        pastTime = (datetime.datetime.now() - datetime.timedelta(days=1095)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
+        pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
         print(pastTime)
+
 
 
         """
@@ -340,18 +341,20 @@ def query(request):
         ccc = 0 #为了画像
         dtlist = list(Lib.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
         if len(dtlist) != 0:
-            nlist = np.zeros(126)
+            Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days + 1 ###代替126
+            nlist = np.zeros(Tdelta)
             for item in dtlist:
                 nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
-                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                # if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <=  datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S'):
                     delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
                     nlist[delta] += 1
             #print(nlist)
-            for i in range(126):
+            for i in range(Tdelta):
                 dd5.append([i+1,nlist[i]])
             #print(dd5)
             nlist = list(nlist)
-            ccc = 126-nlist.count(0)
+            ccc = Tdelta-nlist.count(0)
         print('ok')
 
 
@@ -359,14 +362,14 @@ def query(request):
         dd6 = []
         dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
         if len(dtlist) != 0:
-            nlist = np.zeros(126)
+            nlist = np.zeros(Tdelta)
             for item in dtlist:
                 nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
-                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S'):
                     delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
                     nlist[delta] += 1
             #print(nlist)
-            for i in range(126):
+            for i in range(Tdelta):
                 dd6.append([i+1,nlist[i]])
             #print(dd6)
 
@@ -376,16 +379,16 @@ def query(request):
         costlist = list(Card.objects.filter(StuID=stuid).values_list('Cost', flat=True))
         totlcos = 0
         if len(dtlist) != 0:
-            nlist = np.zeros(126)
+            nlist = np.zeros(Tdelta)
             for item in range(len(dtlist)):
                 nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
-                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S'):
                     delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
                     if float(costlist[item])<0:
                         nlist[delta] += float(costlist[item])
                         totlcos += float(costlist[item])
             #print(nlist)
-            for i in range(126):
+            for i in range(Tdelta):
                 dd7.append([i+1,nlist[i]])
             #print(dd7)
             #print(totlcos)
@@ -460,10 +463,10 @@ def query(request):
 
         ##lib
         str9 = ""
-        if ccc>=126/2:
+        if ccc>=Tdelta/2 and ccc>5:
             str9 = "常驻图书馆"
         if ccc<=5:
-            str9 = "几乎未去过图书馆"
+            str9 = "去图书馆次数少于5次"
 
         ##消费
         totlcos =  round(-totlcos)
