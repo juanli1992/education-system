@@ -77,9 +77,6 @@
                     <a data-toggle="tab" href="#fileImport">文件导入</a>
                   </li>
                   <li>
-                    <a data-toggle="tab" href="#dbImport">数据库导入</a>
-                  </li>
-                  <li>
                     <a data-toggle="tab" href="#export">数据导出</a>
                   </li>
                 </ul>
@@ -88,232 +85,232 @@
               <div class="panel-body">
                 <div class="tab-content">
                   <!-- /数据库导入 -->
-                  <div id="dbImport" class="tab-pane">
-                    <div class="row">
-                      <div class="col-lg-4 detailed">
-                        <h4>数据选择</h4>
-                        <form role="form" class="form-horizontal">
-                          <div class="form-group">
-                            <label class="col-lg-2 control-label">数据名称</label>
-                            <div class="col-lg-6">
-                              <select class="form-control">
-                                <option value="volvo">图书馆访问记录</option>
-                                <option value="volvo">图书馆借阅记录</option>
-                                <option value="saab">宿舍刷卡记录</option>
-                                <option value="mercedes">校园卡消费记录</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="col-lg-2 control-label">学期</label>
-                            <div class="col-lg-6">
-                              <select class="form-control">
-                                <option value="20142">2014年第二学期</option>
-                                <option value="20141">2014年第一学期</option>
-                                <option value="20132">2013年第二学期</option>
-                                <option value="20131">2013年第一学期</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="col-lg-2 control-label">学院</label>
-                            <div class="col-lg-6">
-                              <select class="form-control">
-                                <option value="all">所有学院</option>
-                                <option value="renwen">人文学院</option>
-                                <option value="dianyuan">电子信息与电气工程学院</option>
-                                <option value="jixie">机械与动力工程学院</option>
-                                <option value="chuanbo">船舶与海洋工程学院</option>
-                                <option value="shuxue">数学科学学院</option>
-                                <option value="meishe">媒体与设计学院</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="col-lg-2 control-label">专业</label>
-                            <div class="col-lg-6">
-                              <select class="form-control">
-                                <option value="all">所有专业</option>
-                                <option value="renwen">计算机系</option>
-                                <option value="dianyuan">电子系</option>
-                                <option value="jixie">仪器系</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="col-lg-2 control-label">年级</label>
-                            <div class="col-lg-6">
-                              <select class="form-control">
-                                <option value="all">所有年级</option>
-                                <option value="b1">本科一年级</option>
-                                <option value="b2">本科二年级</option>
-                                <option value="b3">本科三年级</option>
-                                <option value="b4">本科四年级</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <div class="col-lg-offset-2 col-lg-10">
-                              <button class="btn btn-theme" type="submit">查看数据</button>
-                              <button class="btn btn-theme" type="button">数据导入</button>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                      <div class="col-lg-8 detailed">
-                        <h4>数据查看</h4>
-                        <div class="content-panel">
-                          <section id="table1">
-                            <table class="table table-bordered table-striped table-condensed">
-                              <thead>
-                                <tr>
-                                  <th>Code</th>
-                                  <th>Company</th>
-                                  <th class="numeric">Price</th>
-                                  <th class="numeric">Change</th>
-                                  <th class="numeric">Change %</th>
-                                  <th class="numeric">Open</th>
-                                  <th class="numeric">High</th>
-                                  <th class="numeric">Low</th>
-                                  <th class="numeric">Volume</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td>AAC</td>
-                                  <td>AUSTRALIAN AGRICULTURAL COMPANY LIMITED.</td>
-                                  <td class="numeric">$1.38</td>
-                                  <td class="numeric">-0.01</td>
-                                  <td class="numeric">-0.36%</td>
-                                  <td class="numeric">$1.39</td>
-                                  <td class="numeric">$1.39</td>
-                                  <td class="numeric">$1.38</td>
-                                  <td class="numeric">9,395</td>
-                                </tr>
-                                <tr>
-                                  <td>AAD</td>
-                                  <td>ARDENT LEISURE GROUP</td>
-                                  <td class="numeric">$1.15</td>
-                                  <td class="numeric"> +0.02</td>
-                                  <td class="numeric">1.32%</td>
-                                  <td class="numeric">$1.14</td>
-                                  <td class="numeric">$1.15</td>
-                                  <td class="numeric">$1.13</td>
-                                  <td class="numeric">56,431</td>
-                                </tr>
-                                <tr>
-                                  <td>AAX</td>
-                                  <td>AUSENCO LIMITED</td>
-                                  <td class="numeric">$4.00</td>
-                                  <td class="numeric">-0.04</td>
-                                  <td class="numeric">-0.99%</td>
-                                  <td class="numeric">$4.01</td>
-                                  <td class="numeric">$4.05</td>
-                                  <td class="numeric">$4.00</td>
-                                  <td class="numeric">90,641</td>
-                                </tr>
-                                <tr>
-                                  <td>ABC</td>
-                                  <td>ADELAIDE BRIGHTON LIMITED</td>
-                                  <td class="numeric">$3.00</td>
-                                  <td class="numeric"> +0.06</td>
-                                  <td class="numeric">2.04%</td>
-                                  <td class="numeric">$2.98</td>
-                                  <td class="numeric">$3.00</td>
-                                  <td class="numeric">$2.96</td>
-                                  <td class="numeric">862,518</td>
-                                </tr>
-                                <tr>
-                                  <td>ABP</td>
-                                  <td>ABACUS PROPERTY GROUP</td>
-                                  <td class="numeric">$1.91</td>
-                                  <td class="numeric">0.00</td>
-                                  <td class="numeric">0.00%</td>
-                                  <td class="numeric">$1.92</td>
-                                  <td class="numeric">$1.93</td>
-                                  <td class="numeric">$1.90</td>
-                                  <td class="numeric">595,701</td>
-                                </tr>
-                                <tr>
-                                  <td>ABY</td>
-                                  <td>ADITYA BIRLA MINERALS LIMITED</td>
-                                  <td class="numeric">$0.77</td>
-                                  <td class="numeric"> +0.02</td>
-                                  <td class="numeric">2.00%</td>
-                                  <td class="numeric">$0.76</td>
-                                  <td class="numeric">$0.77</td>
-                                  <td class="numeric">$0.76</td>
-                                  <td class="numeric">54,567</td>
-                                </tr>
-                                <tr>
-                                  <td>ACR</td>
-                                  <td>ACRUX LIMITED</td>
-                                  <td class="numeric">$3.71</td>
-                                  <td class="numeric"> +0.01</td>
-                                  <td class="numeric">0.14%</td>
-                                  <td class="numeric">$3.70</td>
-                                  <td class="numeric">$3.72</td>
-                                  <td class="numeric">$3.68</td>
-                                  <td class="numeric">191,373</td>
-                                </tr>
-                                <tr>
-                                  <td>ADU</td>
-                                  <td>ADAMUS RESOURCES LIMITED</td>
-                                  <td class="numeric">$0.72</td>
-                                  <td class="numeric">0.00</td>
-                                  <td class="numeric">0.00%</td>
-                                  <td class="numeric">$0.73</td>
-                                  <td class="numeric">$0.74</td>
-                                  <td class="numeric">$0.72</td>
-                                  <td class="numeric">8,602,291</td>
-                                </tr>
-                                <tr>
-                                  <td>AGG</td>
-                                  <td>ANGLOGOLD ASHANTI LIMITED</td>
-                                  <td class="numeric">$7.81</td>
-                                  <td class="numeric">-0.22</td>
-                                  <td class="numeric">-2.74%</td>
-                                  <td class="numeric">$7.82</td>
-                                  <td class="numeric">$7.82</td>
-                                  <td class="numeric">$7.81</td>
-                                  <td class="numeric">148</td>
-                                </tr>
-                                <tr>
-                                  <td>AGK</td>
-                                  <td>AGL ENERGY LIMITED</td>
-                                  <td class="numeric">$13.82</td>
-                                  <td class="numeric"> +0.02</td>
-                                  <td class="numeric">0.14%</td>
-                                  <td class="numeric">$13.83</td>
-                                  <td class="numeric">$13.83</td>
-                                  <td class="numeric">$13.67</td>
-                                  <td class="numeric">846,403</td>
-                                </tr>
-                                <tr>
-                                  <td>AGO</td>
-                                  <td>ATLAS IRON LIMITED</td>
-                                  <td class="numeric">$3.17</td>
-                                  <td class="numeric">-0.02</td>
-                                  <td class="numeric">-0.47%</td>
-                                  <td class="numeric">$3.11</td>
-                                  <td class="numeric">$3.22</td>
-                                  <td class="numeric">$3.10</td>
-                                  <td class="numeric">5,416,303</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </section>
-                        </div>
-                      </div>
-                      <!-- /col-lg-8 -->
-                    </div>
-                    <!-- /row -->
-                  </div>
+{#                  <div id="dbImport" class="tab-pane">#}
+{#                    <div class="row">#}
+{#                      <div class="col-lg-4 detailed">#}
+{#                        <h4>数据选择</h4>#}
+{#                        <form role="form" class="form-horizontal">#}
+{#                          <div class="form-group">#}
+{#                            <label class="col-lg-2 control-label">数据名称</label>#}
+{#                            <div class="col-lg-6">#}
+{#                              <select class="form-control">#}
+{#                                <option value="volvo">图书馆访问记录</option>#}
+{#                                <option value="volvo">图书馆借阅记录</option>#}
+{#                                <option value="saab">宿舍刷卡记录</option>#}
+{#                                <option value="mercedes">校园卡消费记录</option>#}
+{#                              </select>#}
+{#                            </div>#}
+{#                          </div>#}
+{##}
+{#                          <div class="form-group">#}
+{#                            <label class="col-lg-2 control-label">学期</label>#}
+{#                            <div class="col-lg-6">#}
+{#                              <select class="form-control">#}
+{#                                <option value="20142">2014年第二学期</option>#}
+{#                                <option value="20141">2014年第一学期</option>#}
+{#                                <option value="20132">2013年第二学期</option>#}
+{#                                <option value="20131">2013年第一学期</option>#}
+{#                              </select>#}
+{#                            </div>#}
+{#                          </div>#}
+{##}
+{#                          <div class="form-group">#}
+{#                            <label class="col-lg-2 control-label">学院</label>#}
+{#                            <div class="col-lg-6">#}
+{#                              <select class="form-control">#}
+{#                                <option value="all">所有学院</option>#}
+{#                                <option value="renwen">人文学院</option>#}
+{#                                <option value="dianyuan">电子信息与电气工程学院</option>#}
+{#                                <option value="jixie">机械与动力工程学院</option>#}
+{#                                <option value="chuanbo">船舶与海洋工程学院</option>#}
+{#                                <option value="shuxue">数学科学学院</option>#}
+{#                                <option value="meishe">媒体与设计学院</option>#}
+{#                              </select>#}
+{#                            </div>#}
+{#                          </div>#}
+{##}
+{#                          <div class="form-group">#}
+{#                            <label class="col-lg-2 control-label">专业</label>#}
+{#                            <div class="col-lg-6">#}
+{#                              <select class="form-control">#}
+{#                                <option value="all">所有专业</option>#}
+{#                                <option value="renwen">计算机系</option>#}
+{#                                <option value="dianyuan">电子系</option>#}
+{#                                <option value="jixie">仪器系</option>#}
+{#                              </select>#}
+{#                            </div>#}
+{#                          </div>#}
+{##}
+{#                          <div class="form-group">#}
+{#                            <label class="col-lg-2 control-label">年级</label>#}
+{#                            <div class="col-lg-6">#}
+{#                              <select class="form-control">#}
+{#                                <option value="all">所有年级</option>#}
+{#                                <option value="b1">本科一年级</option>#}
+{#                                <option value="b2">本科二年级</option>#}
+{#                                <option value="b3">本科三年级</option>#}
+{#                                <option value="b4">本科四年级</option>#}
+{#                              </select>#}
+{#                            </div>#}
+{#                          </div>#}
+{##}
+{#                          <div class="form-group">#}
+{#                            <div class="col-lg-offset-2 col-lg-10">#}
+{#                              <button class="btn btn-theme" type="submit">查看数据</button>#}
+{#                              <button class="btn btn-theme" type="button">数据导入</button>#}
+{#                            </div>#}
+{#                          </div>#}
+{#                        </form>#}
+{#                      </div>#}
+{#                      <div class="col-lg-8 detailed">#}
+{#                        <h4>数据查看</h4>#}
+{#                        <div class="content-panel">#}
+{#                          <section id="table1">#}
+{#                            <table class="table table-bordered table-striped table-condensed">#}
+{#                              <thead>#}
+{#                                <tr>#}
+{#                                  <th>Code</th>#}
+{#                                  <th>Company</th>#}
+{#                                  <th class="numeric">Price</th>#}
+{#                                  <th class="numeric">Change</th>#}
+{#                                  <th class="numeric">Change %</th>#}
+{#                                  <th class="numeric">Open</th>#}
+{#                                  <th class="numeric">High</th>#}
+{#                                  <th class="numeric">Low</th>#}
+{#                                  <th class="numeric">Volume</th>#}
+{#                                </tr>#}
+{#                              </thead>#}
+{#                              <tbody>#}
+{#                                <tr>#}
+{#                                  <td>AAC</td>#}
+{#                                  <td>AUSTRALIAN AGRICULTURAL COMPANY LIMITED.</td>#}
+{#                                  <td class="numeric">$1.38</td>#}
+{#                                  <td class="numeric">-0.01</td>#}
+{#                                  <td class="numeric">-0.36%</td>#}
+{#                                  <td class="numeric">$1.39</td>#}
+{#                                  <td class="numeric">$1.39</td>#}
+{#                                  <td class="numeric">$1.38</td>#}
+{#                                  <td class="numeric">9,395</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>AAD</td>#}
+{#                                  <td>ARDENT LEISURE GROUP</td>#}
+{#                                  <td class="numeric">$1.15</td>#}
+{#                                  <td class="numeric"> +0.02</td>#}
+{#                                  <td class="numeric">1.32%</td>#}
+{#                                  <td class="numeric">$1.14</td>#}
+{#                                  <td class="numeric">$1.15</td>#}
+{#                                  <td class="numeric">$1.13</td>#}
+{#                                  <td class="numeric">56,431</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>AAX</td>#}
+{#                                  <td>AUSENCO LIMITED</td>#}
+{#                                  <td class="numeric">$4.00</td>#}
+{#                                  <td class="numeric">-0.04</td>#}
+{#                                  <td class="numeric">-0.99%</td>#}
+{#                                  <td class="numeric">$4.01</td>#}
+{#                                  <td class="numeric">$4.05</td>#}
+{#                                  <td class="numeric">$4.00</td>#}
+{#                                  <td class="numeric">90,641</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>ABC</td>#}
+{#                                  <td>ADELAIDE BRIGHTON LIMITED</td>#}
+{#                                  <td class="numeric">$3.00</td>#}
+{#                                  <td class="numeric"> +0.06</td>#}
+{#                                  <td class="numeric">2.04%</td>#}
+{#                                  <td class="numeric">$2.98</td>#}
+{#                                  <td class="numeric">$3.00</td>#}
+{#                                  <td class="numeric">$2.96</td>#}
+{#                                  <td class="numeric">862,518</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>ABP</td>#}
+{#                                  <td>ABACUS PROPERTY GROUP</td>#}
+{#                                  <td class="numeric">$1.91</td>#}
+{#                                  <td class="numeric">0.00</td>#}
+{#                                  <td class="numeric">0.00%</td>#}
+{#                                  <td class="numeric">$1.92</td>#}
+{#                                  <td class="numeric">$1.93</td>#}
+{#                                  <td class="numeric">$1.90</td>#}
+{#                                  <td class="numeric">595,701</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>ABY</td>#}
+{#                                  <td>ADITYA BIRLA MINERALS LIMITED</td>#}
+{#                                  <td class="numeric">$0.77</td>#}
+{#                                  <td class="numeric"> +0.02</td>#}
+{#                                  <td class="numeric">2.00%</td>#}
+{#                                  <td class="numeric">$0.76</td>#}
+{#                                  <td class="numeric">$0.77</td>#}
+{#                                  <td class="numeric">$0.76</td>#}
+{#                                  <td class="numeric">54,567</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>ACR</td>#}
+{#                                  <td>ACRUX LIMITED</td>#}
+{#                                  <td class="numeric">$3.71</td>#}
+{#                                  <td class="numeric"> +0.01</td>#}
+{#                                  <td class="numeric">0.14%</td>#}
+{#                                  <td class="numeric">$3.70</td>#}
+{#                                  <td class="numeric">$3.72</td>#}
+{#                                  <td class="numeric">$3.68</td>#}
+{#                                  <td class="numeric">191,373</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>ADU</td>#}
+{#                                  <td>ADAMUS RESOURCES LIMITED</td>#}
+{#                                  <td class="numeric">$0.72</td>#}
+{#                                  <td class="numeric">0.00</td>#}
+{#                                  <td class="numeric">0.00%</td>#}
+{#                                  <td class="numeric">$0.73</td>#}
+{#                                  <td class="numeric">$0.74</td>#}
+{#                                  <td class="numeric">$0.72</td>#}
+{#                                  <td class="numeric">8,602,291</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>AGG</td>#}
+{#                                  <td>ANGLOGOLD ASHANTI LIMITED</td>#}
+{#                                  <td class="numeric">$7.81</td>#}
+{#                                  <td class="numeric">-0.22</td>#}
+{#                                  <td class="numeric">-2.74%</td>#}
+{#                                  <td class="numeric">$7.82</td>#}
+{#                                  <td class="numeric">$7.82</td>#}
+{#                                  <td class="numeric">$7.81</td>#}
+{#                                  <td class="numeric">148</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>AGK</td>#}
+{#                                  <td>AGL ENERGY LIMITED</td>#}
+{#                                  <td class="numeric">$13.82</td>#}
+{#                                  <td class="numeric"> +0.02</td>#}
+{#                                  <td class="numeric">0.14%</td>#}
+{#                                  <td class="numeric">$13.83</td>#}
+{#                                  <td class="numeric">$13.83</td>#}
+{#                                  <td class="numeric">$13.67</td>#}
+{#                                  <td class="numeric">846,403</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                  <td>AGO</td>#}
+{#                                  <td>ATLAS IRON LIMITED</td>#}
+{#                                  <td class="numeric">$3.17</td>#}
+{#                                  <td class="numeric">-0.02</td>#}
+{#                                  <td class="numeric">-0.47%</td>#}
+{#                                  <td class="numeric">$3.11</td>#}
+{#                                  <td class="numeric">$3.22</td>#}
+{#                                  <td class="numeric">$3.10</td>#}
+{#                                  <td class="numeric">5,416,303</td>#}
+{#                                </tr>#}
+{#                              </tbody>#}
+{#                            </table>#}
+{#                          </section>#}
+{#                        </div>#}
+{#                      </div>#}
+{#                      <!-- /col-lg-8 -->#}
+{#                    </div>#}
+{#                    <!-- /row -->#}
+{#                  </div>#}
 
                   <!-- /文件导入 -->
                   <div id="fileImport" class="tab-pane active">
@@ -341,8 +338,9 @@
 
                           <div class="form-group">
                             <div class="col-lg-offset-2 col-lg-10">
-                              <button class="btn btn-theme" type="button" onclick="viewData('#db_type', 'table_head_i', 'table_body_i')">查看数据</button>
-                              <button class="btn btn-theme" type="submit">数据导入</button>
+                                <h5> {{ message }} </h5>
+                                <button class="btn btn-theme" type="button" onclick="viewData()">查看数据</button>
+                                <button class="btn btn-theme" type="submit">数据导入</button>
                             </div>
                           </div>
                         </form>
@@ -353,140 +351,18 @@
                           <section id="table2">
                             <table class="table table-bordered table-striped table-condensed">
                               <thead id="table_head_i">
-                                <tr>
-                                  <th>Code</th>
-                                  <th>Company</th>
-                                  <th class="numeric">Price</th>
-                                  <th class="numeric">Change</th>
-                                  <th class="numeric">Change %</th>
-                                  <th class="numeric">Open</th>
-                                  <th class="numeric">High</th>
-                                  <th class="numeric">Low</th>
-                                  <th class="numeric">Volume</th>
+                                <tr class="info">
+                                  <th>id</th>
+                                  <th>学号</th>
+                                  <th class="numeric">进入时间</th>
                                 </tr>
                               </thead>
                               <tbody id="table_body_i">
-                                <tr>
-                                  <td>AAC</td>
-                                  <td>AUSTRALIAN AGRICULTURAL COMPANY LIMITED.</td>
-                                  <td class="numeric">$1.38</td>
-                                  <td class="numeric">-0.01</td>
-                                  <td class="numeric">-0.36%</td>
-                                  <td class="numeric">$1.39</td>
-                                  <td class="numeric">$1.39</td>
-                                  <td class="numeric">$1.38</td>
-                                  <td class="numeric">9,395</td>
-                                </tr>
-                                <tr>
-                                  <td>AAD</td>
-                                  <td>ARDENT LEISURE GROUP</td>
-                                  <td class="numeric">$1.15</td>
-                                  <td class="numeric"> +0.02</td>
-                                  <td class="numeric">1.32%</td>
-                                  <td class="numeric">$1.14</td>
-                                  <td class="numeric">$1.15</td>
-                                  <td class="numeric">$1.13</td>
-                                  <td class="numeric">56,431</td>
-                                </tr>
-                                <tr>
-                                  <td>AAX</td>
-                                  <td>AUSENCO LIMITED</td>
-                                  <td class="numeric">$4.00</td>
-                                  <td class="numeric">-0.04</td>
-                                  <td class="numeric">-0.99%</td>
-                                  <td class="numeric">$4.01</td>
-                                  <td class="numeric">$4.05</td>
-                                  <td class="numeric">$4.00</td>
-                                  <td class="numeric">90,641</td>
-                                </tr>
-                                <tr>
-                                  <td>ABC</td>
-                                  <td>ADELAIDE BRIGHTON LIMITED</td>
-                                  <td class="numeric">$3.00</td>
-                                  <td class="numeric"> +0.06</td>
-                                  <td class="numeric">2.04%</td>
-                                  <td class="numeric">$2.98</td>
-                                  <td class="numeric">$3.00</td>
-                                  <td class="numeric">$2.96</td>
-                                  <td class="numeric">862,518</td>
-                                </tr>
-                                <tr>
-                                  <td>ABP</td>
-                                  <td>ABACUS PROPERTY GROUP</td>
-                                  <td class="numeric">$1.91</td>
-                                  <td class="numeric">0.00</td>
-                                  <td class="numeric">0.00%</td>
-                                  <td class="numeric">$1.92</td>
-                                  <td class="numeric">$1.93</td>
-                                  <td class="numeric">$1.90</td>
-                                  <td class="numeric">595,701</td>
-                                </tr>
-                                <tr>
-                                  <td>ABY</td>
-                                  <td>ADITYA BIRLA MINERALS LIMITED</td>
-                                  <td class="numeric">$0.77</td>
-                                  <td class="numeric"> +0.02</td>
-                                  <td class="numeric">2.00%</td>
-                                  <td class="numeric">$0.76</td>
-                                  <td class="numeric">$0.77</td>
-                                  <td class="numeric">$0.76</td>
-                                  <td class="numeric">54,567</td>
-                                </tr>
-                                <tr>
-                                  <td>ACR</td>
-                                  <td>ACRUX LIMITED</td>
-                                  <td class="numeric">$3.71</td>
-                                  <td class="numeric"> +0.01</td>
-                                  <td class="numeric">0.14%</td>
-                                  <td class="numeric">$3.70</td>
-                                  <td class="numeric">$3.72</td>
-                                  <td class="numeric">$3.68</td>
-                                  <td class="numeric">191,373</td>
-                                </tr>
-                                <tr>
-                                  <td>ADU</td>
-                                  <td>ADAMUS RESOURCES LIMITED</td>
-                                  <td class="numeric">$0.72</td>
-                                  <td class="numeric">0.00</td>
-                                  <td class="numeric">0.00%</td>
-                                  <td class="numeric">$0.73</td>
-                                  <td class="numeric">$0.74</td>
-                                  <td class="numeric">$0.72</td>
-                                  <td class="numeric">8,602,291</td>
-                                </tr>
-                                <tr>
-                                  <td>AGG</td>
-                                  <td>ANGLOGOLD ASHANTI LIMITED</td>
-                                  <td class="numeric">$7.81</td>
-                                  <td class="numeric">-0.22</td>
-                                  <td class="numeric">-2.74%</td>
-                                  <td class="numeric">$7.82</td>
-                                  <td class="numeric">$7.82</td>
-                                  <td class="numeric">$7.81</td>
-                                  <td class="numeric">148</td>
-                                </tr>
-                                <tr>
-                                  <td>AGK</td>
-                                  <td>AGL ENERGY LIMITED</td>
-                                  <td class="numeric">$13.82</td>
-                                  <td class="numeric"> +0.02</td>
-                                  <td class="numeric">0.14%</td>
-                                  <td class="numeric">$13.83</td>
-                                  <td class="numeric">$13.83</td>
-                                  <td class="numeric">$13.67</td>
-                                  <td class="numeric">846,403</td>
-                                </tr>
-                                <tr>
-                                  <td>AGO</td>
-                                  <td>ATLAS IRON LIMITED</td>
-                                  <td class="numeric">$3.17</td>
-                                  <td class="numeric">-0.02</td>
-                                  <td class="numeric">-0.47%</td>
-                                  <td class="numeric">$3.11</td>
-                                  <td class="numeric">$3.22</td>
-                                  <td class="numeric">$3.10</td>
-                                  <td class="numeric">5,416,303</td>
-                                </tr>
+{#                                <tr>#}
+{#                                  <td>AAC</td>#}
+{#                                  <td class="numeric">$1.38</td>#}
+{#                                  <td class="numeric">-0.01</td>#}
+{#                                </tr>#}
                               </tbody>
                             </table>
                           </section>
@@ -769,40 +645,21 @@
     //   $('#submit').click();
     //   viewData();
     // })
-    function viewData(dbID, headID, bodyID){
-      var db_type = $(dbID).val();
+    function viewData(){
+      var db_type = "图书馆借阅记录";
       $.ajax({
         url: '/web/View/',
         type: 'POST',
         data: {'db': db_type},
         datatype: 'json',
         clearForm: false,
-        success: function(ret){
-          $('#'+headID).empty();
-          $('#'+bodyID).empty();
-          var head= document.getElementById(headID);
-          var body = document.getElementById(bodyID);
-          alert(db_type);
-          if(db_type == '图书馆借阅记录'){
-            htemp = "<tr>" + "<td>" + "学号" + "</td>"
-                + "<td>" + "图书编号" + "</td>"
-                + "<td>" + "时间" + "</td>"
-                + "<td>" + "操作编号" + "</td>"
-                + "<td>" + "学生类型" + "</td>"
-                + "<td>" + "部门" + "</td>" + "</tr>";
-            head.innerHTML = htemp;
-            btemp = ""
-            for(var i=0; i<20; i++){
-              var l = ret.lines[i];
-              btemp += "<tr>" + "<td>" + l.StuID + "</td>"
-                + "<td>" + l['BookID'] + "</td>"
-                + "<td>" + l['Date'] + "</td>"
-                + "<td>" + l['OperType'] + "</td>"
-                + "<td>" + l['StuType'] + "</td>"
-                + "<td>" + l['Department'] + "</td>" + "</tr>"
+        success: function(result){
+            var value = result;
+            for (var i = 0; i < value.length; i++) {
+                $('#table_body_i').append($('<tr>\n' + '<td>' + (i+1) +
+                '</td>\n' + '<td>' + value[i]['StuID'] + '</td>\n' +
+                '<td>' + value[i]['DateTime'] + '</td>\n' + '</tr>\n'))
             }
-            body.innerHTML = btemp;
-          }
         }
       });
     }

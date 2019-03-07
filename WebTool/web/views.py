@@ -574,10 +574,13 @@ def CheckData(request):
             except Exception as e:
                 message = '文件读取出现错误'
         else:
-            message = '请上传excel文件！'
+            for line in f:
+                info_list = line.decode().split(',')
+                print(info_list)
+                Lib.objects.get_or_create(StuID=info_list[1], Gate=info_list[2], DateTime=info_list[3])
         # ret = {'message': message, 'data': return_data, 'data_type': db_type}
         # return HttpResponse(json.dumps(ret), content_type='application/json')
-        return render(request, "servermaterial/data_import_export.html", {'message': message, 'data': return_data, 'data_type': db_type})
+        return render(request, "servermaterial/data_import_export.html", context = {'message': '上传成功'})
 
 def download(request):
     if request.method == 'POST':
@@ -606,13 +609,12 @@ def download(request):
             return response
 
 def View(request):
-    if request.method == "POST":
-        db_type = request.POST['db']
-        if db_type == "图书馆借阅记录":
-            contents = models.Book.objects.all()
-            lines = [c.as_dict() for c in contents]
-            # ret = {'lines': lines}
-            return HttpResponse(json.dumps({'lines':lines}), content_type='application/json')
+    db_type = request.POST['db']
+    if db_type == "图书馆借阅记录":
+        contents = Lib.objects.all()
+        lines = [c.as_dict() for c in contents]
+        # ret = {'lines': lines}
+        return HttpResponse(json.dumps(lines), content_type='application/json')
 
 
 def query_majors(request):
