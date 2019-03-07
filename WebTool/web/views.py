@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import HttpResponse
 from django.shortcuts import render
 from web import models
+from django.contrib.auth.decorators import login_required
 from web.models import *
 import json
 import time
@@ -17,9 +18,11 @@ from django.db import connection
 from .recommend_util import *
 
 # Create your views here.
+@login_required
 def home(request):
     return render_to_response('servermaterial/home.html')
 
+@login_required
 def monitor_all(request):
     return render_to_response('servermaterial/monitor_all.html')
 
@@ -43,10 +46,12 @@ def login(request):
         passwd = request.POST['id_password']
         message = '所有字段都必须填写！'
         if username and passwd:
-            if models.Register.objects.filter(UserName=username):
-                db_password = models.Register.objects.filter(UserName=username).values()[0]['Password']
+            if Register.objects.filter(UserName=username):
+                record = Register.objects.filter(UserName=username).values()[0]
+                db_password = record['Password']
                 if passwd == db_password:
-                    return render_to_response('servermaterial/index.html')
+                    request.session['userName'] = record['Name']
+                    return render(request, 'servermaterial/home.html')
                 else:
                     message = '密码错误！'
             else:
