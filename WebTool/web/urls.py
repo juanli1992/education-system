@@ -31,5 +31,6 @@ urlpatterns = [
     path('query_class', query_class),
     path('recommend', recommend),
     path('hot_book', get_hot_book_list),
+    path('index/', index),
     path('tt', tt)
 ]

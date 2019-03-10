@@ -70,7 +70,7 @@ def login(request):
                 db_password = record['Password']
                 if passwd == db_password:
                     request.session['userName'] = record['Name']
-                    return render(request, 'servermaterial/home.html')
+                    return render(request, 'servermaterial/index_main.html')
                 else:
                     message = '密码错误！'
             else:
@@ -749,7 +749,13 @@ def tt(request):
 
 
 
-
+def index(request):
+    """
+    index页面
+    :param request:
+    :return:
+    """
+    return render(request, "servermaterial/index_main.html")
 
 
 def tst(request):
