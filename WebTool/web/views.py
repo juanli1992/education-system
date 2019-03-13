@@ -61,7 +61,7 @@ def login(request):
     if request.method == 'POST':
         if 'turn2register' in request.POST:
             return render(request, 'servermaterial/register.html')
-        username = request.POST['id_username'].strip()
+        username = request.POST['id_username']
         passwd = request.POST['id_password']
         message = '所有字段都必须填写！'
         if username and passwd:
@@ -70,12 +70,14 @@ def login(request):
                 db_password = record['Password']
                 if passwd == db_password:
                     request.session['userName'] = record['Name']
-                    return render(request, 'servermaterial/index_main.html')
+                    return JsonResponse({'info': 'success', 'userName': record['Name']})
                 else:
                     message = '密码错误！'
             else:
                 message = '用户名不存在！'
-        return render(request, 'servermaterial/login.html', {'error_info': message})
+        # return render(request, 'servermaterial/login.html', {'error_info': message})
+        return JsonResponse({'info': message})
+
     return render(request, 'servermaterial/login.html')
 
 def reset(request):
@@ -112,10 +114,7 @@ def register(request):
         password = request.POST['password']
         password_confirm = request.POST['repassword']
         job = request.POST['job']
-        department = request.POST['department']
-        school = request.POST['school']
-        major = request.POST['major']
-        grade = request.POST['grade']
+        department = request.POST['manageScope']
         email = request.POST['email']
         t = time.localtime()
         message = '所有字段都必须填写！'

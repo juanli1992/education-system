@@ -109,9 +109,6 @@
 {% include 'servermaterial/sidebar.html' %}
 <!--sidebar end-->
 
-<!-- **********************************************************************************************************************************************************
-MAIN CONTENT
-*********************************************************************************************************************************************************** -->
 <!--main content start-->
 <section id="main-content">
     <section class="wrapper site-min-height">
@@ -139,8 +136,25 @@ MAIN CONTENT
                                                    style="font-size: 17px"><strong>学院选择</strong></label>
                                             <div class="col-lg-8">
                                                 <select class="form-control" id="query_option">
-                                                    <option value="class">全校学生</option>
-                                                    <option value="student">电子信息与电气工程学院</option>
+                                                    <option value="all">全校学生</option>
+                                                    <option>电子信息与电气工程学院</option>
+                                                    <option>农业与生物学院</option>
+                                                    <option>船舶海洋与建筑工程学院</option>
+                                                    <option>安泰经济与管理学院</option>
+                                                    <option>材料科学与工程学院</option>
+                                                    <option>密西根学院</option>
+                                                    <option>机械与动力工程学院</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label class="col-lg-4 control-label text-info"
+                                                   style="font-size: 17px"><strong>榜单范围</strong></label>
+                                            <div class="col-lg-8">
+                                                <select class="form-control" id="query_option">
+                                                    <option>top20</option>
+                                                    <option>top30</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -149,15 +163,17 @@ MAIN CONTENT
 
                                 {#                                <h4 id="query_hint">热门书籍top20</h4>#}
                                 <div class="row mt">
-                                        <div id="hotBookChart"class="center-block" style="width: 550px;height:400px;"></div>
+                                    <div id="hotBookChart" class="center-block"
+                                         style="width: 550px;height:400px;"></div>
                                 </div>
                                 <div class="row">
                                     <div class="center-block">
-                                        <div class="bdsharebuttonbox center-block"><a href="#" class="bds_weixin" data-cmd="weixin"
-                                                                         title="分享到微信">微信</a><a href="#"
-                                                                                                class="bds_qzone"
-                                                                                                data-cmd="qzone"
-                                                                                                title="分享到QQ空间">QQ空间</a><a
+                                        <div class="bdsharebuttonbox center-block"><a href="#" class="bds_weixin"
+                                                                                      data-cmd="weixin"
+                                                                                      title="分享到微信">微信</a><a href="#"
+                                                                                                             class="bds_qzone"
+                                                                                                             data-cmd="qzone"
+                                                                                                             title="分享到QQ空间">QQ空间</a><a
                                                 href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博">新浪微博</a><a
                                                 href="#"
                                                 class="bds_more"
@@ -186,40 +202,65 @@ MAIN CONTENT
                             </div>
                         </div>
                         <div class="tab-pane" id="personalize">
-                            <div class="col-lg-12 mt">
-                                <div class="row content-panel">
-                                    <h4>个性化书籍推荐意见</h4>
-                                    <div class="col-lg-12 detailed">
+                            <div class="col-lg-12 detailed">
+                                <div class="col-lg-12 detailed">
 
-                                        <h4>个性化书籍推荐意见</h4>
-                                        <ul class="list-group" name="recommenList">
-                                            {% for book in book_list %}
-                                                <li class="list-group-item"><<{{ book }}>></li>
-                                            {% endfor %}
-                                        </ul>
-                                        <table class="table table-bordered table-striped table-hover">
-                                            <thead>
-                                            <tr class="info">
-                                                <th>学号</th>
-                                                <th>推荐1</th>
-                                                <th>推荐2</th>
-                                                <th>推荐3</th>
-                                                <th>推荐4</th>
-                                                <th>推荐5</th>
-                                            </tr>
-                                            {% for k,v in recommend_dict.items %}
-                                                <tr>
-                                                    <td> {{ k }} </td>
-                                                    {% for book in v %}
-                                                        <td> {{ book }}</td>
-                                                    {% endfor %}
-                                                </tr>
-                                            {% endfor %}
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <form role="form" class="form-horizontal">
+                                        <div class="form-group col-lg-12">
+                                            <label class="col-lg-12 control-label text-info"
+                                                   style="font-size: 17px"><strong>推荐后端设置</strong></label>
+                                        </div>
+                                        <form role="form" class="form-horizontal">
+                                            <div class="cls form-group col-lg-4">
+                                                <label class="col-lg-4 control-label">推荐频率</label>
+                                                <div class="col-lg-8">
+                                                    <select class="form-control" id="school">
+                                                        <option>每周一次</option>
+                                                        <option>每月一次</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="cls form-group col-lg-4">
+                                                <label class="col-lg-4 control-label">推荐方式</label>
+                                                <div class="col-lg-8">
+                                                    <select class="form-control" id="major">
+                                                        <option>短信通知</option>
+                                                        <option>邮箱通知</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label class="col-lg-12 control-label text-info"
+                                                       style="font-size: 17px"><strong>推荐后端设置</strong></label>
+                                            </div>
+                                        </form>
+                                        {#                                        <ul class="list-group" name="recommenList">#}
+                                        {#                                            {% for book in book_list %}#}
+                                        {#                                                <li class="list-group-item"><<{{ book }}>></li>#}
+                                        {#                                            {% endfor %}#}
+                                        {#                                        </ul>#}
+                                        {#                                        <table class="table table-bordered table-striped table-hover">#}
+                                        {#                                            <thead>#}
+                                        {#                                            <tr class="info">#}
+                                        {#                                                <th>学号</th>#}
+                                        {#                                                <th>推荐1</th>#}
+                                        {#                                                <th>推荐2</th>#}
+                                        {#                                                <th>推荐3</th>#}
+                                        {#                                                <th>推荐4</th>#}
+                                        {#                                                <th>推荐5</th>#}
+                                        {#                                            </tr>#}
+                                        {#                                            {% for k,v in recommend_dict.items %}#}
+                                        {#                                                <tr>#}
+                                        {#                                                    <td> {{ k }} </td>#}
+                                        {#                                                    {% for book in v %}#}
+                                        {#                                                        <td> {{ book }}</td>#}
+                                        {#                                                    {% endfor %}#}
+                                        {#                                                </tr>#}
+                                        {#                                            {% endfor %}#}
+                                        {#                                            </thead>#}
+                                        {#                                            <tbody>#}
+                                        {#                                            </tbody>#}
+                                        {#                                        </table>#}
                                 </div>
                             </div>
                         </div>
