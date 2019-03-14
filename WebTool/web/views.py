@@ -233,7 +233,7 @@ def base(request):
     return render(request, 'servermaterial/base.html')
 
 def supervision(request):
-    return render(request, 'servermaterial/supervision.html')
+    return render(request, 'servermaterial/supervision_new.html')
 
 def result(request):
     print('here')
