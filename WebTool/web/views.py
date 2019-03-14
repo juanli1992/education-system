@@ -492,6 +492,8 @@ def queryY(request):
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
+def monitor(request):
+    return render(request, 'servermaterial/monitor.html')
 
 def data_import_export(request):
     return render(request, 'servermaterial/data_import_export.html')

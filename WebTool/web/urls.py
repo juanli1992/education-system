@@ -32,5 +32,6 @@ urlpatterns = [
     path('recommend', recommend),
     path('hot_book', get_hot_book_list),
     path('index/', index),
-    path('tt', tt)
+    path('tt', tt),
+    path('monitor/', monitor),
 ]
