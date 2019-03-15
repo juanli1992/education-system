@@ -495,6 +495,18 @@ def queryY(request):
 def monitor(request):
     return render(request, 'servermaterial/monitor.html')
 
+def list1(request):
+    return render(request, 'servermaterial/list1.html')
+
+def list2(request):
+    return render(request, 'servermaterial/list2.html')
+
+def list3(request):
+    return render(request, 'servermaterial/list3.html')
+
+def list4(request):
+    return render(request, 'servermaterial/list4.html')
+
 def data_import_export(request):
     return render(request, 'servermaterial/data_import_export.html')
 
