@@ -34,4 +34,8 @@ urlpatterns = [
     path('index/', index),
     path('tt', tt),
     path('monitor/', monitor),
+    path('list1/', list1),
+    path('list2/', list2),
+    path('list3/', list3),
+    path('list4/', list4),
 ]

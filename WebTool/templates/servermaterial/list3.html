@@ -56,46 +56,43 @@
         <div class="col-lg-12 mt">
           <div class="row content-panel">
             <div class="col-lg-12 detailed mt">
-              <h4>监测</h4>
+              <h4>有挂科情况学生名单</h4>
               <div>
+                   <div class="row">
 
-                  <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
-                      <div id="chart-1" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list1">查看需要关注学生名单</a>
+
+
+                      <div class="col-md-6 col-md-offset-1" id="chart-3" style="width: 450px;height:400px;"></div>
+
+
+                    <div class="col-md-6">
+                     <table class="table table-striped table-bordered table-hover table-checkable order-column" id="table3">
+                          <thead>
+                              <tr>
+                                  <th>学号 </th>
+                                  <th>学院</th>
+                                  <th>专业</th>
+                                  <th>班级</th>
+
+                              </tr>
+                          </thead>
+                          <tbody>
+
+                          </tbody>
+                      </table>
+                        </div>
+
+
                     </div>
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
-                      <div id="chart-2" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list2">查看需要关注学生名单</a>
-                    </div>
-                  </div>
+
+
 
 
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-12 detailed">
-          <div class="row content-panel">
-            <h4>预警</h4>
 
-                  <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
-                      <div id="chart-3" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list3">查看需要关注学生名单</a>
-                    </div>
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
-                      <div id="chart-4" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list4">查看需要关注学生名单</a>
-                    </div>
-                  </div>
-
-
-
-          </div>
-          <!-- /row content-panel -->
-        </div>
-        <!-- /col-lg-12 -->
       </section>
       <!-- /wrapper -->
     </section>
@@ -137,158 +134,7 @@
     <script src="/templates/servermaterial/js/echarts-wordcloud.min.js"></script>
 
 
-    <!--监测-->
     <script>
-var myChart1 = echarts.init(document.getElementById('chart-1'));
-option = {
-    <!--backgroundColor: '#2c343c',-->
-
-    title: {
-        text: '生活规律与否比例',
-        left: 'center',
-        top: 20,
-        textStyle: {
-            color: 'black'
-        }
-    },
-
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
-
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
-    series : [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius : '55%',
-            center: ['50%', '50%'],
-            data:[
-                {value:335, name:'不规律'},
-                {value:900, name:'规律'}
-            ].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
-            label: {
-                normal: {
-                    textStyle: {
-                        color: 'black'
-                    }
-                }
-            },
-            labelLine: {
-                normal: {
-                    lineStyle: {
-                        color: 'black'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
-
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-                return Math.random() * 200;
-            }
-        }
-    ]
-};;
-myChart1.setOption(option);
-
-
-
-var myChart2 = echarts.init(document.getElementById('chart-2'));
-option = {
-
-    title: {
-        text: '健康状况比例',
-        left: 'center',
-        top: 20,
-        textStyle: {
-            color: 'black'
-        }
-    },
-
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
-
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
-    series : [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius : '55%',
-            center: ['50%', '50%'],
-            data:[
-                {value:335, name:'不健康'},
-                {value:900, name:'健康'}
-            ].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
-            label: {
-                normal: {
-                    textStyle: {
-                        color: 'black'
-                    }
-                }
-            },
-            labelLine: {
-                normal: {
-                    lineStyle: {
-                        color: 'black'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
-
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-                return Math.random() * 200;
-            }
-        }
-    ]
-};;
-myChart2.setOption(option);
-
-    </script>
-
-    <!--预警-->
-    <script>
-
 var myChart3 = echarts.init(document.getElementById('chart-3'));
 option = {
 
@@ -363,81 +209,15 @@ option = {
 myChart3.setOption(option);
 
 
+    </script>
 
-var myChart4 = echarts.init(document.getElementById('chart-4'));
-option = {
+    <script>
 
-    title: {
-        text: '有劝退风险与否比例',
-        left: 'center',
-        top: 20,
-        textStyle: {
-            color: 'black'
-        }
-    },
 
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
 
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
-    series : [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius : '55%',
-            center: ['50%', '50%'],
-            data:[
-                {value:335, name:'有劝退风险'},
-                {value:900, name:'无劝退风险'}
-            ].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
-            label: {
-                normal: {
-                    textStyle: {
-                        color: 'black'
-                    }
-                }
-            },
-            labelLine: {
-                normal: {
-                    lineStyle: {
-                        color: 'black'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
-
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-                return Math.random() * 200;
-            }
-        }
-    ]
-};;
-myChart4.setOption(option);
 
 
     </script>
-
 
 
 
