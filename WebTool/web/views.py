@@ -491,11 +491,124 @@ def queryY(request):
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
+dormlist = []
+no1 = yes1 = 0
 def monitor(request):
-    return render(request, 'servermaterial/monitor.html')
+    """
+    需要学院和班级信息
+    """
+    #School
+    School = '电子信息与电气工程学院'
+    #
+    classNo = ['1','2']
+
+
+    pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
+    print(pastTime)
+    Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
+                                                                                                     '%Y-%m-%d')).days + 1  ###代替126
+
+
+
+    ###查出所有学生
+    stus = []
+    for ite in classNo:
+        with connection.cursor() as cursor:
+            # 执行sql语句
+            cursor.execute("SELECT StuID FROM web_basic WHERE School = %s and ClassNo = %s", [School, ite])
+            # 查出所有数据
+            re = cursor.fetchall()
+            for row in re:
+                stus.append(row[0])
+    print(stus)
+
+    ###访问dorm
+    global dormlist
+    dormlist = []
+    for stuid in stus:
+        dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        if len(dtlist) != 0:
+            nlist = np.zeros(Tdelta)
+            for item in dtlist:
+                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                              '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                          '%Y-%m-%d %H:%M:%S'):
+                    delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                    nlist[delta] += 1
+            # print(nlist)
+            nlist = list(nlist)
+            dormc = Tdelta-nlist.count(0)
+            freq4dorm = dormc/float(Tdelta) ###回寝室不规律
+            if freq4dorm<0.7:
+                dormlist.append(stuid)
+    # rat = len(dormlist)/float(len(stus))
+    # print('比例1')
+    # print(rat)
+    # print(dormlist)
+
+    ###食堂等
+    consulist = []
+    for stuid in stus:
+        dtlist = list(Card.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        costlist = list(Card.objects.filter(StuID=stuid).values_list('Cost', flat=True))
+        if len(dtlist) != 0:
+            nlist = np.zeros(Tdelta)
+            for item in range(len(dtlist)):
+                nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
+                if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                              '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                          '%Y-%m-%d %H:%M:%S'):
+                    delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                    if float(costlist[item]) < 0:
+                        nlist[delta] += float(costlist[item])
+            # print(nlist)
+            nlist = list(nlist)
+            consuc = Tdelta - nlist.count(0)
+            freq4consu = consuc / float(Tdelta)  ###吃饭不规律
+            if freq4consu < 0.7:
+                consulist.append(stuid)
+    # rat = len(consulist) / float(len(stus))
+    # print('比例2')
+    # print(rat)
+    # print(consulist)
+
+    ###合并
+    dormlist.extend(consulist)
+    dormlist = list(set(dormlist))
+    # rat = len(dormlist)/float(len(stus))
+
+    # print('比例')
+    # print(rat)
+    # print(dormlist)
+    global no1
+    no1 = len(dormlist)
+    no1d = {'value':no1, 'name': '不规律'}
+    global yes1
+    yes1 = len(stus)-no1
+    yes1d = {'value':yes1, 'name': '规律'}
+    cha1 = [no1d,yes1d]
+    retu = {'cha1':cha1}
+
+    print(retu)
+    return render(request, 'servermaterial/monitor.html', {'retu':json.dumps(retu)})
 
 def list1(request):
-    return render(request, 'servermaterial/list1.html')
+    global dormlist
+    global no1
+    global yes1
+    no1d = {'value': no1, 'name': '不规律'}
+    yes1d = {'value': yes1, 'name': '规律'}
+    cha1 = [no1d, yes1d]
+    retu = {'cha1': cha1}
+
+
+    ###表格
+    for stuid in dormlist:
+        objs4 = Basic.objects.filter(StuID=stuid)
+
+
+    return render(request, 'servermaterial/list1.html', {'retu':json.dumps(retu)})
 
 def list2(request):
     return render(request, 'servermaterial/list2.html')
@@ -783,6 +896,19 @@ def tst(request):
     model.load_weights('./web/lstmfc/model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
     print('load weights...')
     reeee = model.predict(x_test)
+    reeee = np.reshape(reeee,(len(stulist),))
     print(reeee)
-    print(reeee.shape)
+    print(reeee.shape)#（200,1）-->(200,)
+
+    PredScore.objects.all().delete()
+    #print('deeeeeeeeeeeeeeeeel')
+    addlist = []
+    for i in range(len(stulist)):
+        obj = PredScore(
+            StuID = stulist[i],
+            Score = reeee[i]
+        )
+        addlist.append(obj)
+    PredScore.objects.bulk_create(addlist)
+    #print('inssssssssssssssssssssss')
 
