@@ -69,6 +69,7 @@ def login(request):
                 record = Register.objects.filter(UserName=username).values()[0]
                 db_password = record['Password']
                 if passwd == db_password:
+                    request.session['state'] = True
                     request.session['userName'] = record['Name']
                     return JsonResponse({'info': 'success', 'userName': record['Name']})
                 else:
@@ -77,7 +78,8 @@ def login(request):
                 message = '用户名不存在！'
         # return render(request, 'servermaterial/login.html', {'error_info': message})
         return JsonResponse({'info': message})
-
+    else:
+        request.session.clear()
     return render(request, 'servermaterial/login.html')
 
 def reset(request):
@@ -111,35 +113,40 @@ def register(request):
     if request.method == 'POST':
         username = request.POST['username']
         name = request.POST['name']
-        password = request.POST['password']
+        password = request.POST['rpassword']
         password_confirm = request.POST['repassword']
         job = request.POST['job']
-        department = request.POST['manageScope']
+        school = request.POST['school']
         email = request.POST['email']
         t = time.localtime()
         message = '所有字段都必须填写！'
         date = time.strftime("%b %d %Y %H:%M:%S", t)
-        if not (username and name and password and password_confirm and job and department and school and major and grade and email):
-            return render(request, 'servermaterial/register.html', {'message': message})
-        if models.Register.objects.filter(UserName=username):
+        if not (username and name and password and password_confirm and job and school and email):
+            return JsonResponse({'message': message})
+        if Register.objects.filter(UserName=username):
             message = '该用户已存在'
-            return render(request, 'servermaterial/register.html', {'message': message})
+            return JsonResponse({'message': message})
+        if Register.objects.filter(Email=email):
+            message = '该邮箱已存在'
+            return JsonResponse({'message': message})
         if len(password)<6:
             message = '密码长度太短，请输入6-20位密码'
-            return render(request, 'servermaterial/register.html', {'message': message})
+            return JsonResponse({'message': message})
         if password != password_confirm:
             message = '两次输入的密码不同，请再次确认'
-            return render(request, 'servermaterial/register.html', {'message': message})
+            return JsonResponse({'message': message})
         else:
-            if department == '校级部门':
-                authority = 'VIP用户'
-            elif department == '院级部门':
-                authority = '高级用户'
-            else:
-                authority = '普通用户'
-            models.Register.objects.create(UserName=username, Name=name, Password=password, Job=job,
-                                           Department=department, School=school, Major=major, Grade=grade, Reg=0,
-                                           Login=date, Authority=authority, Email=email)
+            # if department == '校级部门':
+            #     authority = 'VIP用户'
+            # elif department == '院级部门':
+            #     authority = '高级用户'
+            # else:
+            #     authority = '普通用户'
+            Register.objects.create(UserName=username, Name=name, Password=password, Job=job,
+                                           Department="校级部门", School=school, Major="all", Grade="b1", Reg=0,
+                                           Login=date, Authority="tt", Email=email)
+            return JsonResponse({'message': 'success'})
+
     return render(request, 'servermaterial/login.html', {'message': '新用户创建成功'})
 
 def inquiry(request):
@@ -797,6 +804,7 @@ def get_hot_book_list(request):
         book = {'name': topk_name_list[i], 'value': topk_count_list[i]}
         data.append(book)
     return JsonResponse(data=data, safe=False)
+
 
 def recommend(request):
     """
