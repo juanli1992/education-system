@@ -88,7 +88,98 @@
 
             });
 
-        });
+            $("#id_query").click(function () {
+                idr = $("#stuNo").val();
+                $.ajax({
+                    url: "/web/recommend",
+                    type: "POST",
+                    dataType: "json",
+                    data: {'idr': idr},
+                    success: function (result) {
+                        // 查询到对应该学生的干预意见，展示在表格上
+                        var newTableNode = $("<tr>\n" + "<td>" + result[0] + "</td>\n" + "<td>" + result[1]
+                            + "</td>\n" + "<td>" + result[2] + "</td>\n" + "<td>" + result[3] + "</td>\n"
+                            + "<td>" + result[4] + "</td>\n" + "</tr>");
+                        $("tbody").children().remove();
+                        $("tbody").append(newTableNode);
+                        $("table").show();
+                        $("#man_set").show();
+                    }
+                })
+            });
+
+            $("#set").click(function () {
+                if ($(this).val() == "set") {
+                    $("#rrate").attr("disabled", false);
+                    $("#rway").attr("disabled", false);
+                    $(this).val("save");
+                    document.getElementById("set").innerText = "保存";
+                } else {
+                    $("#rrate").attr("disabled", true);
+                    $("#rway").attr("disabled", true);
+                    $(this).val("set");
+                    document.getElementById("set").innerText = "设置";
+                }
+            });
+
+            $("#query_option2").change(function () {
+                var k = $(this).val();
+
+                $.ajax({
+                    url: '/web/hot_book',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {'k': k},
+                    success: function (result) {
+                        var chart = echarts.init(document.getElementById('hotBookChart'));
+                        option = {
+                            title: {
+                                text: '',
+                            },
+                            tooltip: {
+                                show: true
+                            },
+
+                            series: [{
+                                type: 'wordCloud',
+                                textRotation: [0, 0, 0, 0],
+                                sizeRange: [12, 60],
+                                textPadding: 0,
+                                autoSize: {
+                                    enable: true,
+                                    minSize: 14
+                                },
+                                textStyle: {
+                                    normal: {
+                                        fontFamily: 'sans-serif',
+                                        fontWeight: 'bold',
+                                        // Color can be a callback function or a color string
+                                        color: function () {
+                                            // Random color
+                                            return 'rgb(' + [
+                                                Math.round(Math.random() * 160),
+                                                Math.round(Math.random() * 160),
+                                                Math.round(Math.random() * 160)
+                                            ].join(',') + ')';
+                                        }
+                                    },
+                                    emphasis: {
+                                        shadowBlur: 10,
+                                        shadowColor: '#333'
+                                    }
+                                },
+                                data: result
+                            }]
+                        };
+                        chart.setOption(option);
+                    }
+
+                });
+            });
+
+
+        })
+        ;
     </script>
     <!-- =======================================================
         Template Name: Dashio
@@ -123,6 +214,9 @@
                         <li>
                             <a data-toggle="tab" href="#personalize">个性化推荐</a>
                         </li>
+                        <li>
+                            <a data-toggle="tab" href="#personalize">优秀学生共性分析</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="panel-body">
@@ -152,20 +246,16 @@
                                             <label class="col-lg-4 control-label text-info"
                                                    style="font-size: 17px"><strong>榜单范围</strong></label>
                                             <div class="col-lg-8">
-                                                <select class="form-control" id="query_option">
-                                                    <option>top20</option>
-                                                    <option>top30</option>
+                                                <select class="form-control" id="query_option2">
+                                                    <option value="20">top20</option>
+                                                    <option value="30">top30</option>
+                                                    <option value="40">top40</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
 
-                                {#                                <h4 id="query_hint">热门书籍top20</h4>#}
-                                <div class="row mt">
-                                    <div id="hotBookChart" class="center-block"
-                                         style="width: 550px;height:400px;"></div>
-                                </div>
                                 <div class="row">
                                     <div class="center-block">
                                         <div class="bdsharebuttonbox center-block"><a href="#" class="bds_weixin"
@@ -180,6 +270,10 @@
                                                 data-cmd="more">分享到：</a>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row mt">
+                                    <div id="hotBookChart" class="center-block"
+                                         style="width: 650px;height:500px;"></div>
                                 </div>
                                 <script>window._bd_share_config = {
                                     "common": {
@@ -209,29 +303,54 @@
                                         <div class="form-group col-lg-12">
                                             <label class="col-lg-12 control-label text-info"
                                                    style="font-size: 17px"><strong>推荐后端设置</strong></label>
+                                            <h5 class="page-header"
+                                                style="margin-top: 25px; margin-bottom: 5px; color: red"></h5>
                                         </div>
                                         <form role="form" class="form-horizontal">
                                             <div class="cls form-group col-lg-4">
                                                 <label class="col-lg-4 control-label">推荐频率</label>
                                                 <div class="col-lg-8">
-                                                    <select class="form-control" id="school">
+                                                    <select class="form-control" id="rrate" disabled>
+                                                        <option>每天一次</option>
+                                                        <option>每三天一次</option>
                                                         <option>每周一次</option>
                                                         <option>每月一次</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="cls form-group col-lg-4">
-                                                <label class="col-lg-4 control-label">推荐方式</label>
+                                                <label class="col-lg-4 control-label" disabled>推荐方式</label>
                                                 <div class="col-lg-8">
-                                                    <select class="form-control" id="major">
+                                                    <select class="form-control" id="rway" disabled>
+                                                        <option>BOTH</option>
                                                         <option>短信通知</option>
                                                         <option>邮箱通知</option>
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="form-group col-lg-offset-3">
+                                                <button class="btn btn-theme" id="set" type="button" value="set">设置
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <form role="form" class="form-horizontal">
                                             <div class="form-group col-lg-12">
                                                 <label class="col-lg-12 control-label text-info"
-                                                       style="font-size: 17px"><strong>推荐后端设置</strong></label>
+                                                       style="font-size: 17px"><strong>推荐后端查询</strong></label>
+                                                <h5 class="page-header"
+                                                    style="margin-top: 25px; margin-bottom: 5px; color: red"></h5>
+                                            </div>
+                                            <div class="form-group col-lg-4" id="stuNo_query" style="display:block">
+                                                <label class="col-lg-3 control-label">学号</label>
+                                                <div class="col-lg-8">
+                                                    <input type="text" id="stuNo" name="stuNo" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <center>
+                                                    <button type="button" class="btn btn-theme" id="id_query">查询
+                                                    </button>
+                                                </center>
                                             </div>
                                         </form>
                                         {#                                        <ul class="list-group" name="recommenList">#}
@@ -239,28 +358,35 @@
                                         {#                                                <li class="list-group-item"><<{{ book }}>></li>#}
                                         {#                                            {% endfor %}#}
                                         {#                                        </ul>#}
-                                        {#                                        <table class="table table-bordered table-striped table-hover">#}
-                                        {#                                            <thead>#}
-                                        {#                                            <tr class="info">#}
-                                        {#                                                <th>学号</th>#}
-                                        {#                                                <th>推荐1</th>#}
-                                        {#                                                <th>推荐2</th>#}
-                                        {#                                                <th>推荐3</th>#}
-                                        {#                                                <th>推荐4</th>#}
-                                        {#                                                <th>推荐5</th>#}
-                                        {#                                            </tr>#}
-                                        {#                                            {% for k,v in recommend_dict.items %}#}
-                                        {#                                                <tr>#}
-                                        {#                                                    <td> {{ k }} </td>#}
-                                        {#                                                    {% for book in v %}#}
-                                        {#                                                        <td> {{ book }}</td>#}
-                                        {#                                                    {% endfor %}#}
-                                        {#                                                </tr>#}
-                                        {#                                            {% endfor %}#}
-                                        {#                                            </thead>#}
-                                        {#                                            <tbody>#}
-                                        {#                                            </tbody>#}
-                                        {#                                        </table>#}
+                                        <table class="table table-bordered table-striped table-hover"
+                                               style="display: none;">
+                                            <thead>
+                                            <tr class="info">
+                                                {#                                                <th>学号</th>#}
+                                                <th>推荐1</th>
+                                                <th>推荐2</th>
+                                                <th>推荐3</th>
+                                                <th>推荐4</th>
+                                                <th>推荐5</th>
+                                            </tr>
+                                            <tr>
+                                                {#                                                    <td> {{ k }} </td>#}
+                                                {#                                                {% for book in v %}#}
+                                                {#                                                    <td> {{ book }}</td>#}
+                                                {#                                                {% endfor %}#}
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        <form class="form-horizontal">
+                                            <div class="form-group col-lg-12">
+                                                <center>
+                                                    <button type="button" class="btn btn-theme" id="man_set" style="display: none">手工配置
+                                                    </button>
+                                                </center>
+                                            </div>
+                                        </form>
                                 </div>
                             </div>
                         </div>

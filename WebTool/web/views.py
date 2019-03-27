@@ -1,7 +1,6 @@
 # Create your views here.
 from __future__ import unicode_literals
 
-
 from django.http import JsonResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import HttpResponse
@@ -41,21 +40,27 @@ from .recommend_util import *
 def home(request):
     return render(request, 'servermaterial/home.html')
 
+
 @login_required
 def monitor_all(request):
     return render(request, 'servermaterial/monitor_all.html')
 
+
 def study_well(request):
     return render(request, 'servermaterial/study_well.html')
+
 
 def study_poor(request):
     return render(request, 'servermaterial/study_poor.html')
 
+
 def admin(request):
     return render(request, 'servermaterial/admin_index.html')
 
+
 def first(request):
     return render(request, 'servermaterial/first.html')
+
 
 def login(request):
     if request.method == 'POST':
@@ -81,6 +86,7 @@ def login(request):
     else:
         request.session.clear()
     return render(request, 'servermaterial/login.html')
+
 
 def reset(request):
     if request.method == 'POST':
@@ -109,6 +115,7 @@ def reset(request):
         success = '修改成功！'
         return HttpResponse(json.dumps({'success': success}))
 
+
 def register(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -129,7 +136,7 @@ def register(request):
         if Register.objects.filter(Email=email):
             message = '该邮箱已存在'
             return JsonResponse({'message': message})
-        if len(password)<6:
+        if len(password) < 6:
             message = '密码长度太短，请输入6-20位密码'
             return JsonResponse({'message': message})
         if password != password_confirm:
@@ -143,77 +150,69 @@ def register(request):
             # else:
             #     authority = '普通用户'
             Register.objects.create(UserName=username, Name=name, Password=password, Job=job,
-                                           Department="校级部门", School=school, Major="all", Grade="b1", Reg=0,
-                                           Login=date, Authority="tt", Email=email)
+                                    Department="校级部门", School=school, Major="all", Grade="b1", Reg=0,
+                                    Login=date, Authority="tt", Email=email)
             return JsonResponse({'message': 'success'})
 
     return render(request, 'servermaterial/login.html', {'message': '新用户创建成功'})
 
+
 def inquiry(request):
     school = request.POST.get('school')
-    time='20161'
+    time = '20161'
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
 
-
-    #grades
-    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    cdfall=[]
+    # grades
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cdfall = []
     for i in x:
-        cdfall.append(sum(float(j)<i for j in score_all)/len(score_all) )
+        cdfall.append(sum(float(j) < i for j in score_all) / len(score_all))
 
-    x=[-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
-    pdfall=[]
-    i=1
-    while i<=11:
-        pdfall.append( sum( (x[i-1]+x[i])/2<float(j)<(x[i]+x[i+1])/2 for j in score_all)/len(score_all) )
-        i=i+1
+    x = [-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
+    pdfall = []
+    i = 1
+    while i <= 11:
+        pdfall.append(sum((x[i - 1] + x[i]) / 2 < float(j) < (x[i] + x[i + 1]) / 2 for j in score_all) / len(score_all))
+        i = i + 1
 
-    x=[0, 50, 60, 70, 80, 90, 100]
-    num=[]
-    i=1
-    while i<=6:
-        if i==6:
-            num.append( sum( x[i-1]<=float(j)<=x[i] for j in score_all) )
+    x = [0, 50, 60, 70, 80, 90, 100]
+    num = []
+    i = 1
+    while i <= 6:
+        if i == 6:
+            num.append(sum(x[i - 1] <= float(j) <= x[i] for j in score_all))
         else:
-            num.append( sum( x[i-1]<=float(j)<x[i] for j in score_all) )
-        i=i+1
+            num.append(sum(x[i - 1] <= float(j) < x[i] for j in score_all))
+        i = i + 1
 
-
-
-
-
-
-    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ratio': ratio}
+    ret = {'cdfall': cdfall, 'pdfall': pdfall, 'num': num, 'ratio': ratio}
     return HttpResponse(json.dumps(ret), content_type='application/json')
-
-
-
-
 
 
 def base(request):
     return render(request, 'servermaterial/base.html')
 
+
 def supervision(request):
     return render(request, 'servermaterial/supervision_new_2.html')
+
 
 def result(request):
     print('here')
     return render(request, 'servermaterial/result.html')
+
 
 ##查询
 def query(request):
     if request.method == 'POST':
         # 关键内容
         stuid = request.POST.get('stuid')
-        #print(stuid)
-        #没有判空   应该加一个判断，若学号不存在，返回什么
+        # print(stuid)
+        # 没有判空   应该加一个判断，若学号不存在，返回什么
         nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
         print(nowTime)
         pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
         print(pastTime)
-
-
 
         """
         table
@@ -233,73 +232,69 @@ def query(request):
             FinanceType = '无'
             if Finance.objects.filter(StuID=stuid):
                 FinanceType = Finance.objects.filter(StuID=stuid)[0].FinanceType
-            res4[0].update({'FinanceType':FinanceType})#res4就一个字典元素
+            res4[0].update({'FinanceType': FinanceType})  # res4就一个字典元素
 
         ##为了下面的画像
-        #print(res4)
+        # print(res4)
         str12 = ""
         str13 = ""
         str14 = ""
         str15 = ""
         str16 = ""
         str17 = ""
-        if res4.__len__()==1:
+        if res4.__len__() == 1:
             str12 = res4[0]["School"]
             str13 = res4[0]["Major"]
             str14 = res4[0]["classNo"] + "班"
             str15 = "来自" + res4[0]["Province"]
             str16 = res4[0]["Gender"]
-            if res4[0]["FinanceType"]!="无":
+            if res4[0]["FinanceType"] != "无":
                 str17 = res4[0]["FinanceType"]
-
-
 
         objs = Aid.objects.filter(StuID=stuid)
         res9 = [obj.as_dict() for obj in objs]
-
-
 
         """
         chart 都没判空
         """
         xx = list(Score.objects.filter(StuID=stuid).values_list('Semester', flat=True))
-        #print(xx)
-        dd=[]
+        # print(xx)
+        dd = []
         Grade = list(Score.objects.filter(StuID=stuid).values_list('Grade', flat=True))[0]
         str18 = str(int(Grade)) + "级"
         School = list(Score.objects.filter(StuID=stuid).values_list('School', flat=True))[0]
         for sem in xx:
             score = Score.objects.get(StuID=stuid, Semester=sem).AveScore
-            score_ = list(Score.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('AveScore', flat=True))
-            numm = sum(float(score)>=float(j) for j in score_)
-            dd.append(numm/len(score_))
-        #print(dd)
-        #ret1 = {'xx':xx, 'dd':dd}
-
+            score_ = list(
+                Score.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('AveScore', flat=True))
+            numm = sum(float(score) >= float(j) for j in score_)
+            dd.append(numm / len(score_))
+        # print(dd)
+        # ret1 = {'xx':xx, 'dd':dd}
 
         morallist = list(Moral.objects.filter(StuID=stuid).values_list('Semester', flat=True))
-        xx2 = sorted(set(morallist),key=morallist.index)
-        #print(xx2)
+        xx2 = sorted(set(morallist), key=morallist.index)
+        # print(xx2)
         dd2 = []
         for i in xx2:
             dd2.append(morallist.count(i))
-        #print(dd2)
+        # print(dd2)
 
-
-        xx3 = list(Health.objects.filter(StuID=stuid).values_list('Semester', flat=True)) #Grade and School donnot change
-        #print(xx3)
-        dd3=[]
+        xx3 = list(
+            Health.objects.filter(StuID=stuid).values_list('Semester', flat=True))  # Grade and School donnot change
+        # print(xx3)
+        dd3 = []
         for sem in xx3:
             score = Health.objects.get(StuID=stuid, Semester=sem).TotalScore
-            score_ = list(Health.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('TotalScore', flat=True))
-            numm = sum(float(score)>=float(j) for j in score_)
-            dd3.append(numm/len(score_))
-        #print(dd3)
-
+            score_ = list(
+                Health.objects.filter(Semester=sem, Grade=Grade, School=School).values_list('TotalScore', flat=True))
+            numm = sum(float(score) >= float(j) for j in score_)
+            dd3.append(numm / len(score_))
+        # print(dd3)
 
         ###访问lib
         dd5 = []
-        ccc = 0 #为了画像
+        ccc = 0  # 为了画像
         dtlist = list(Lib.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
         Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
                                                                                                          '%Y-%m-%d')).days + 1  ###代替126
@@ -308,17 +303,18 @@ def query(request):
             for item in dtlist:
                 nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
                 # if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
-                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <=  datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S'):
+                if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                              '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                          '%Y-%m-%d %H:%M:%S'):
                     delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
                     nlist[delta] += 1
-            #print(nlist)
+            # print(nlist)
             for i in range(Tdelta):
-                dd5.append([i+1,nlist[i]])
-            #print(dd5)
+                dd5.append([i + 1, nlist[i]])
+            # print(dd5)
             nlist = list(nlist)
-            ccc = Tdelta-nlist.count(0)
+            ccc = Tdelta - nlist.count(0)
         print('ok')
-
 
         ###访问dorm
         dd6 = []
@@ -327,13 +323,15 @@ def query(request):
             nlist = np.zeros(Tdelta)
             for item in dtlist:
                 nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
-                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S'):
+                if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                              '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                          '%Y-%m-%d %H:%M:%S'):
                     delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
                     nlist[delta] += 1
-            #print(nlist)
+            # print(nlist)
             for i in range(Tdelta):
-                dd6.append([i+1,nlist[i]])
-            #print(dd6)
+                dd6.append([i + 1, nlist[i]])
+            # print(dd6)
 
         ###消费
         dd7 = []
@@ -344,17 +342,18 @@ def query(request):
             nlist = np.zeros(Tdelta)
             for item in range(len(dtlist)):
                 nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
-                if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S'):
+                if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                              '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                          '%Y-%m-%d %H:%M:%S'):
                     delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
-                    if float(costlist[item])<0:
+                    if float(costlist[item]) < 0:
                         nlist[delta] += float(costlist[item])
                         totlcos += float(costlist[item])
-            #print(nlist)
+            # print(nlist)
             for i in range(Tdelta):
-                dd7.append([i+1,nlist[i]])
-            #print(dd7)
-            #print(totlcos)
-
+                dd7.append([i + 1, nlist[i]])
+            # print(dd7)
+            # print(totlcos)
 
         xx8mid = []
         aidlist = Aid.objects.filter(StuID=stuid)
@@ -363,12 +362,12 @@ def query(request):
                 xx8mid.append(aidlist[i].Year)
             if aidlist[i].Scholorship != '':
                 xx8mid.append(aidlist[i].Year)
-        xx8 = sorted(set(xx8mid),key=xx8mid.index)
-        #print(xx2)
+        xx8 = sorted(set(xx8mid), key=xx8mid.index)
+        # print(xx2)
         dd8 = []
         for i in xx8:
             dd8.append(xx8mid.count(i))
-        #print(dd2)
+        # print(dd2)
 
         ###画像
         str0 = str(stuid)
@@ -420,37 +419,37 @@ def query(request):
 
         ##奖助学金
         str8 = ""
-        if len(xx8) >= 2016-int(Grade):
+        if len(xx8) >= 2016 - int(Grade):
             str8 = "奖助学金达人"
 
         ##lib
         str9 = ""
-        if ccc>=Tdelta/2 and ccc>5:
+        if ccc >= Tdelta / 2 and ccc > 5:
             str9 = "常驻图书馆"
-        if ccc<=5:
+        if ccc <= 5:
             str9 = "去图书馆次数少于5次"
 
         ##消费
-        totlcos =  round(-totlcos)
-        #print(totlcos)
+        totlcos = round(-totlcos)
+        # print(totlcos)
         str10 = ""
-        if totlcos>0:
+        if totlcos > 0:
             str10 = "最近一学期总消费约" + str(totlcos) + "元"
 
         cloud = [
             {"name": str0, "value": 2500},
-            {"name": str11, "value": 2000},#成绩
+            {"name": str11, "value": 2000},  # 成绩
             {"name": str1, "value": 2300},
-            {"name": str2, "value": 2000},#身体
+            {"name": str2, "value": 2000},  # 身体
             {"name": str3, "value": 2000},
             {"name": str4, "value": 2000},
             {"name": str5, "value": 2000},
             {"name": str6, "value": 2000},
             {"name": str7, "value": 2000},
-            {"name": str8, "value": 2300},#奖助学金
-            {"name": str9, "value": 2000},#lib
-            {"name": str10, "value": 2000},#消费
-            {"name": str12, "value": 2300},#bas
+            {"name": str8, "value": 2300},  # 奖助学金
+            {"name": str9, "value": 2000},  # lib
+            {"name": str10, "value": 2000},  # 消费
+            {"name": str12, "value": 2300},  # bas
             {"name": str13, "value": 2300},
             {"name": str14, "value": 2300},
             {"name": str15, "value": 2300},
@@ -458,28 +457,27 @@ def query(request):
             {"name": str17, "value": 2300},
             {"name": str18, "value": 2300}
 
-
-
         ]
 
+        # print(cloud)
 
-        #print(cloud)
+        # ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud, 'dd5':dd5, 'dd6':dd6, 'dd7':dd7, 'xx8':xx8, 'dd8':dd8}
 
-        #ret4charts = {'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud, 'dd5':dd5, 'dd6':dd6, 'dd7':dd7, 'xx8':xx8, 'dd8':dd8}
-
-
-        retu = {'res1':res1, 'res2':res2, 'res3':res3, 'res4':res4, 'res9':res9, 'xx': xx, 'dd': dd,'xx2':xx2, 'dd2':dd2, 'xx3':xx3, 'dd3':dd3, 'cloud':cloud, 'dd5':dd5, 'dd6':dd6, 'dd7':dd7, 'xx8':xx8, 'dd8':dd8}
-        #print(retu)
+        retu = {'res1': res1, 'res2': res2, 'res3': res3, 'res4': res4, 'res9': res9, 'xx': xx, 'dd': dd, 'xx2': xx2,
+                'dd2': dd2, 'xx3': xx3, 'dd3': dd3, 'cloud': cloud, 'dd5': dd5, 'dd6': dd6, 'dd7': dd7, 'xx8': xx8,
+                'dd8': dd8}
+        # print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
+
 
 def queryY(request):
     if request.method == 'POST':
         # 关键内容
         stuid = request.POST.get('stuid')
         year = request.POST.get('year')
-        #print(stuid)
-        #没有判空
+        # print(stuid)
+        # 没有判空
         # objs = Lib.objects.filter(StuID=stuid, DateTime__year=year)
         # res5 = [obj.as_dict() for obj in objs]
 
@@ -492,30 +490,29 @@ def queryY(request):
         objs = HosBX.objects.filter(StuID=stuid, DateTime__year=year)
         res8 = [obj.as_dict() for obj in objs]
 
-
-        retu = {'res6':res6, 'res7':res7, 'res8':res8}
-        #print(retu)
+        retu = {'res6': res6, 'res7': res7, 'res8': res8}
+        # print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
+
 dormlist = []
 no1 = yes1 = 0
+
+
 def monitor(request):
     """
     需要学院和班级信息
     """
-    #School
+    # School
     School = '电子信息与电气工程学院'
     #
-    classNo = ['1','2']
-
+    classNo = ['1', '2']
 
     pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
     print(pastTime)
     Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
                                                                                                      '%Y-%m-%d')).days + 1  ###代替126
-
-
 
     ###查出所有学生
     stus = []
@@ -545,9 +542,9 @@ def monitor(request):
                     nlist[delta] += 1
             # print(nlist)
             nlist = list(nlist)
-            dormc = Tdelta-nlist.count(0)
-            freq4dorm = dormc/float(Tdelta) ###回寝室不规律
-            if freq4dorm<0.7:
+            dormc = Tdelta - nlist.count(0)
+            freq4dorm = dormc / float(Tdelta)  ###回寝室不规律
+            if freq4dorm < 0.7:
                 dormlist.append(stuid)
     # rat = len(dormlist)/float(len(stus))
     # print('比例1')
@@ -590,15 +587,16 @@ def monitor(request):
     # print(dormlist)
     global no1
     no1 = len(dormlist)
-    no1d = {'value':no1, 'name': '不规律'}
+    no1d = {'value': no1, 'name': '不规律'}
     global yes1
-    yes1 = len(stus)-no1
-    yes1d = {'value':yes1, 'name': '规律'}
-    cha1 = [no1d,yes1d]
-    retu = {'cha1':cha1}
+    yes1 = len(stus) - no1
+    yes1d = {'value': yes1, 'name': '规律'}
+    cha1 = [no1d, yes1d]
+    retu = {'cha1': cha1}
 
     print(retu)
-    return render(request, 'servermaterial/monitor.html', {'retu':json.dumps(retu)})
+    return render(request, 'servermaterial/monitor.html', {'retu': json.dumps(retu)})
+
 
 def list1(request):
     global dormlist
@@ -609,22 +607,24 @@ def list1(request):
     cha1 = [no1d, yes1d]
     retu = {'cha1': cha1}
 
-
     ###表格
     for stuid in dormlist:
         objs4 = Basic.objects.filter(StuID=stuid)
 
+    return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu)})
 
-    return render(request, 'servermaterial/list1.html', {'retu':json.dumps(retu)})
 
 def list2(request):
     return render(request, 'servermaterial/list2.html')
 
+
 def list3(request):
     return render(request, 'servermaterial/list3.html')
 
+
 def list4(request):
     return render(request, 'servermaterial/list4.html')
+
 
 def data_import_export(request):
     return render(request, 'servermaterial/data_import_export.html')
@@ -647,8 +647,8 @@ def intervene(request):
                                                 Entrance__startswith='2013').values("classNo")
         class_list = list(set(tmp['classNo'] for tmp in class_query_list))
     return render(request, 'servermaterial/intervene.html', context={'school_list': school_list,
-                                                                        'major_list': major_list,
-                                                                        'class_list': class_list})
+                                                                     'major_list': major_list,
+                                                                     'class_list': class_list})
 
 
 def CheckData(request):
@@ -658,7 +658,7 @@ def CheckData(request):
         file_type = f.name.split('.')[1]
         return_data = []
         message = '文件解析成功！'
-        if file_type=='xlsx':
+        if file_type == 'xlsx':
             wb = xlrd.open_workbook(filename=None, file_contents=f.read())  # 关键点在于这里
             table = wb.sheets()[0]
             nrows = table.nrows
@@ -667,7 +667,9 @@ def CheckData(request):
                     if db_type == '图书馆借阅记录':
                         for i in range(1, nrows):
                             rowValues = table.row_values(i)
-                            models.Book.objects.get_or_create(StuID=rowValues[0], BookID=rowValues[1], Date=rowValues[2], OperType=rowValues[3], StuType=rowValues[4], Department=rowValues[5])
+                            models.Book.objects.get_or_create(StuID=rowValues[0], BookID=rowValues[1],
+                                                              Date=rowValues[2], OperType=rowValues[3],
+                                                              StuType=rowValues[4], Department=rowValues[5])
                             return_data.append(rowValues)
             except Exception as e:
                 message = '文件读取出现错误'
@@ -678,7 +680,8 @@ def CheckData(request):
                 Lib.objects.get_or_create(StuID=info_list[1], Gate=info_list[2], DateTime=info_list[3])
         # ret = {'message': message, 'data': return_data, 'data_type': db_type}
         # return HttpResponse(json.dumps(ret), content_type='application/json')
-        return render(request, "servermaterial/data_import_export.html", context = {'message': '上传成功'})
+        return render(request, "servermaterial/data_import_export.html", context={'message': '上传成功'})
+
 
 def download(request):
     if request.method == 'POST':
@@ -701,10 +704,13 @@ def download(request):
                 mysheet.write(r + 1, 3, str(rows[r].OperType))
                 mysheet.write(r + 1, 4, str(rows[r].StuType))
                 mysheet.write(r + 1, 5, str(rows[r].Department))
-            response = HttpResponse(content_type='application/vnd.ms-excel')  # 这里响应对象获得了一个特殊的mime类型,告诉浏览器这是个excel文件不是html
-            response['Content-Disposition'] = 'attachment; filename=export_data.xls'  # 这里响应对象获得了附加的Content-Disposition协议头,它含有excel文件的名称,文件名随意,当浏览器访问它时,会以"另存为"对话框中使用它.
+            response = HttpResponse(
+                content_type='application/vnd.ms-excel')  # 这里响应对象获得了一个特殊的mime类型,告诉浏览器这是个excel文件不是html
+            response[
+                'Content-Disposition'] = 'attachment; filename=export_data.xls'  # 这里响应对象获得了附加的Content-Disposition协议头,它含有excel文件的名称,文件名随意,当浏览器访问它时,会以"另存为"对话框中使用它.
             workbook.save(response)
             return response
+
 
 def View(request):
     db_type = request.POST['db']
@@ -735,11 +741,12 @@ def query_class(request):
     :param request: 班级list(json数据格式)
     :return:
     """
-    data = json.loads(request.body.decode())      # 浏览器端用ajax传来json字典数据
+    data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
     class_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
                                             Entrance__startswith=data['grade'].strip()).values("classNo")
     class_list = list(set(tmp['classNo'] for tmp in class_query_list))
     return HttpResponse(json.dumps(class_list), content_type='application/json')
+
 
 def query_intervene(request):
     """
@@ -751,7 +758,7 @@ def query_intervene(request):
     objs = InterveneSuggestion.objects
     # 查询单个学生
     if len(data) == 1:
-        stu_id = data['stuNo']    # 查询不到该学生
+        stu_id = data['stuNo']  # 查询不到该学生
         if len(Basic.objects.filter(StuID=stu_id)) == 0:
             return JsonResponse({"info": '查无此人'})
         school = Basic.objects.filter(StuID=stu_id)[0].School
@@ -781,7 +788,7 @@ def query_intervene(request):
                                                is_fail_exam=labels['is_fail_exam'],
                                                body_health_state=labels['body_health_state'])
             single_intervene = intervene_suggestion[0].as_dict()
-            single_intervene['school'], single_intervene['stu_id']  = data['school'], id
+            single_intervene['school'], single_intervene['stu_id'] = data['school'], id
             list_intervene.append(single_intervene)
         return HttpResponse(json.dumps(list_intervene), content_type="application/json")
 
@@ -792,7 +799,12 @@ def get_hot_book_list(request):
     :param request:
     :return:每一本书用一个字典对象(有name属性，values属性，itemStyle属性)
     """
+    topk = 20
+    if request.method == "POST":
+        topk = int(request.POST['k'])
     topk_name_list = []
+    print(topk)
+    topk_loc_list, topk_count_list = get_hot_book(topk)
     with connection.cursor() as cursor:
         for loc in topk_loc_list:
             cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
@@ -812,8 +824,9 @@ def recommend(request):
     :param request:
     :return:
     """
-    recommend_dict = {}
-    for idr in range(0, 10):
+    if request.method == "POST":
+        idr = int(request.POST['idr'])
+        get_recommend_list(idr)
         book_id_list = get_recommend_list(idr)
         book_loc_list = [book_dict[str(v)].strip() for v in book_id_list]
         print(book_loc_list)
@@ -824,8 +837,21 @@ def recommend(request):
                 row = cursor.fetchone()
                 book_name_list.append(row[0])
         stu_id = stu_dict[str(idr)]
-        recommend_dict[stu_id] = book_name_list
-    print(recommend_dict)
+        return JsonResponse(data=book_name_list, safe=False)
+    recommend_dict = {}
+    # for idr in range(0, 10):
+    #     book_id_list = get_recommend_list(idr)
+    #     book_loc_list = [book_dict[str(v)].strip() for v in book_id_list]
+    #     print(book_loc_list)
+    #     book_name_list = []
+    #     with connection.cursor() as cursor:
+    #         for loc in book_loc_list:
+    #             cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
+    #             row = cursor.fetchone()
+    #             book_name_list.append(row[0])
+    #     stu_id = stu_dict[str(idr)]
+    #     recommend_dict[stu_id] = book_name_list
+    # print(recommend_dict)
     return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict})
 
 
@@ -835,7 +861,6 @@ def tt(request):
         row = cursor.fetchone()
         print(row[1])
     return HttpResponse(row)
-
 
 
 def index(request):
@@ -848,16 +873,14 @@ def index(request):
 
 
 def tst(request):
-
     np.random.seed(1119)
-
 
     stuolist = Score.objects.all()
     stulist = []
     for i in stuolist:
         if i.StuID not in stulist:
             stulist.append(i.StuID)
-    #print(stulist)
+    # print(stulist)
 
     # x_test = np.array( pd.read_csv("x_test.csv",header=None) )
     # x_test = np.reshape(x_test,(x_test.shape[0],7,1))
@@ -872,7 +895,7 @@ def tst(request):
     for u in stulist:
         scorlist = list(Score.objects.filter(StuID=u).values_list('AveScore', flat=True))
         scorlist = list(map(float, scorlist))
-        num = 7-scorlist.__len__()
+        num = 7 - scorlist.__len__()
         for i in range(num):
             scorlist.append(-2)
 
@@ -882,41 +905,39 @@ def tst(request):
     print(x_test)
     x_test = np.reshape(x_test, (x_test.shape[0], 7, 1))
 
-
-    batch_size = 32 #超参
-    epochs = 1000 #超参
-    units = 6 #超参 4不行
+    batch_size = 32  # 超参
+    epochs = 1000  # 超参
+    units = 6  # 超参 4不行
 
     keras.backend.clear_session()
     model = Sequential()
-    model.add(Masking(mask_value=-2., input_shape=(7,1)))
+    model.add(Masking(mask_value=-2., input_shape=(7, 1)))
     model.add(LSTM(units))
     model.add(Dense(1))
     print(model.summary())
-    model.compile(loss='mean_squared_error', optimizer='adam',metrics=['mse', 'mape'])
+    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['mse', 'mape'])
 
     # filepath = './lstmfc/model-ep{epoch:03d}-mse{mean_squared_error:.3f}-val_mse{val_mean_squared_error:.3f}-val_mape{val_mean_absolute_percentage_error}.h5'
     # checkpoint = keras.callbacks.ModelCheckpoint(filepath, monitor='val_mean_squared_error', verbose=1, save_best_only=True, mode='min')
     # model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=1, validation_data=(x_test, y_test), shuffle=True, callbacks=[checkpoint])
 
     ###predict
-    #model.load_weights('C:\\Users\\ICE\\education-system\\WebTool\\web\\lstmfc\\model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
+    # model.load_weights('C:\\Users\\ICE\\education-system\\WebTool\\web\\lstmfc\\model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
     model.load_weights('./web/lstmfc/model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
     print('load weights...')
     reeee = model.predict(x_test)
-    reeee = np.reshape(reeee,(len(stulist),))
+    reeee = np.reshape(reeee, (len(stulist),))
     print(reeee)
-    print(reeee.shape)#（200,1）-->(200,)
+    print(reeee.shape)  # （200,1）-->(200,)
 
     PredScore.objects.all().delete()
-    #print('deeeeeeeeeeeeeeeeel')
+    # print('deeeeeeeeeeeeeeeeel')
     addlist = []
     for i in range(len(stulist)):
         obj = PredScore(
-            StuID = stulist[i],
-            Score = reeee[i]
+            StuID=stulist[i],
+            Score=reeee[i]
         )
         addlist.append(obj)
     PredScore.objects.bulk_create(addlist)
-    #print('inssssssssssssssssssssss')
-
+    # print('inssssssssssssssssssssss')

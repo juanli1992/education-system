@@ -71,30 +71,31 @@ stu_dict = load_dict_map('./web/recommend_data/B5_stuDic.txt')
 book_dict = load_dict_map('./web/recommend_data/B5_bookDic.txt')
 negativeList = load_negative_file('./web/recommend_data/B5.negative')
 
+book_dict2 = {}
+with open('./web/recommend_data/B5.txt', encoding='UTF-8') as f:
+    for line in f:
+        if line == '':
+            continue
+        book_loc = line.split(';')[2]
+        if not (book_loc in book_dict2):
+            book_dict2[book_loc] = 1
+        else:
+            book_dict2[book_loc] += 1
 
-def get_hot_book_list(topK):
+def get_hot_book(topK):
     """
     获取借阅量前topK的书籍列表
     :param topK:
     :return:
     """
-    book_dict = {}
-    with open('./web/recommend_data/B5.txt', encoding='UTF-8') as f:
-        for line in f:
-            if line == '':
-                continue
-            book_loc = line.split(';')[2]
-            if not (book_loc in book_dict):
-                book_dict[book_loc] = 1
-            else:
-                book_dict[book_loc] += 1
-
-    klarget_loc_list = heapq.nlargest(topK, book_dict.keys(), key=book_dict.get)
-    klarget_count_list = [book_dict[loc] for loc in klarget_loc_list]
+    global book_dict2
+    print('===================util method==================', topK)
+    klarget_loc_list = heapq.nlargest(topK, book_dict2.keys(), key=book_dict2.get)
+    klarget_count_list = [book_dict2[loc] for loc in klarget_loc_list]
     return klarget_loc_list, klarget_count_list
 
 
-topk_loc_list, topk_count_list = get_hot_book_list(20)
+# topk_loc_list, topk_count_list = get_hot_book(20)
 
 
 def get_recommend_list(idr):
