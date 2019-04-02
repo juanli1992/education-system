@@ -17,6 +17,7 @@ class Basic(models.Model):
     State = models.TextField()
     Type = models.TextField()
     Year = models.TextField(max_length=5)
+    Grade = models.CharField(max_length=10, default="")
 
     def __unicode__(self):
         return self.StuID
