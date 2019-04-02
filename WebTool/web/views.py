@@ -142,12 +142,12 @@ def register(request):
 
 def inquiry(request):
     school = request.POST.get('school')
-    time = '20161'
+    time='20151'
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
 
     # grades
-    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    cdfall = []
+    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cdfall=[]
     for i in x:
         cdfall.append(sum(float(j) < i for j in score_all) / len(score_all))
 
@@ -165,12 +165,29 @@ def inquiry(request):
         if i == 6:
             num.append(sum(x[i - 1] <= float(j) <= x[i] for j in score_all))
         else:
-            num.append(sum(x[i - 1] <= float(j) < x[i] for j in score_all))
-        i = i + 1
+            num.append( sum( x[i-1]<=float(j)<x[i] for j in score_all) )
+        i=i+1
 
-    ret = {'cdfall': cdfall, 'pdfall': pdfall, 'num': num, 'ratio': ratio}
+    # the average grade for different gender
+    score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='男').values_list('AveScore', flat=True))
+    ave_score_male=sum(float(j) for j in score_male)/len(score_male)
+    print(len(score_male))
+
+    score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='女').values_list('AveScore', flat=True))
+    ave_score_female=sum(float(j) for j in score_female)/len(score_female)
+    print(len(score_female))
+
+    ave_score=sum(float(j) for j in score_all)/len(score_all)
+    print(len(score_all))
+
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+
+
+    # health
+    # physical test
+    # distribution
 
 def base(request):
     return render(request, 'servermaterial/base.html')
