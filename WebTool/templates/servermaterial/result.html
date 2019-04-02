@@ -276,15 +276,19 @@
                     </div>
                 </div>
 
-
-                <!--<div class="form-group col-lg-4">-->
-                  <!--<label class="col-lg-3 control-label">学号</label>-->
-                  <!--<div class="col-lg-8">-->
-                    <!--<input type="text" id="stuid" class="form-control">-->
-                  <!--</div>-->
-                </div>
                 <div class="form-group col-lg-1">
                   <button class="btn btn-theme" id="searchlog" type="button">查询</button>
+                </div>
+
+
+                <div class="form-group col-lg-4">
+                  <label class="col-lg-4 control-label">输入学号直接查询</label>
+                  <div class="col-lg-8">
+                    <input type="text" id="stuid1" class="form-control">
+                  </div>
+                </div>
+                <div class="form-group col-lg-1">
+                  <button class="btn btn-theme" id="searchlog1" type="button">查询</button>
                 </div>
                 <!--<div >-->
                   <!--<button class="btn btn-theme" id="analyselog" type="button">分析</button>-->
@@ -313,9 +317,9 @@
                 <li>
                   <a data-toggle="tab" href="#aid">奖助勤工信息</a>
                 </li>
-                <li>
-                  <a data-toggle="tab" href="#hos">校医院相关记录</a>
-                </li>
+<!--                <li>-->
+<!--                  <a data-toggle="tab" href="#hos">校医院相关记录</a>-->
+<!--                </li>-->
                 <li>
                   <a data-toggle="tab" href="#oth">其他信息</a>
                 </li>
@@ -1298,6 +1302,659 @@ $("#searchlog4hos").click(function(){
 
 
     </script>
+
+
+
+    <script>
+$("#searchlog1").click(function(){
+    stuid = $("#stuid1").val();
+    //datatable1
+    var table1 = $('#logtable').DataTable().clear().draw();
+    table1.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res1"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                School = ret[j]["School"];
+                Semester = ret[j]["Semester"];
+                CourseNum = ret[j]["CourseNum"];
+                Credits = ret[j]["Credits"];
+                AveScore = ret[j]["AveScore"];
+                Up90 = ret[j]["Up90"];
+                Up80 = ret[j]["Up80"];
+                Up70 = ret[j]["Up70"];
+                Up60 = ret[j]["Up60"];
+                Low60 = ret[j]["Low60"];
+                Grade = ret[j]["Grade"];
+
+                table1.row.add([StuID,School,Semester,CourseNum,Credits,AveScore,Up90,Up80,Up70,Up60,Low60,Grade]).draw();
+            }
+        }
+    });
+
+    //datatable2
+    var table2 = $('#logtable2').DataTable().clear().draw();
+    table2.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res2"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                School = ret[j]["School"];
+                ItemName = ret[j]["ItemName"];
+                Semester = ret[j]["Semester"];
+                Prize = ret[j]["Prize"];
+                PrizeType = ret[j]["PrizeType"];
+                School = ret[j]["School"];
+                Grade = ret[j]["Grade"];
+
+                table2.row.add([StuID,ItemName,Semester,Prize,PrizeType,School,Grade]).draw();
+            }
+        }
+    });
+
+    //datatable3
+    var table3 = $('#logtable3').DataTable().clear().draw();
+    table3.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res3"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                Height = ret[j]["Height"];
+                Weight = ret[j]["Weight"];
+                HWScore = ret[j]["HWScore"];
+                LungVolume = ret[j]["LungVolume"];
+                LungScore = ret[j]["LungScore"];
+                Meter50 = ret[j]["Meter50"];
+                Meter50Score = ret[j]["Meter50Score"];
+                Crook = ret[j]["Crook"];
+                CrookScore = ret[j]["CrookScore"];
+                Jump = ret[j]["Jump"];
+                JumpScore = ret[j]["JumpScore"];
+                Strength = ret[j]["Strength"];
+                StrengthScore = ret[j]["StrengthScore"];
+                Meter8001000 = ret[j]["Meter8001000"];
+                Meter8001000Score = ret[j]["Meter8001000Score"];
+                TotalScore = ret[j]["TotalScore"];
+                School = ret[j]["School"];
+                Grade = ret[j]["Grade"];
+                Semester = ret[j]["Semester"];
+
+                table3.row.add([StuID,Height,Weight,HWScore,LungVolume,LungScore,Meter50,Meter50Score,Crook,CrookScore,Jump,JumpScore,Strength,StrengthScore,Meter8001000,Meter8001000Score,TotalScore,School,Grade,Semester]).draw();
+            }
+        }
+    });
+
+    //datatable4
+    var table4 = $('#logtable4').DataTable().clear().draw();
+    table4.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res4"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                School = ret[j]["School"];
+                Major = ret[j]["Major"];
+                BirthYear = ret[j]["BirthYear"];
+                Country = ret[j]["Country"];
+                National = ret[j]["National"];
+                Entrance = ret[j]["Entrance"];
+                Province = ret[j]["Province"];
+                Gender = ret[j]["Gender"];
+                State = ret[j]["State"];
+                Type = ret[j]["Type"];
+                Year = ret[j]["Year"];
+                FinanceType = ret[j]["FinanceType"];
+                classNo = ret[j]["classNo"];
+
+                table4.row.add([StuID,School,Major,classNo,Entrance,BirthYear,Country,National,Province,Gender,Type,Year,FinanceType]).draw();
+            }
+        }
+    });
+
+    //datatable5
+    <!--var table5 = $('#logtable5').DataTable().clear().draw();-->
+    <!--table5.clear().draw();-->
+    <!--$.ajax({-->
+        <!--url:"/web/query/",-->
+        <!--type:'POST',-->
+        <!--data:{'stuid':stuid},-->
+        <!--success: function(arg){-->
+            <!--retu = eval(arg);-->
+            <!--ret = retu["res5"]-->
+            <!--for(j = 0,len = ret.length; j < len; j++) {-->
+                <!--StuID = ret[j]["StuID"];-->
+                <!--//alert(StuID);-->
+
+                <!--DateTime = ret[j]["DateTime"];-->
+
+                <!--table5.row.add([StuID,DateTime]).draw();-->
+            <!--}-->
+        <!--}-->
+    <!--});-->
+
+    //datatable9
+    var table9 = $('#logtable9').DataTable().clear().draw();
+    table9.clear().draw();
+    $.ajax({
+        url:"/web/query/",
+        type:'POST',
+        data:{'stuid':stuid},
+        success: function(arg){
+            retu = eval(arg);
+            ret = retu["res9"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                PTJob = ret[j]["PTJob"];
+                Loan = ret[j]["Loan"];
+                Aid = ret[j]["Aid"];
+                Scholorship = ret[j]["Scholorship"];
+                Year = ret[j]["Year"];
+
+                table9.row.add([StuID,PTJob,Loan,Aid,Scholorship,Year]).draw();
+            }
+        }
+    });
+
+
+
+
+});
+
+$("#searchlog1").click(function(){
+    //echarts1
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
+    var myChart = echarts.init(document.getElementById('chart-1'));
+            option = {
+              title : {
+                  text: '平均成绩超过同年级同学院学生比例',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      magicType : {show: true, type: ['line', 'bar']},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis : [
+                  {
+                      type : 'category',
+                      data : retu['xx']
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : [
+                  {
+                      name:'比例',
+                      type:'bar',
+                      data:retu['dd'],
+
+                  }
+              ]
+            };
+            myChart.setOption(option);
+     });
+
+    //echarts2
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
+    var myChart2 = echarts.init(document.getElementById('chart-2'));
+            option = {
+              title : {
+                  text: '各学年参与德育相关活动次数统计',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      magicType : {show: true, type: ['line', 'bar']},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis : [
+                  {
+                      type : 'category',
+                      data : retu['xx2']
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : [
+                  {
+                      name:'次数',
+                      type:'bar',
+                      data:retu['dd2'],
+
+                  }
+              ]
+            };
+            myChart2.setOption(option);
+     });
+
+    //echarts3
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
+    var myChart3 = echarts.init(document.getElementById('chart-3'));
+            option = {
+              title : {
+                  text: '体质总评分数超过同年级同学院学生比例',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      magicType : {show: true, type: ['line', 'bar']},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis : [
+                  {
+                      type : 'category',
+                      data : retu['xx3']
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : [
+                  {
+                      name:'比例',
+                      type:'bar',
+                      data:retu['dd3'],
+
+                  }
+              ]
+            };
+            myChart3.setOption(option);
+     });
+
+    //echarts4
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
+    var myChart4 = echarts.init(document.getElementById('chart-4'));
+
+          option = {
+              title: {
+                  text: '学生画像（根据最近学期的情况）',
+              },
+              tooltip: {
+                  show: true
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              series: [{
+                  type: 'wordCloud',
+                  size: ['80%', '80%'],//size属性是文字丢失的原因，最好设置为100%
+                  textRotation : [0, 0, 0, 0],
+					textPadding: 3,//把间距调大点 textPadding
+					autoSize: {
+						enable: true,
+						minSize: 14
+					},
+					textStyle: {
+						normal: {
+							fontFamily: 'sans-serif',
+							fontWeight: 'bold',
+							// Color can be a callback function or a color string
+							color: function () {
+								// Random color
+								return 'rgb(' + [
+									Math.round(Math.random() * 160),
+									Math.round(Math.random() * 160),
+									Math.round(Math.random() * 160)
+								].join(',') + ')';
+							}
+						},
+						emphasis: {
+							shadowBlur: 10,
+							shadowColor: '#333'
+						}
+					},
+
+                  data:retu['cloud']
+              }]
+
+
+          };
+          myChart4.setOption(option);
+
+     });
+
+    //echarts5
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
+    var myChart5 = echarts.init(document.getElementById('chart-5'));
+
+            option = {
+              title : {
+                  text: '最近一学期访问图书馆次数一览',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis: {
+                  name : '天数',
+                  scale: true
+              },
+              yAxis: {
+                  name : '次数',
+                  scale: true
+              },
+              series: [{
+                  type: 'scatter',
+                  data:retu['dd5'],
+
+                  }
+              ]
+            };
+            myChart5.setOption(option);
+     });
+
+    //echarts6
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
+    var myChart6 = echarts.init(document.getElementById('chart-6'));
+
+            option = {
+              title : {
+                  text: '最近一学期回寝室刷卡次数一览',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis: {
+                  name : '天数',
+                  scale: true
+              },
+              yAxis: {
+                  name : '次数',
+                  scale: true
+              },
+              series: [{
+                  type: 'scatter',
+                  data:retu['dd6'],
+
+                  }
+              ]
+            };
+            myChart6.setOption(option);
+     });
+
+    //echarts7
+    $.post("/web/query/",{'stuid':stuid}, function(retu){
+    var myChart7 = echarts.init(document.getElementById('chart-7'));
+
+            option = {
+              title : {
+                  text: '最近一学期刷卡消费金额一览',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show : true,
+                  feature : {
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis: {
+                  name : '天数',
+                  scale: true
+              },
+              yAxis: {
+                  name : '次数',
+                  scale: true
+              },
+              series: [{
+                  type: 'scatter',
+                  data:retu['dd7'],
+
+                  }
+              ]
+            };
+            myChart7.setOption(option);
+     });
+
+    <!--//echarts8-->
+    <!--$.post("/web/query/",{'stuid':stuid}, function(retu){-->
+    <!--var myChart8 = echarts.init(document.getElementById('chart-8'));-->
+            <!--option = {-->
+              <!--title : {-->
+                  <!--text: '各学年获奖助学金次数统计',-->
+              <!--},-->
+              <!--tooltip : {-->
+                  <!--trigger: 'axis'-->
+              <!--},-->
+              <!--toolbox: {-->
+                  <!--show : true,-->
+                  <!--feature : {-->
+                      <!--dataView : {show: true, readOnly: false},-->
+                      <!--magicType : {show: true, type: ['line', 'bar']},-->
+                      <!--restore : {show: true},-->
+                      <!--saveAsImage : {show: true}-->
+                  <!--}-->
+              <!--},-->
+              <!--calculable : true,-->
+              <!--xAxis : [-->
+                  <!--{-->
+                      <!--type : 'category',-->
+                      <!--data : retu['xx8']-->
+                  <!--}-->
+              <!--],-->
+              <!--yAxis : [-->
+                  <!--{-->
+                      <!--type : 'value'-->
+                  <!--}-->
+              <!--],-->
+              <!--series : [-->
+                  <!--{-->
+                      <!--name:'次数',-->
+                      <!--type:'bar',-->
+                      <!--data:retu['dd8'],-->
+
+                  <!--}-->
+              <!--]-->
+            <!--};-->
+            <!--myChart8.setOption(option);-->
+     <!--});-->
+
+
+
+
+
+});
+
+
+
+    </script>
+
+    <script>
+$("#searchlog4hos").click(function(){
+    stuid = $("#stuid1").val();
+    year = $("#year").val();
+    <!--alert(stuid);-->
+    <!--alert(year);-->
+
+
+
+    <!--//datatable5-->
+    <!--var table5 = $('#logtable5').DataTable().clear().draw();-->
+    <!--table5.clear().draw();-->
+    <!--$.ajax({-->
+        <!--url:"/web/queryY/",-->
+        <!--type:'POST',-->
+        <!--data:{'stuid':stuid, 'year':year},-->
+        <!--success: function(arg){//可以注释掉 进行调试-->
+            <!--retu = eval(arg);-->
+            <!--ret = retu["res5"]-->
+            <!--for(j = 0,len = ret.length; j < len; j++) {-->
+                <!--StuID = ret[j]["StuID"];-->
+                <!--//alert(StuID);-->
+
+                <!--DateTime = ret[j]["DateTime"];-->
+
+                <!--table5.row.add([StuID,DateTime]).draw();-->
+            <!--}-->
+        <!--}-->
+    <!--});-->
+
+
+    //datatable6
+    var table6 = $('#logtable6').DataTable().clear().draw();
+    table6.clear().draw();
+    $.ajax({
+        url:"/web/queryY/",
+        type:'POST',
+        data:{'stuid':stuid, 'year':year},
+        success: function(arg){//可以注释掉 进行调试
+            retu = eval(arg);
+            ret = retu["res6"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                SchoolHos = ret[j]["SchoolHos"];
+                CostType = ret[j]["CostType"];
+                DateTime = ret[j]["DateTime"];
+                Department = ret[j]["Department"];
+                RegCost = ret[j]["RegCost"];
+
+                table6.row.add([StuID,SchoolHos,CostType,DateTime,Department,RegCost]).draw();
+            }
+        }
+    });
+
+    //datatable7
+    var table7 = $('#logtable7').DataTable().clear().draw();
+    table7.clear().draw();
+    $.ajax({
+        url:"/web/queryY/",
+        type:'POST',
+        data:{'stuid':stuid, 'year':year},
+        success: function(arg){//可以注释掉 进行调试
+            retu = eval(arg);
+            ret = retu["res7"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                SchoolHos = ret[j]["SchoolHos"];
+                DateTime = ret[j]["DateTime"];
+                Hospital = ret[j]["Hospital"];
+                Department = ret[j]["Department"];
+                SchDepart = ret[j]["SchDepart"];
+
+                table7.row.add([StuID,SchoolHos,DateTime,Hospital,Department,SchDepart]).draw();
+            }
+        }
+    });
+
+    //datatable8
+    var table8 = $('#logtable8').DataTable().clear().draw();
+    table8.clear().draw();
+    $.ajax({
+        url:"/web/queryY/",
+        type:'POST',
+        data:{'stuid':stuid, 'year':year},
+        success: function(arg){//可以注释掉 进行调试
+            retu = eval(arg);
+            ret = retu["res8"]
+            for(j = 0,len = ret.length; j < len; j++) {
+                StuID = ret[j]["StuID"];
+                //alert(StuID);
+
+                SchoolHos = ret[j]["SchoolHos"];
+                Cause = ret[j]["Cause"];
+                BX = ret[j]["BX"];
+                OriginCost = ret[j]["OriginCost"];
+                DateTime = ret[j]["DateTime"];
+
+                table8.row.add([StuID,SchoolHos,Cause,BX,OriginCost,DateTime]).draw();
+            }
+        }
+    });
+
+
+});
+
+
+
+
+
+
+    </script>
+
 
 
 
