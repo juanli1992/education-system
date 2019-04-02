@@ -33,6 +33,121 @@
         Author: TemplateMag.com
         License: https://templatemag.com/license/
     ======================================================= -->
+    <script>
+        $(document).ready(function () {
+
+            /*
+             学院下拉框改变
+             */
+            $("#school").change(function () {
+                $.ajax({
+                    url: '/web/query_majors',
+                    type: 'POST',
+                    data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#major").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#major").append(newNode);
+                        }
+                        changeClassList();
+                    }
+
+                });
+            });
+
+            function changeClassList() {
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
+                var grade = $("#grade").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_class',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major, "grade": grade}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $('option[value=class1]').remove();
+                        for (var i = 0; i < result.length; i++) {
+                            $("#class").append($("<option value = 'class1'>" + result[i] + "</option>"))
+                        }
+                    }
+                })
+            }
+
+            /*
+             专业下拉框改变
+             */
+            $("#major").change(changeClassList);
+
+            /*
+             年级下拉框改变
+             */
+            $('#grade').change(changeClassList);
+
+
+            $("#query_button").click(function () {
+                /*
+                 按学号查询
+                 */
+                $("tbody").empty();
+                if ($("#query_option").val() == 'student') {
+                    var data = {stuNo: $("#stuNo").val()};
+                    $.ajax({
+                        url: "/web/query_intervene",
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json;charset=utf-8",
+                        data: JSON.stringify(data),
+                        success: function (result) {
+                            if (Object.keys(result).length == 1)
+                                alert(result['info']);
+                            else {
+                                // 查询到对应该学生的干预意见，展示在表格上
+                                var newTableNode = $("<tr>\n" + "<td>" + result['stu_id'] + "</td>\n" + "<td>" + result['school']
+                                    + "</td>\n" + "<td>" + result['study_state'] + "</td>\n" + "<td>" + result['is_fail_exam'] + "</td>\n"
+                                    + "<td>" + result['treatment_count'] + "</td>\n" + "<td>" + result['body_health_state'] + "</td>\n"
+                                    + "<td class='danger'>" + result['suggestion'] + "</td>\n" + "</tr>");
+                                $("tbody").append(newTableNode);
+                            }
+                        }
+                    });
+                } else {
+                    /*
+                     按专业年纪查询
+                     */
+                    var school = $("#school").find("option:selected").text();
+                    var major = $("#major").find("option:selected").text();
+                    var grade = $("#grade").find("option:selected").text();
+                    var classNo = $("#class").find("option:selected").text();
+                    var post_data = {'school': school, 'major': major, 'grade': grade, 'classNo': classNo};
+
+                    $.ajax({
+                        url: '/web/query_intervene',
+                        type: 'POST',
+                        data: JSON.stringify(post_data),
+                        dataType: 'json',
+                        contentType: "application/json;charset=utf-8",
+                        success: function (result) {
+                            if (result.length == 0)
+                                alert('未查询到对应数据');
+                            for (var i = 0; i < result.length; i++) {
+                                var newTableNode = $("<tr>\n" + "<td>" + result[i]['stu_id'] + "</td>\n" + "<td>" + result[i]['school']
+                                    + "</td>\n" + "<td>" + result[i]['study_state'] + "</td>\n" + "<td>" + result[i]['is_fail_exam'] + "</td>\n"
+                                    + "<td>" + result[i]['treatment_count'] + "</td>\n" + "<td>" + result[i]['body_health_state'] + "</td>\n"
+                                    + "<td class='danger'>" + result[i]['suggestion'] + "</td>\n" + "</tr>");
+                                $("tbody").append(newTableNode);
+                            }
+                        },
+                    });
+
+                }
+            });
+
+        });
+    </script>
 
   </head>
   <body>
@@ -58,6 +173,17 @@
             <div class="col-lg-12 detailed mt">
               <h4>查询选项</h4>
               <div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">学院</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="school">
+                            {% for school in school_list %}
+                                <option>{{ school }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
 
                 <div class="form-group col-lg-4">
                   <label class="col-lg-3 control-label">学号</label>
@@ -112,9 +238,9 @@
 
                   <div class="row mt">
 
-                  <div class="col-lg-5 col-lg-offset-3 detailed">
-                     <img   src="/templates/servermaterial/assets/img/stu.jpg" class="img-circle" width="130">
-                  </div>
+                  <!--<div class="col-lg-5 col-lg-offset-3 detailed">-->
+                     <!--<img   src="/templates/servermaterial/assets/img/stu.jpg" class="img-circle" width="130">-->
+                  <!--</div>-->
 
                     <div class="col-lg-5 col-lg-offset-3 detailed">
                       <div id="chart-4" style="width: 800px;height:800px;"></div>

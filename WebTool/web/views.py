@@ -41,25 +41,8 @@ def home(request):
     return render(request, 'servermaterial/home.html')
 
 
-@login_required
-def monitor_all(request):
-    return render(request, 'servermaterial/monitor_all.html')
-
-
-def study_well(request):
-    return render(request, 'servermaterial/study_well.html')
-
-
-def study_poor(request):
-    return render(request, 'servermaterial/study_poor.html')
-
-
 def admin(request):
     return render(request, 'servermaterial/admin_index.html')
-
-
-def first(request):
-    return render(request, 'servermaterial/first.html')
 
 
 def login(request):
