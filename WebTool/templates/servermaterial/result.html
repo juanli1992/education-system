@@ -52,16 +52,48 @@
                             var newNode = $("<option>" + result[i] + "</option>");
                             $("#major").append(newNode);
                         }
-                        changeClassList();
+                        changeMajor();
                     }
 
                 });
             });
 
-            function changeClassList() {
+
+            /*
+             专业下拉框改变
+             */
+            $("#major").change(changeMajor);
+
+            function changeMajor() {
                 var major = $("#major").find('option:selected').text();
                 var school = $("#school").find('option:selected').text();
-                var grade = $("#grade").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_grades',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#grade_").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#grade_").append(newNode);
+                        }
+                        changeGrade();
+                    }
+                })
+            }
+
+
+            /*
+             年级下拉框改变
+             */
+            $("#grade_").change(changeGrade);
+
+            function changeGrade() {
+                var grade = $("#grade_").find('option:selected').text();
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
                 $.ajax({
                     url: '/web/query_class',
                     type: 'POST',
@@ -69,82 +101,101 @@
                     dataType: 'JSON',
                     contentType: 'application/json;charset=utf-8',
                     success: function (result) {
-                        $('option[value=class1]').remove();
+                        $("#class").empty();
                         for (var i = 0; i < result.length; i++) {
-                            $("#class").append($("<option value = 'class1'>" + result[i] + "</option>"))
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#class").append(newNode);
+                        }
+                        changeClass();
+                    }
+                })
+            }
+
+
+            /*
+             班级下拉框改变
+             */
+            $("#class").change(changeClass);
+
+            function changeClass() {
+                var clas = $("#class").find('option:selected').text();
+                var grade = $("#grade_").find('option:selected').text();
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_ID',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major, "grade": grade, "class":clas}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#stuid").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#stuid").append(newNode);
                         }
                     }
                 })
             }
 
-            /*
-             专业下拉框改变
-             */
-            $("#major").change(changeClassList);
 
-            /*
-             年级下拉框改变
-             */
-            $('#grade').change(changeClassList);
+            <!--$("#query_button").click(function () {-->
+                <!--/*-->
+                 <!--按学号查询-->
+                 <!--*/-->
+                <!--$("tbody").empty();-->
+                <!--if ($("#query_option").val() == 'student') {-->
+                    <!--var data = {stuNo: $("#stuNo").val()};-->
+                    <!--$.ajax({-->
+                        <!--url: "/web/query_intervene",-->
+                        <!--type: "POST",-->
+                        <!--dataType: "json",-->
+                        <!--contentType: "application/json;charset=utf-8",-->
+                        <!--data: JSON.stringify(data),-->
+                        <!--success: function (result) {-->
+                            <!--if (Object.keys(result).length == 1)-->
+                                <!--alert(result['info']);-->
+                            <!--else {-->
+                                <!--// 查询到对应该学生的干预意见，展示在表格上-->
+                                <!--var newTableNode = $("<tr>\n" + "<td>" + result['stu_id'] + "</td>\n" + "<td>" + result['school']-->
+                                    <!--+ "</td>\n" + "<td>" + result['study_state'] + "</td>\n" + "<td>" + result['is_fail_exam'] + "</td>\n"-->
+                                    <!--+ "<td>" + result['treatment_count'] + "</td>\n" + "<td>" + result['body_health_state'] + "</td>\n"-->
+                                    <!--+ "<td class='danger'>" + result['suggestion'] + "</td>\n" + "</tr>");-->
+                                <!--$("tbody").append(newTableNode);-->
+                            <!--}-->
+                        <!--}-->
+                    <!--});-->
+                <!--} else {-->
+                    <!--/*-->
+                     <!--按专业年纪查询-->
+                     <!--*/-->
+                    <!--var school = $("#school").find("option:selected").text();-->
+                    <!--var major = $("#major").find("option:selected").text();-->
+                    <!--var grade = $("#grade").find("option:selected").text();-->
+                    <!--var classNo = $("#class").find("option:selected").text();-->
+                    <!--var post_data = {'school': school, 'major': major, 'grade': grade, 'classNo': classNo};-->
 
+                    <!--$.ajax({-->
+                        <!--url: '/web/query_intervene',-->
+                        <!--type: 'POST',-->
+                        <!--data: JSON.stringify(post_data),-->
+                        <!--dataType: 'json',-->
+                        <!--contentType: "application/json;charset=utf-8",-->
+                        <!--success: function (result) {-->
+                            <!--if (result.length == 0)-->
+                                <!--alert('未查询到对应数据');-->
+                            <!--for (var i = 0; i < result.length; i++) {-->
+                                <!--var newTableNode = $("<tr>\n" + "<td>" + result[i]['stu_id'] + "</td>\n" + "<td>" + result[i]['school']-->
+                                    <!--+ "</td>\n" + "<td>" + result[i]['study_state'] + "</td>\n" + "<td>" + result[i]['is_fail_exam'] + "</td>\n"-->
+                                    <!--+ "<td>" + result[i]['treatment_count'] + "</td>\n" + "<td>" + result[i]['body_health_state'] + "</td>\n"-->
+                                    <!--+ "<td class='danger'>" + result[i]['suggestion'] + "</td>\n" + "</tr>");-->
+                                <!--$("tbody").append(newTableNode);-->
+                            <!--}-->
+                        <!--},-->
+                    <!--});-->
 
-            $("#query_button").click(function () {
-                /*
-                 按学号查询
-                 */
-                $("tbody").empty();
-                if ($("#query_option").val() == 'student') {
-                    var data = {stuNo: $("#stuNo").val()};
-                    $.ajax({
-                        url: "/web/query_intervene",
-                        type: "POST",
-                        dataType: "json",
-                        contentType: "application/json;charset=utf-8",
-                        data: JSON.stringify(data),
-                        success: function (result) {
-                            if (Object.keys(result).length == 1)
-                                alert(result['info']);
-                            else {
-                                // 查询到对应该学生的干预意见，展示在表格上
-                                var newTableNode = $("<tr>\n" + "<td>" + result['stu_id'] + "</td>\n" + "<td>" + result['school']
-                                    + "</td>\n" + "<td>" + result['study_state'] + "</td>\n" + "<td>" + result['is_fail_exam'] + "</td>\n"
-                                    + "<td>" + result['treatment_count'] + "</td>\n" + "<td>" + result['body_health_state'] + "</td>\n"
-                                    + "<td class='danger'>" + result['suggestion'] + "</td>\n" + "</tr>");
-                                $("tbody").append(newTableNode);
-                            }
-                        }
-                    });
-                } else {
-                    /*
-                     按专业年纪查询
-                     */
-                    var school = $("#school").find("option:selected").text();
-                    var major = $("#major").find("option:selected").text();
-                    var grade = $("#grade").find("option:selected").text();
-                    var classNo = $("#class").find("option:selected").text();
-                    var post_data = {'school': school, 'major': major, 'grade': grade, 'classNo': classNo};
-
-                    $.ajax({
-                        url: '/web/query_intervene',
-                        type: 'POST',
-                        data: JSON.stringify(post_data),
-                        dataType: 'json',
-                        contentType: "application/json;charset=utf-8",
-                        success: function (result) {
-                            if (result.length == 0)
-                                alert('未查询到对应数据');
-                            for (var i = 0; i < result.length; i++) {
-                                var newTableNode = $("<tr>\n" + "<td>" + result[i]['stu_id'] + "</td>\n" + "<td>" + result[i]['school']
-                                    + "</td>\n" + "<td>" + result[i]['study_state'] + "</td>\n" + "<td>" + result[i]['is_fail_exam'] + "</td>\n"
-                                    + "<td>" + result[i]['treatment_count'] + "</td>\n" + "<td>" + result[i]['body_health_state'] + "</td>\n"
-                                    + "<td class='danger'>" + result[i]['suggestion'] + "</td>\n" + "</tr>");
-                                $("tbody").append(newTableNode);
-                            }
-                        },
-                    });
-
-                }
-            });
+                <!--}-->
+            <!--});-->
 
         });
     </script>
@@ -183,13 +234,54 @@
                         </select>
                     </div>
                 </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">专业</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="major">
+                            {% for major in major_list %}
+                                <option> {{ major }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">年级</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="grade_">
+                            {% for grade in grade_list %}
+                                <option> {{ grade }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">班级</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="class">
+                            {% for class in class_list %}
+                                <option> {{ class }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+               <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">学号</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="stuid">
+                            {% for id in id_list %}
+                                <option> {{ id }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 
 
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">学号</label>
-                  <div class="col-lg-8">
-                    <input type="text" id="stuid" class="form-control">
-                  </div>
+                <!--<div class="form-group col-lg-4">-->
+                  <!--<label class="col-lg-3 control-label">学号</label>-->
+                  <!--<div class="col-lg-8">-->
+                    <!--<input type="text" id="stuid" class="form-control">-->
+                  <!--</div>-->
                 </div>
                 <div class="form-group col-lg-1">
                   <button class="btn btn-theme" id="searchlog" type="button">查询</button>

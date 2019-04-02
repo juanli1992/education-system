@@ -13,7 +13,7 @@ def Basic2db(filepath):
     lines = f.readlines()
     f.close()
     for line in lines:
-        stuId, school, major, classno, birthYear, country, nation, entrance, province, gender, state, stuType, year, grade = line.split(',')
+        stuId, school, major, classno, birthYear, country, nation, entrance, province, gender, state, stuType, year, grade = line.strip('\n').split(',')
         Basic.objects.get_or_create(StuID=stuId, School=school, Major=major, classNo=classno, BirthYear=birthYear, Country=country, National=nation, Entrance=entrance, Province=province, Gender=gender, State=state, Type=stuType, Year=year, Grade=grade)
     print("Basic Done!")
 
@@ -57,7 +57,7 @@ def Score2db(filepath):
     lines = f.readlines()
     f.close()
     for line in lines:
-        contents = line.split(',')
+        contents = line.strip('\n').split(',')
         Score.objects.get_or_create(StuID=contents[0], School=contents[1], Semester=contents[2], CourseNum=contents[3], Credits=contents[4], AveScore=contents[5], Lowest=contents[6], Highest=contents[7], Up90=contents[8], Up80=contents[9], Up70=contents[10], Up60=contents[11], Low60=contents[12], Num0=contents[13], Grade=contents[14])
     print("Score Done!")
 
