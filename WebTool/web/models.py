@@ -364,3 +364,17 @@ class Register(models.Model):
     Reg = models.CharField(max_length=5)
     Login = models.CharField(max_length=15)
     # Time = models.DateTimeField()
+
+
+class PredScore(models.Model): ###web_predscore 表为了存预测的成绩
+    StuID = models.CharField(max_length=20)
+    Score = models.CharField(max_length=10)
+
+    def __unicode__(self):
+        return self.StuID
+
+    def as_dict(self):
+        return {
+            "StuID": self.StuID,
+            "Score" : self.Score
+        }

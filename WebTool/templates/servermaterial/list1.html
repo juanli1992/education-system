@@ -167,10 +167,7 @@ option = {
             type:'pie',
             radius : '55%',
             center: ['50%', '50%'],
-            data:[
-                {value:335, name:'不规律'},
-                {value:900, name:'规律'}
-            ].sort(function (a, b) { return a.value - b.value; }),
+            data:[].sort(function (a, b) { return a.value - b.value; }),
             roseType: 'radius',
             label: {
                 normal: {
@@ -205,7 +202,13 @@ option = {
         }
     ]
 };;
-myChart1.setOption(option);
+var data = {{retu|safe}}
+myChart1.setOption(option)
+myChart1.setOption({
+series:[{data:data.cha1}]
+}
+
+);
 
 
     </script>

@@ -221,7 +221,14 @@
         <div class="top-menu">
             <ul class="nav pull-right top-menu">
                 <li>
-                    <button type="button" class="btn btn-theme" style="margin-top: 10px" id="logout">点击登陆</button>
+                    <button type="button" class="btn btn-theme" style="margin-top: 10px" id="logout">
+                        {% if request.session.userName %}
+                            Logout
+                        {% else %}
+                            点击登陆
+                        {% endif %}
+
+                    </button>
                 </li>
             </ul>
         </div>
@@ -299,46 +306,57 @@
 
         </div>
     </div>
+
     <div id="register-page" style="display: none">
         <div class="container">
-            <form class="form-login" action="#" method="post">
+            <form class="form-login" action="#" method="post" style="max-width: 450px">
                 <h2 class="form-login-heading">注册</h2>
-                <div class="login-wrap">
-                    <label for="username">用户名：</label>
-                    <input type="text" name="username" class="form-control" placeholder="用户名" id="username">
-                    <br>
-                    <label for="name">姓名：</label>
-                    <input type="text" name="name" class="form-control" placeholder="姓名" id="name">
-                    <br>
-                    <label for="email">邮箱：</label>
-                    <input type="text" name="email" class="form-control" placeholder="邮箱" id="email">
-                    <br>
-                    <label for="job">职务：</label>
-                    <input type="text" name="job" class="form-control" placeholder="职务" id="job">
-                    <br>
-                    <label for="school">管理范围：</label>
-                    <div class="form-group">
-                        <select class="form-control" id="school" name="school">
-                            <option value="all">全校</option>
-                            <option value="机械与动力工程学院">机械与动力工程学院</option>
-                            <option value="电子信息与电器工程学院">电子信息与电器工程学院</option>
-                            <option value="数学科学学院">数学科学学院</option>
-                            <option value="人文学院">人文学院</option>
-                            <option value="媒体与设计学院">媒体与设计学院</option>
-                        </select>
+                <div class="login-wrap" style="width: 450px">
+                    <div class="col-lg-6">
+                        <label for="username">用户名：</label>
+                        <input type="text" name="username" class="form-control" placeholder="用户名" id="rusername">
                     </div>
-                    <label for="password">请输入密码：</label>
-                    <input type="password" class="form-control" placeholder="密码" id="password" name="password">
-                    <br>
-                    <label for="repassword">请确认密码：</label>
-                    <input type="password" class="form-control" placeholder="确认密码" id="repassword" name="repassword">
-                    <br>
+                    <div class="col-lg-6">
+                        <label for="name">姓名：</label>
+                        <input type="text" name="name" class="form-control" placeholder="姓名" id="rname">
+                    </div>
+
+                    <div class="col-lg-6" style="margin-top: 15px">
+                        <label for="school">管理范围：</label>
+                        <div class="form-group" style="margin-bottom: 0px">
+                            <select class="form-control" id="rschool" name="school">
+                                <option value="all">全校</option>
+                                <option value="机械与动力工程学院">机械与动力工程学院</option>
+                                <option value="电子信息与电器工程学院">电子信息与电器工程学院</option>
+                                <option value="数学科学学院">数学科学学院</option>
+                                <option value="人文学院">人文学院</option>
+                                <option value="媒体与设计学院">媒体与设计学院</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" style="margin-top: 15px">
+                        <label for="job">职务：</label>
+                        <input type="text" name="job" class="form-control" placeholder="职务" id="rjob">
+                    </div>
+                    <div class="col-lg-12" style="margin-top: 15px">
+                        <label for="email">邮箱：</label>
+                        <input type="text" name="email" class="form-control" placeholder="邮箱" id="remail">
+                    </div>
+                    <div class="col-lg-6" style="margin-top: 15px">
+                        <label for="password">请输入密码：</label>
+                        <input type="password" class="form-control" placeholder="密码" id="rpassword" name="password">
+                    </div>
+                    <div class="col-lg-6" style="margin-top: 15px">
+                        <label for="repassword">请确认密码：</label>
+                        <input type="password" class="form-control" placeholder="确认密码" id="rrepassword"
+                               name="repassword">
+                    </div>
+                    <div class="col-lg-12">
+                        <h5 id="registerInfo" style="visibility: hidden; color: red">成都机场能见度</h5>
+                    </div>
                     <button class="btn btn-theme btn-block" type="button" id="registerSubmit"><i class="fa fa-lock"></i>提交注册信息
                     </button>
                 </div>
-                {% if message %}
-                    <div class="alert alert-warning">{{ message }}</div>
-                {% endif %}
             </form>
 
         </div>
@@ -491,8 +509,20 @@
 <script>
     $(document).ready(function () {
         $("#logout").click(function () {
-            $("#login-page").show();
-        });
+            if (document.getElementById("logout").innerText == "Logout") {
+                $.ajax({
+                    url: "/web/login/",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (result) {
+                    }
+                });
+                alert("退出登陆成功！");
+                document.getElementById("logout").innerText = "点击登陆";
+            } else {
+                $("#login-page").show();
+            }
+        })
 
         $("#register").click(function () {
             {#alert(1000);#}
@@ -500,6 +530,42 @@
             $("#register-page").show();
         });
 
+        $("#registerSubmit").click(function () {
+
+            var data = {
+                "username": $("#rusername").val(),
+                "name": $("#rname").val(),
+                "email": $("#remail").val(),
+                "job": $("#rjob").val(),
+                "school": $("#rschool").find("option:selected").val(),
+                "repassword": $("#rrepassword").val(),
+                "rpassword": $("#rpassword").val()
+            };
+
+            $.ajax({
+                url: "/web/register/",
+                type: "POST",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    if (result['message'] != "success") {
+                        document.getElementById("registerInfo").innerText = result['message'];
+                        $("#registerInfo").css("visibility", "visible");
+                    } else {
+                        document.getElementById("registerInfo").innerText = "创建成功，3秒后自动返回登陆页面.....";
+                        $("#registerInfo").css("visibility", "visible");
+                        setTimeout(go, 3000);
+
+                        function go() {
+                            $("#login-page").show();
+                            $("#register-page").hide();
+                        }
+                    }
+                }
+
+            });
+
+        });
 
 
         // 登陆事件
