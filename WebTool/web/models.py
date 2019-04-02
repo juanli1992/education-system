@@ -4,7 +4,7 @@ import datetime
 # Create your models here.
 
 class Basic(models.Model):
-    StuID = models.CharField(max_length=20)
+    StuID = models.CharField(unique=True, max_length=20)
     School = models.TextField()
     Major = models.TextField()
     classNo = models.CharField(max_length=20, default='')
@@ -16,7 +16,7 @@ class Basic(models.Model):
     Gender = models.TextField()
     State = models.TextField()
     Type = models.TextField()
-    Year = models.CharField(max_length=5)
+    Year = models.TextField(max_length=5)
 
     def __unicode__(self):
         return self.StuID
@@ -110,6 +110,7 @@ class Score(models.Model):
     Low60 = models.CharField(max_length=2)
     Num0 = models.CharField(max_length=2)
     Grade = models.CharField(max_length=10, default="")
+    basic = models.ForeignKey(to="Basic", to_field="StuID", on_delete = models.CASCADE, null=True)
 
     def __unicode__(self):
         return self.StuID
@@ -269,6 +270,7 @@ class Health(models.Model):
     School = models.TextField()
     Grade = models.CharField(max_length=10)
     Semester = models.TextField()
+    basic = models.ForeignKey(to="Basic", to_field="StuID", on_delete = models.CASCADE, null=True)
 
     def __unicode__(self):
         return self.StuID
