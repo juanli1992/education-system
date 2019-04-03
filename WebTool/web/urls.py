@@ -32,6 +32,7 @@ urlpatterns = [
     path('index/', index),
     path('tt', tt),
     path('monitor/', monitor),
+    path('monitor_engine/', monitor_engine),
     path('list1/', list1),
     path('list2/', list2),
     path('list3/', list3),

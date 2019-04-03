@@ -521,6 +521,26 @@ no1 = yes1 = 0
 
 
 def monitor(request):
+       # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
+                                                                     'major_list': major_list,
+                                                                     'grade_list': grade_list,
+                                                                     'class_list': class_list})
+
+
+def monitor_engine(request):
     """
     需要学院和班级信息
     """
