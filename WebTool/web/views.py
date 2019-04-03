@@ -191,7 +191,7 @@ def inquiry(request):
     while i<=9:
         if i==9:
             index=x[i-1]<=a[:,1]<=x[i]
-        else:
+        # else:
     '''
     while i<=9:
         if i==9:
