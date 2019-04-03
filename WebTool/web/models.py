@@ -166,6 +166,7 @@ class Lib(models.Model):
     DateTime = models.CharField(max_length=30)
     #DateTime = models.DateTimeField()
     Gate = models.CharField(max_length=2)
+    basic = models.ForeignKey(to="Basic", to_field="StuID", on_delete = models.CASCADE, null=True)
 
     def __unicode__(self):
         return self.StuID
