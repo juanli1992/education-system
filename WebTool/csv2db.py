@@ -13,8 +13,8 @@ def Basic2db(filepath):
     lines = f.readlines()
     f.close()
     for line in lines:
-        stuId, school, major, birthYear, country, nation, entrance, province, gender, state, stuType, year = line.split(',')
-        Basic.objects.get_or_create(StuID=stuId, School=school, Major=major, BirthYear=birthYear, Country=country, National=nation, Entrance=entrance, Province=province, Gender=gender, State=state, Type=stuType, Year=year)
+        stuId, school, major, classno, birthYear, country, nation, entrance, province, gender, state, stuType, year, grade = line.strip('\n').split(',')
+        Basic.objects.get_or_create(StuID=stuId, School=school, Major=major, classNo=classno, BirthYear=birthYear, Country=country, National=nation, Entrance=entrance, Province=province, Gender=gender, State=state, Type=stuType, Year=year, Grade=grade)
     print("Basic Done!")
 
 def Book2db(filepath):
@@ -57,7 +57,7 @@ def Score2db(filepath):
     lines = f.readlines()
     f.close()
     for line in lines:
-        contents = line.split(',')
+        contents = line.strip('\n').split(',')
         Score.objects.get_or_create(StuID=contents[0], School=contents[1], Semester=contents[2], CourseNum=contents[3], Credits=contents[4], AveScore=contents[5], Lowest=contents[6], Highest=contents[7], Up90=contents[8], Up80=contents[9], Up70=contents[10], Up60=contents[11], Low60=contents[12], Num0=contents[13], Grade=contents[14])
     print("Score Done!")
 
@@ -161,11 +161,11 @@ def Health2db(filepath):
     print("Health Done!")
 
 def main():
-    #Basic2db('E:/basic111.csv')
+    Basic2db('D:/basic111.csv')
     # Book2db('F:/book200_new.csv')
     # Card2db('F:/card200_new.csv')
     # Aid2db('F:/aid200_new.csv')
-     Score2db('D:/score111.csv')
+     #Score2db('D:/score111.csv')
      #Moral2db('D:/moral200.csv')
     # Lib2db('F:/lib200_new.csv')
     # HosTrans2db('F:/hOSTRANS200_new.csv')

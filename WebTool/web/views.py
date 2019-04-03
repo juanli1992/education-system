@@ -42,25 +42,8 @@ def home(request):
     return render(request, 'servermaterial/home.html')
 
 
-@login_required
-def monitor_all(request):
-    return render(request, 'servermaterial/monitor_all.html')
-
-
-def study_well(request):
-    return render(request, 'servermaterial/study_well.html')
-
-
-def study_poor(request):
-    return render(request, 'servermaterial/study_poor.html')
-
-
 def admin(request):
     return render(request, 'servermaterial/admin_index.html')
-
-
-def first(request):
-    return render(request, 'servermaterial/first.html')
 
 
 def login(request):
@@ -267,7 +250,27 @@ def supervision(request):
 
 def result(request):
     print('here')
-    return render(request, 'servermaterial/result.html')
+    # Basic.objects.all().delete()
+    # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0], classNo=class_list[0]).values('StuID')
+    id_list = list(set([tmp['StuID'] for tmp in id_query_list if tmp['StuID'] != '']))
+    return render(request, 'servermaterial/result.html', context={'school_list': school_list,
+                                                                     'major_list': major_list,
+                                                                     'grade_list': grade_list,
+                                                                     'class_list': class_list,
+                                                                     'id_list': id_list})
 
 
 ##查询
@@ -569,6 +572,26 @@ no1 = yes1 = 0
 
 
 def monitor(request):
+       # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
+                                                                     'major_list': major_list,
+                                                                     'grade_list': grade_list,
+                                                                     'class_list': class_list})
+
+
+def monitor_engine(request):
     """
     需要学院和班级信息
     """
@@ -576,6 +599,27 @@ def monitor(request):
     School = '电子信息与电气工程学院'
     #
     classNo = ['1', '2']
+
+    # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0], classNo=class_list[0]).values('StuID')
+    id_list = list(set([tmp['StuID'] for tmp in id_query_list if tmp['StuID'] != '']))
+
+
+
+
+
 
     pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
     print(pastTime)
@@ -663,7 +707,12 @@ def monitor(request):
     retu = {'cha1': cha1}
 
     print(retu)
-    return render(request, 'servermaterial/monitor.html', {'retu': json.dumps(retu)})
+    # return render(request, 'servermaterial/monitor.html', {'retu': json.dumps(retu)})
+    return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
+                                                                     'major_list': major_list,
+                                                                     'grade_list': grade_list,
+                                                                     'class_list': class_list,
+                                                                     'retu': retu})
 
 
 def list1(request):
@@ -803,6 +852,21 @@ def query_majors(request):
     return HttpResponse(json.dumps(list(major_set)), content_type='application/json')
 
 
+def query_grades(request):
+    """
+     给定 学院+专业 查询所有年级信息
+     :param request: 年级list(json数据格式)
+     :return:
+     """
+    data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
+    grade_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip()).values("Grade")
+    grade_list = list(set(tmp['Grade'] for tmp in grade_query_list))
+    if grade_list.__len__()==0:
+        grade_list.append('NULL')
+    print(grade_list)
+    return HttpResponse(json.dumps(grade_list), content_type='application/json')
+
+
 def query_class(request):
     """
     给定 学院+专业+年纪 查询所有班级信息
@@ -810,10 +874,37 @@ def query_class(request):
     :return:
     """
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
-    class_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
-                                            Entrance__startswith=data['grade'].strip()).values("classNo")
-    class_list = list(set(tmp['classNo'] for tmp in class_query_list))
+    if data['grade'].strip()=='NULL':
+        class_list=['NULL']
+    else:
+        # print(data)
+        class_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
+                                                Grade=data['grade'].strip()).values("classNo")
+        class_list = list(set(tmp['classNo'] for tmp in class_query_list))
+        if class_list.__len__() == 0:
+            class_list.append('NULL')
+        print(class_list)
     return HttpResponse(json.dumps(class_list), content_type='application/json')
+
+
+def query_ID(request):
+    """
+    给定 学院+专业+年纪+班级 查询所有ID信息
+    :param request: IDlist(json数据格式)
+    :return:
+    """
+    data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
+    if data['grade'].strip()=='NULL' or data['class'].strip()=='NULL':
+        id_list=['NULL']
+    else:
+        id_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
+                                                Grade=data['grade'].strip(), classNo=data['class'].strip()).values("StuID")
+        print(id_query_list)
+        id_list = list(set(tmp['StuID'] for tmp in id_query_list))
+        if id_list.__len__() == 0:
+            id_list.append('NULL')
+        print(id_list)
+    return HttpResponse(json.dumps(id_list), content_type='application/json')
 
 
 def query_intervene(request):
