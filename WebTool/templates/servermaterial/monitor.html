@@ -303,80 +303,174 @@
 
     <!--监测-->
     <script>
-var myChart1 = echarts.init(document.getElementById('chart-1'));
-option = {
-    <!--backgroundColor: '#2c343c',-->
+$("#searchlog").click(function(){
+    var clas = $("#class").val();
+    var grade = $("#grade_").val();
+    var major = $("#major").val();
+    var school = $("#school").val();
+    //echarts1
+    $.post("/web/monitor_engine/",{"school": school, "major": major, "grade": grade, "class":clas}, function(retu){
+    var myChart1 = echarts.init(document.getElementById('chart-1'));
+            option = {
+                <!--backgroundColor: '#2c343c',-->
 
-    title: {
-        text: '生活规律与否比例',
-        left: 'center',
-        top: 20,
-        textStyle: {
-            color: 'black'
-        }
-    },
-
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
-
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
-    series : [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius : '55%',
-            center: ['50%', '50%'],
-            data:[].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
-            label: {
-                normal: {
+                title: {
+                    text: '生活规律与否比例',
+                    left: 'center',
+                    top: 20,
                     textStyle: {
                         color: 'black'
                     }
-                }
-            },
-            labelLine: {
-                normal: {
-                    lineStyle: {
-                        color: 'black'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
+                },
 
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-                return Math.random() * 200;
-            }
-        }
-    ]
-};;
-var data = {{retu|safe}}
-myChart1.setOption(option)
-myChart1.setOption({
-series:[{data:data.cha1}]
-}
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
 
-);
+                visualMap: {
+                    show: false,
+                    min: 80,
+                    max: 600,
+                    inRange: {
+                        colorLightness: [0, 1]
+                    }
+                },
+                series : [
+                    {
+                        name:'访问来源',
+                        type:'pie',
+                        radius : '55%',
+                        center: ['50%', '50%'],
+                        data:[].sort(function (a, b) { return a.value - b.value; }),
+                        roseType: 'radius',
+                        label: {
+                            normal: {
+                                textStyle: {
+                                    color: 'black'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                lineStyle: {
+                                    color: 'black'
+                                },
+                                smooth: 0.2,
+                                length: 10,
+                                length2: 20
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#c23531',
+                                shadowBlur: 200,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+
+                        animationType: 'scale',
+                        animationEasing: 'elasticOut',
+                        animationDelay: function (idx) {
+                            return Math.random() * 200;
+                        }
+                    }
+                ]
+            };;
+            var data = {{retu|safe}}
+            myChart1.setOption(option)
+            myChart1.setOption({
+            series:[{data:data.cha1}]
+            });
+     });
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+<!--var myChart1 = echarts.init(document.getElementById('chart-1'));-->
+<!--option = {-->
+    <!--&lt;!&ndash;backgroundColor: '#2c343c',&ndash;&gt;-->
+
+    <!--title: {-->
+        <!--text: '生活规律与否比例',-->
+        <!--left: 'center',-->
+        <!--top: 20,-->
+        <!--textStyle: {-->
+            <!--color: 'black'-->
+        <!--}-->
+    <!--},-->
+
+    <!--tooltip : {-->
+        <!--trigger: 'item',-->
+        <!--formatter: "{a} <br/>{b} : {c} ({d}%)"-->
+    <!--},-->
+
+    <!--visualMap: {-->
+        <!--show: false,-->
+        <!--min: 80,-->
+        <!--max: 600,-->
+        <!--inRange: {-->
+            <!--colorLightness: [0, 1]-->
+        <!--}-->
+    <!--},-->
+    <!--series : [-->
+        <!--{-->
+            <!--name:'访问来源',-->
+            <!--type:'pie',-->
+            <!--radius : '55%',-->
+            <!--center: ['50%', '50%'],-->
+            <!--data:[].sort(function (a, b) { return a.value - b.value; }),-->
+            <!--roseType: 'radius',-->
+            <!--label: {-->
+                <!--normal: {-->
+                    <!--textStyle: {-->
+                        <!--color: 'black'-->
+                    <!--}-->
+                <!--}-->
+            <!--},-->
+            <!--labelLine: {-->
+                <!--normal: {-->
+                    <!--lineStyle: {-->
+                        <!--color: 'black'-->
+                    <!--},-->
+                    <!--smooth: 0.2,-->
+                    <!--length: 10,-->
+                    <!--length2: 20-->
+                <!--}-->
+            <!--},-->
+            <!--itemStyle: {-->
+                <!--normal: {-->
+                    <!--color: '#c23531',-->
+                    <!--shadowBlur: 200,-->
+                    <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
+                <!--}-->
+            <!--},-->
+
+            <!--animationType: 'scale',-->
+            <!--animationEasing: 'elasticOut',-->
+            <!--animationDelay: function (idx) {-->
+                <!--return Math.random() * 200;-->
+            <!--}-->
+        <!--}-->
+    <!--]-->
+<!--};;-->
+<!--var data = {{retu|safe}}-->
+<!--myChart1.setOption(option)-->
+<!--myChart1.setOption({-->
+<!--series:[{data:data.cha1}]-->
+<!--}-->
+
+<!--);-->
 
 
 
