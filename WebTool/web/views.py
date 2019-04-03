@@ -220,13 +220,6 @@ def result(request):
                                                                      'grade_list': grade_list,
                                                                      'class_list': class_list,
                                                                      'id_list': id_list})
-    # # 读取学院信息，显示在下拉框上
-    # school_query_list = Basic.objects.values('School')
-    # school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
-    #
-    #
-    # return render(request, 'servermaterial/result.html', context={'school_list': school_list})
-
 
 
 ##查询
@@ -536,6 +529,27 @@ def monitor(request):
     #
     classNo = ['1', '2']
 
+    # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0], classNo=class_list[0]).values('StuID')
+    id_list = list(set([tmp['StuID'] for tmp in id_query_list if tmp['StuID'] != '']))
+
+
+
+
+
+
     pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
     print(pastTime)
     Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
@@ -622,7 +636,12 @@ def monitor(request):
     retu = {'cha1': cha1}
 
     print(retu)
-    return render(request, 'servermaterial/monitor.html', {'retu': json.dumps(retu)})
+    # return render(request, 'servermaterial/monitor.html', {'retu': json.dumps(retu)})
+    return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
+                                                                     'major_list': major_list,
+                                                                     'grade_list': grade_list,
+                                                                     'class_list': class_list,
+                                                                     'retu': retu})
 
 
 def list1(request):
