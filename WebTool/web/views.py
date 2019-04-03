@@ -14,6 +14,7 @@ import xlrd
 import xlwt
 import numpy as np
 import datetime
+from django.db.models import Count
 ###
 import numpy as np
 import pandas as pd
@@ -188,23 +189,73 @@ def inquiry(request):
     # the average grade for different gender
     score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='男').values_list('AveScore', flat=True))
     ave_score_male=sum(float(j) for j in score_male)/len(score_male)
-    print(len(score_male))
+    #print(len(score_male))
 
     score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='女').values_list('AveScore', flat=True))
     ave_score_female=sum(float(j) for j in score_female)/len(score_female)
-    print(len(score_female))
+    #print(len(score_female))
 
     ave_score=sum(float(j) for j in score_all)/len(score_all)
-    print(len(score_all))
+    #print(len(score_all))
 
-    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score}
-    return HttpResponse(json.dumps(ret), content_type='application/json')
+    # score vs. library
+    r=Basic.objects.filter(School=school, score_Semester=time).annotate(count=Count("lib__id")).values_list('count','score__AveScore')
+    print(r)
+    r=np.array(r)
+
+    x=[0,10,20,30,40,50,60,70,80,90]
+    i=1
+    while i<=9:
+        if i==9:
+            index=x[i-1]<=a[:,1]<=x[i]
+        else:
+    '''
+    while i<=9:
+        if i==9:
+            re=r.filter(count__gte=x[i-1], count__lte=x[i])
+            print(re)
+        else:
+            re=r.filter(count__gte=x[i-1], count__lt=x[i])
+            print(re)
+        i=i+1
+    '''
+
+
+    # r=Lib.objects.values(basic__StuID)
 
 
 
     # health
     # physical test
     # distribution
+    health_score_all = list(Health.objects.filter(Semester=time, School=school).values_list('TotalScore', flat=True))
+    x = [0, 50, 60, 70, 80, 90, 100]
+    health_num = getdistribution(x,health_score_all)
+
+    # hospital
+    #distribution
+
+
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score, 'health_num': health_num}
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+
+def getdistribution(x,data):
+    # x includes endpoints of intervals
+    l=len(x)
+    num=[]
+    i=1
+    while i<=len(x):
+        if i==len(x):
+            num.append(sum(x[i-1]<=float(j)<=x[i] for j in data))
+        else:
+            num.append(sum(x[i-1]<=float(j)<x[i] for j in data))
+        i=i+1
+    return num
+
+
+
 
 def base(request):
     return render(request, 'servermaterial/base.html')
