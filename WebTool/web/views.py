@@ -170,11 +170,11 @@ def inquiry(request):
         i=i+1
 
     # the average grade for different gender
-    score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='男').values_list('AveScore', flat=True))
+    score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
     ave_score_male=sum(float(j) for j in score_male)/len(score_male)
     #print(len(score_male))
 
-    score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='女').values_list('AveScore', flat=True))
+    score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
     ave_score_female=sum(float(j) for j in score_female)/len(score_female)
     #print(len(score_female))
 
@@ -182,16 +182,19 @@ def inquiry(request):
     #print(len(score_all))
 
     # score vs. library
+    '''
     r=Basic.objects.filter(School=school, score_Semester=time).annotate(count=Count("lib__id")).values_list('count','score__AveScore')
     print(r)
     r=np.array(r)
-
+'''
+    '''
     x=[0,10,20,30,40,50,60,70,80,90]
     i=1
     while i<=9:
         if i==9:
             index=x[i-1]<=a[:,1]<=x[i]
         else:
+    '''
     '''
     while i<=9:
         if i==9:
@@ -211,15 +214,15 @@ def inquiry(request):
     # health
     # physical test
     # distribution
+    '''
     health_score_all = list(Health.objects.filter(Semester=time, School=school).values_list('TotalScore', flat=True))
     x = [0, 50, 60, 70, 80, 90, 100]
     health_num = getdistribution(x,health_score_all)
-
+'''
     # hospital
-    #distribution
 
 
-    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score, 'health_num': health_num}
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
