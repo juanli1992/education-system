@@ -68,7 +68,7 @@
             <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
         </div>
         <!--logo start-->
-        <a href="/templates/servermaterial/index.html" class="logo"><b>学生成长分析平台</b></a>
+        <a href="/templates/servermaterial/index.html" class="logo"><b>教育大数据分析和应用平台</b></a>
         <!--logo end-->
         <div class="nav notify-row" id="top_menu">
             <!--  notification start -->
@@ -371,10 +371,68 @@
                     <!--custom chart end-->
                     <div class="row mt">
                         <!-- SERVER STATUS PANELS -->
+                        <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/supervision'">
+                            <div class="darkblue-panel pn">
+                                <div class="darkblue-header">
+                                    <h3><font color="white">数据可视化</font></h3>
+                                </div>
+                                <canvas id="serverstatus02" height="120" width="120"></canvas>
+                                <script>
+                                    var doughnutData = [{
+                                        value: 60,
+                                        color: "#1c9ca7"
+                                    },
+                                        {
+                                            value: 40,
+                                            color: "#f68275"
+                                        }
+                                    ];
+                                    var myDoughnut = new Chart(document.getElementById("serverstatus02").getContext("2d")).Doughnut(doughnutData);
+                                </script>
+                            </div>
+                            <!--  /darkblue panel -->
+                        </div>
+                        <!-- /col-md-4-->
                         <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/monitor'">
+                            <!-- REVENUE PANEL -->
+                            <div class="green-panel pn">
+                                <div class="green-header">
+                                    <h3>预警监测</h3>
+                                </div>
+                                <div class="chart mt">
+                                    <div class="sparkline" data-type="line" data-resize="true" data-height="75"
+                                         data-width="90%" data-line-width="1" data-line-color="#fff"
+                                         data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff"
+                                         data-spot-radius="4"
+                                         data-data="[200,135,667,333,526,996,564,123,890,464,655]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /col-md-4 -->
+                        <div class="col-md-4 mb" onclick="window.location.href='/web/result'">
+                            <!-- WHITE PANEL - TOP USER -->
+                            <div class="white-panel pn">
+                                <div class="white-header">
+                                    <h3><font color="black">学生画像</font></h3>
+                                </div>
+                                <br/>
+                                <br/>
+                                <p><img src="/templates/servermaterial/img/icon.jpg" class="img-circle" width="70"></p>
+                                <p><font color="black">朱大竞</font></p>
+                            </div>
+                        </div>
+                        <!-- /col-md-4 -->
+                    </div>
+
+                    <div class="row">
+                        <!-- TWITTER PANEL -->
+                        <!-- /col-md-4 -->
+                        <div class="col-md-2 mb">
+                        </div>
+                        <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/recommend'">
                             <div class="grey-panel pn donut-chart">
                                 <div class="grey-header">
-                                    <h3>学生成长检测</h3>
+                                    <h3>图书推荐</h3>
                                 </div>
                                 <canvas id="serverstatus01" height="120" width="120"></canvas>
                                 <script>
@@ -392,70 +450,11 @@
                             </div>
                             <!-- /grey-panel -->
                         </div>
-                        <!-- /col-md-4-->
-                        <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/result'">
-                            <div class="darkblue-panel pn">
-                                <div class="darkblue-header">
-                                    <h3><font color="white">学生画像分析</font></h3>
-                                </div>
-                                <canvas id="serverstatus02" height="120" width="120"></canvas>
-                                <script>
-                                    var doughnutData = [{
-                                        value: 60,
-                                        color: "#1c9ca7"
-                                    },
-                                        {
-                                            value: 40,
-                                            color: "#f68275"
-                                        }
-                                    ];
-                                    var myDoughnut = new Chart(document.getElementById("serverstatus02").getContext("2d")).Doughnut(doughnutData);
-                                </script>
-                                <p>April 17, 2014</p>
-                            </div>
-                            <!--  /darkblue panel -->
-                        </div>
-                        <!-- /col-md-4 -->
-                        <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/recommend'">
-                            <!-- REVENUE PANEL -->
-                            <div class="green-panel pn">
-                                <div class="green-header">
-                                    <h3>学习资源推荐</h3>
-                                </div>
-                                <div class="chart mt">
-                                    <div class="sparkline" data-type="line" data-resize="true" data-height="75"
-                                         data-width="90%" data-line-width="1" data-line-color="#fff"
-                                         data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff"
-                                         data-spot-radius="4"
-                                         data-data="[200,135,667,333,526,996,564,123,890,464,655]"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /col-md-4 -->
-                    </div>
-
-                    <div class="row">
-                        <!-- TWITTER PANEL -->
-                        <!-- /col-md-4 -->
-                        <div class="col-md-2 mb">
-                        </div>
-                        <div class="col-md-4 mb" onclick="window.location.href='/web/result'">
-                            <!-- WHITE PANEL - TOP USER -->
-                            <div class="white-panel pn">
-                                <div class="white-header">
-                                    <h3><font color="black">学生信息分析</font></h3>
-                                </div>
-                                <br/>
-                                <br/>
-                                <p><img src="/templates/servermaterial/img/icon.jpg" class="img-circle" width="70"></p>
-                                <p><font color="black">朱大竞</font></p>
-                            </div>
-                        </div>
                         <!-- /col-md-4 -->
                         <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/data_import_export'">
                             <div class="darkblue-panel pn">
                                 <div class="darkblue-header">
-                                    <h3><font color='white'>数据导入导出</font></h3>
+                                    <h3><font color='white'>数据处理</font></h3>
                                 </div>
                                 <br/>
                                 <p><img src="/templates/servermaterial/img/apple-touch-icon.png" class="img"
