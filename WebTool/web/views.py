@@ -718,11 +718,24 @@ def monitor_engine(request):
         不及格预警
         """
         tst()
-        print('ok')
+        global bujigeyujinglist  # 给list函数的
+        bujigeyujinglist = []
+        for stuid in stus:
+            dtlist = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))
+            if float(dtlist[0]) < 70:
+                bujigeyujinglist.append(stuid)
+
+        global no3
+        no3 = len(bujigeyujinglist)
+        no3d = {'value': no3, 'name': '不及格'}
+        global yes3
+        yes3 = len(stus) - no3
+        yes3d = {'value': yes3, 'name': '及格'}
+        cha3 = [no3d, yes3d]
 
 
 
-        retu = {'cha1': cha1, 'cha2': cha2}
+        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3}
 
         print(retu)
 
