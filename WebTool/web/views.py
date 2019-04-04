@@ -593,7 +593,6 @@ def monitor(request):
 
 def monitor_engine(request):
     if request.method == 'POST':
-        # 关键内容
         school = request.POST.get('school')
         major = request.POST.get('major')
         grade = request.POST.get('grade')
@@ -613,8 +612,11 @@ def monitor_engine(request):
 
 
 
+        """
+        生活规律
+        """
         ###访问dorm
-        global dormlist
+        global dormlist # 给list函数的
         dormlist = []
         for stuid in stus:
             dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
@@ -679,7 +681,43 @@ def monitor_engine(request):
         yes1 = len(stus) - no1
         yes1d = {'value': yes1, 'name': '规律'}
         cha1 = [no1d, yes1d]
-        retu = {'cha1': cha1}
+
+
+
+        """
+        不及格监测
+        """
+        global bujigejiancelist  # 给list函数的
+        global kemushu
+        bujigejiancelist = []
+        kemushu = []
+        for stuid in stus:
+            dtlist1 = list(Score.objects.filter(StuID=stuid).values_list('Low60', flat=True))
+            cccc = 0
+            for it in dtlist1:
+                cccc += int(it)
+            dtlist2 = list(Score.objects.filter(StuID=stuid).values_list('Num0', flat=True))
+            for it in dtlist2:
+                cccc += int(it)
+
+            if cccc != 0:
+                bujigejiancelist.append(stuid)
+                kemushu.append(cccc)
+
+        global no2
+        no2 = len(bujigejiancelist)
+        no2d = {'value': no2, 'name': '不及格'}
+        global yes2
+        yes2 = len(stus) - no2
+        yes2d = {'value': yes2, 'name': '及格'}
+        cha2 = [no2d, yes2d]
+
+
+
+
+
+
+        retu = {'cha1': cha1, 'cha2': cha2}
 
         print(retu)
 
