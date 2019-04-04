@@ -714,6 +714,11 @@ def monitor_engine(request):
 
 
 
+        """
+        不及格预警
+        """
+        tst()
+        print('ok')
 
 
 
@@ -1040,7 +1045,7 @@ def index(request):
     return render(request, "servermaterial/index_main.html")
 
 
-def tst(request):
+def tst():
     np.random.seed(1119)
 
     stuolist = Score.objects.all()
