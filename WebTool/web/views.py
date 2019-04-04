@@ -170,11 +170,11 @@ def inquiry(request):
         i=i+1
 
     # the average grade for different gender
-    score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='男').values_list('AveScore', flat=True))
+    score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
     ave_score_male=sum(float(j) for j in score_male)/len(score_male)
     #print(len(score_male))
 
-    score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='女').values_list('AveScore', flat=True))
+    score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
     ave_score_female=sum(float(j) for j in score_female)/len(score_female)
     #print(len(score_female))
 
@@ -182,16 +182,19 @@ def inquiry(request):
     #print(len(score_all))
 
     # score vs. library
+    '''
     r=Basic.objects.filter(School=school, score_Semester=time).annotate(count=Count("lib__id")).values_list('count','score__AveScore')
     print(r)
     r=np.array(r)
-
+'''
+    '''
     x=[0,10,20,30,40,50,60,70,80,90]
     i=1
     while i<=9:
         if i==9:
             index=x[i-1]<=a[:,1]<=x[i]
         # else:
+    '''
     '''
     while i<=9:
         if i==9:
@@ -211,15 +214,15 @@ def inquiry(request):
     # health
     # physical test
     # distribution
+    '''
     health_score_all = list(Health.objects.filter(Semester=time, School=school).values_list('TotalScore', flat=True))
     x = [0, 50, 60, 70, 80, 90, 100]
     health_num = getdistribution(x,health_score_all)
-
+'''
     # hospital
-    #distribution
 
 
-    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score, 'health_num': health_num}
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -593,7 +596,6 @@ def monitor(request):
 
 def monitor_engine(request):
     if request.method == 'POST':
-        # 关键内容
         school = request.POST.get('school')
         major = request.POST.get('major')
         grade = request.POST.get('grade')
@@ -613,8 +615,11 @@ def monitor_engine(request):
 
 
 
+        """
+        生活规律
+        """
         ###访问dorm
-        global dormlist
+        global dormlist # 给list函数的
         dormlist = []
         for stuid in stus:
             dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
@@ -679,7 +684,48 @@ def monitor_engine(request):
         yes1 = len(stus) - no1
         yes1d = {'value': yes1, 'name': '规律'}
         cha1 = [no1d, yes1d]
-        retu = {'cha1': cha1}
+
+
+
+        """
+        不及格监测
+        """
+        global bujigejiancelist  # 给list函数的
+        global kemushu
+        bujigejiancelist = []
+        kemushu = []
+        for stuid in stus:
+            dtlist1 = list(Score.objects.filter(StuID=stuid).values_list('Low60', flat=True))
+            cccc = 0
+            for it in dtlist1:
+                cccc += int(it)
+            dtlist2 = list(Score.objects.filter(StuID=stuid).values_list('Num0', flat=True))
+            for it in dtlist2:
+                cccc += int(it)
+
+            if cccc != 0:
+                bujigejiancelist.append(stuid)
+                kemushu.append(cccc)
+
+        global no2
+        no2 = len(bujigejiancelist)
+        no2d = {'value': no2, 'name': '不及格'}
+        global yes2
+        yes2 = len(stus) - no2
+        yes2d = {'value': yes2, 'name': '及格'}
+        cha2 = [no2d, yes2d]
+
+
+
+        """
+        不及格预警
+        """
+        tst()
+        print('ok')
+
+
+
+        retu = {'cha1': cha1, 'cha2': cha2}
 
         print(retu)
 
@@ -1002,7 +1048,7 @@ def index(request):
     return render(request, "servermaterial/index_main.html")
 
 
-def tst(request):
+def tst():
     np.random.seed(1119)
 
     stuolist = Score.objects.all()

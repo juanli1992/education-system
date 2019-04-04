@@ -165,7 +165,7 @@
         <div class="col-lg-12 mt">
           <div class="row content-panel">
             <div class="col-lg-12 detailed mt">
-              <h4>查询选项</h4>
+              <h4>选择监测预警对象</h4>
               <div>
                 <div class="cls form-group col-lg-4">
                     <label class="col-lg-3 control-label">学院</label>
@@ -209,7 +209,7 @@
                 </div>
 
                 <div class="form-group col-lg-1">
-                  <button class="btn btn-theme" id="searchlog" type="button">查询</button>
+                  <button class="btn btn-theme" id="searchlog" type="button">开始</button>
                 </div>
 
               </div>
@@ -217,37 +217,50 @@
           </div>
         </div>
 
-        <div class="col-lg-12 mt">
-          <div class="row content-panel">
-            <div class="col-lg-12 detailed mt">
-              <h4>监测</h4>
-              <div>
 
-                  <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
-                      <div id="chart-1" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list1">查看需要关注学生名单</a>
-                    </div>
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
-                      <div id="chart-2" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list2">查看需要关注学生名单</a>
-                    </div>
-                  </div>
-
-
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="col-lg-12 detailed">
           <div class="row content-panel">
-            <h4>预警</h4>
+            <h4>不及格监测</h4>
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-1 detailed">
                       <div id="chart-3" style="width: 450px;height:400px;"></div>
                       <a href="/web/list3">查看需要关注学生名单</a>
                     </div>
+
+                  </div>
+
+
+
+          </div>
+
+        </div>
+
+       <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+            <h4>不及格预警</h4>
+
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-5" style="width: 450px;height:400px;"></div>
+                      <a href="/web/list3">查看需要关注学生名单</a>
+                    </div>
+
+                  </div>
+
+
+
+          </div>
+
+        </div>
+
+
+       <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+            <h4>退学预警</h4>
+
+                  <div class="row mt">
+
                     <div class="col-lg-5 col-lg-offset-1 detailed">
                       <div id="chart-4" style="width: 450px;height:400px;"></div>
                       <a href="/web/list4">查看需要关注学生名单</a>
@@ -257,9 +270,67 @@
 
 
           </div>
-          <!-- /row content-panel -->
+
         </div>
-        <!-- /col-lg-12 -->
+
+
+
+
+       <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+               <h4>生活规律监测</h4>
+              <div>
+
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-1" style="width: 450px;height:400px;"></div>
+                        <a href="/web/list1">查看需要关注学生名单</a>
+                    </div>
+                    <!--<div class="col-lg-5 col-lg-offset-1 detailed">-->
+                      <!--<div id="chart-2" style="width: 450px;height:400px;"></div>-->
+                        <!--<a href="/web/list2">查看需要关注学生名单</a>-->
+                    <!--</div>-->
+                  </div>
+
+
+              </div>
+
+
+
+          </div>
+
+        </div>
+
+
+
+       <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+            <h4>身体健康监测</h4>
+
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-2" style="width: 450px;height:400px;"></div>
+                        <a href="/web/list2">查看需要关注学生名单</a>
+                    </div>
+                  </div>
+
+
+
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
       </section>
       <!-- /wrapper -->
     </section>
@@ -309,14 +380,15 @@ $("#searchlog").click(function(){
     var grade = $("#grade_").val();
     var major = $("#major").val();
     var school = $("#school").val();
-    //echarts1
+
     $.post("/web/monitor_engine/",{"school": school, "major": major, "grade": grade, "class":clas}, function(retu){
-    var myChart1 = echarts.init(document.getElementById('chart-1'));
+			//echarts1
+			var myChart1 = echarts.init(document.getElementById('chart-1'));
 			option = {
 				<!--backgroundColor: '#2c343c',-->
 
 				title: {
-					text: '生活规律与否比例',
+					text: '规律与否人数比例图',
 					left: 'center',
 					top: 20,
 					textStyle: {
@@ -382,15 +454,86 @@ $("#searchlog").click(function(){
 			myChart1.setOption({
 			series:[{data:retu['cha1']}]
 			});
-			alert(retu['cha1'])
+
+
+
+			//echarts3
+			var myChart3 = echarts.init(document.getElementById('chart-3'));
+			option = {
+				<!--backgroundColor: '#2c343c',-->
+
+				title: {
+					text: '及格与否人数比例图',
+					left: 'center',
+					top: 20,
+					textStyle: {
+						color: 'black'
+					}
+				},
+
+				tooltip : {
+					trigger: 'item',
+					formatter: "{a} <br/>{b} : {c} ({d}%)"
+				},
+
+				visualMap: {
+					show: false,
+					min: 80,
+					max: 600,
+					inRange: {
+						colorLightness: [0, 1]
+					}
+				},
+				series : [
+					{
+						name:'访问来源',
+						type:'pie',
+						radius : '55%',
+						center: ['50%', '50%'],
+						data:[].sort(function (a, b) { return a.value - b.value; }),
+						roseType: 'radius',
+						label: {
+							normal: {
+								textStyle: {
+									color: 'black'
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								lineStyle: {
+									color: 'black'
+								},
+								smooth: 0.2,
+								length: 10,
+								length2: 20
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: '#c23531',
+								shadowBlur: 200,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						},
+
+						animationType: 'scale',
+						animationEasing: 'elasticOut',
+						animationDelay: function (idx) {
+							return Math.random() * 200;
+						}
+					}
+				]
+			};
+            myChart3.setOption(option);
+			myChart3.setOption({
+			series:[{data:retu['cha2']}]
+			});
 
 
 
 
      });
-
-
-
 
 });
 
@@ -552,12 +695,9 @@ option = {
 };;
 myChart2.setOption(option);
 
-    </script>
 
-    <!--预警-->
-    <script>
 
-var myChart3 = echarts.init(document.getElementById('chart-3'));
+var myChart5 = echarts.init(document.getElementById('chart-5'));
 option = {
 
     title: {
@@ -628,7 +768,7 @@ option = {
         }
     ]
 };;
-myChart3.setOption(option);
+myChart5.setOption(option);
 
 
 
