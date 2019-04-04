@@ -38,6 +38,40 @@
         }
 
         $(document).ready(function () {
+            $("#query_option").change(function () {
+                {#alert($('#query_option').val());#}
+                $("tbody").empty();
+                if ($(this).val() == 'student') {
+                    $(".cls").hide();
+                    $("#stuNo_query").show();
+                    $("#query_hint").empty();
+                    $("#query_hint").append("学生查询");
+                } else {
+                    $("#stuNo_query").hide();
+                    $(".cls").show();
+                    $("#query_hint").empty();
+                    $("#query_hint").append("班级查询");
+                }
+            });
+
+            $("#school").change(function () {
+                $.ajax({
+                    url: '/web/query_majors',
+                    type: 'POST',
+                    data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#major").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#major").append(newNode);
+                        }
+                    }
+
+                });
+            });
+
             $.ajax({
                 url: '/web/hot_book',
                 type: 'GET',
@@ -88,7 +122,7 @@
 
             });
 
-            $("#id_query").click(function () {
+            $("#query_button").click(function () {
                 idr = $("#stuNo").val();
                 $.ajax({
                     url: "/web/recommend",
@@ -212,10 +246,10 @@
                             <a data-toggle="tab" href="#hotBook">热门书籍推荐</a>
                         </li>
                         <li>
-                            <a data-toggle="tab" href="#personalize">个性化推荐</a>
+                            <a data-toggle="tab" href="#personalize">个性化推荐配置</a>
                         </li>
                         <li>
-                            <a data-toggle="tab" href="#personalize">优秀学生共性分析</a>
+                            <a data-toggle="tab" href="#overlord">学霸书目挖掘</a>
                         </li>
                     </ul>
                 </div>
@@ -229,7 +263,7 @@
                                             <label class="col-lg-4 control-label text-info"
                                                    style="font-size: 17px"><strong>学院选择</strong></label>
                                             <div class="col-lg-8">
-                                                <select class="form-control" id="query_option">
+                                                <select class="form-control" id="query_option3">
                                                     <option value="all">全校学生</option>
                                                     <option>电子信息与电气工程学院</option>
                                                     <option>农业与生物学院</option>
@@ -307,7 +341,7 @@
                                                 style="margin-top: 25px; margin-bottom: 5px; color: red"></h5>
                                         </div>
                                         <form role="form" class="form-horizontal">
-                                            <div class="cls form-group col-lg-4">
+                                            <div class="form-group col-lg-4">
                                                 <label class="col-lg-4 control-label">推荐频率</label>
                                                 <div class="col-lg-8">
                                                     <select class="form-control" id="rrate" disabled>
@@ -318,7 +352,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="cls form-group col-lg-4">
+                                            <div class="form-group col-lg-4">
                                                 <label class="col-lg-4 control-label" disabled>推荐方式</label>
                                                 <div class="col-lg-8">
                                                     <select class="form-control" id="rway" disabled>
@@ -335,24 +369,74 @@
                                         </form>
                                         <form role="form" class="form-horizontal">
                                             <div class="form-group col-lg-12">
-                                                <label class="col-lg-12 control-label text-info"
-                                                       style="font-size: 17px"><strong>推荐后端查询</strong></label>
-                                                <h5 class="page-header"
-                                                    style="margin-top: 25px; margin-bottom: 5px; color: red"></h5>
-                                            </div>
-                                            <div class="form-group col-lg-4" id="stuNo_query" style="display:block">
-                                                <label class="col-lg-3 control-label">学号</label>
-                                                <div class="col-lg-8">
-                                                    <input type="text" id="stuNo" name="stuNo" class="form-control">
+                                                <label class="col-lg-2 control-label text-info"
+                                                       style="font-size: 17px; margin-right: 0px; padding-right: 0px"><strong>推荐后端查询</strong></label>
+                                                <div class="col-lg-2" style="margin-top: 3px; padding-left: 0px">
+                                                    <select class="form-control" id="query_option">
+                                                        <option value="student">学生查询</option>
+                                                        <option value="class">班级查询</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="form-group col-lg-4">
-                                                <center>
-                                                    <button type="button" class="btn btn-theme" id="id_query">查询
-                                                    </button>
-                                                </center>
-                                            </div>
                                         </form>
+                                        <div class="col-lg-12 detailed">
+                                            <form role="form" class="form-horizontal">
+                                                <div class="cls form-group col-lg-4" style="display:none">
+                                                    <label class="col-lg-3 control-label">学院</label>
+                                                    <div class="col-lg-8">
+                                                        <select class="form-control" id="r_school">
+                                                            {% for school in school_list %}
+                                                                <option>{{ school }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="cls form-group col-lg-4" style="display:none">
+                                                    <label class="col-lg-3 control-label">专业</label>
+                                                    <div class="col-lg-8">
+                                                        <select class="form-control" id="r_major">
+                                                            {% for major in major_list %}
+                                                                <option> {{ major }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-lg-4 cls" style="display:none">
+                                                    <label class="col-lg-3 control-label">年级</label>
+                                                    <div class="col-lg-8">
+                                                        <select class="form-control" id="grade">
+                                                            <option value="volvo">2013</option>
+                                                            <option value="volvo">2014</option>
+                                                            <option value="saab">2015</option>
+                                                            <option value="saab">2016</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-lg-4 cls" style="display:none">
+                                                    <label class="col-lg-3 control-label">班级</label>
+                                                    <div class="col-lg-8">
+                                                        <select class="form-control" id="class">
+                                                            <option value="saab">所有班级</option>
+                                                            {% for classNo in class_list %}
+                                                                <option value="class1">{{ classNo }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-lg-4" id="stuNo_query">
+                                                    <label class="col-lg-3 control-label">学号</label>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" id="stuNo" name="stuNo" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-lg-12">
+                                                    <center>
+                                                        <button type="button" class="btn btn-theme" id="query_button">查询
+                                                        </button>
+                                                    </center>
+                                                </div>
+                                            </form>
+                                        </div>
                                         {#                                        <ul class="list-group" name="recommenList">#}
                                         {#                                            {% for book in book_list %}#}
                                         {#                                                <li class="list-group-item"><<{{ book }}>></li>#}
@@ -382,12 +466,93 @@
                                         <form class="form-horizontal">
                                             <div class="form-group col-lg-12">
                                                 <center>
-                                                    <button type="button" class="btn btn-theme" id="man_set" style="display: none">手工配置
+                                                    <button type="button" class="btn btn-theme" id="man_set"
+                                                            style="display: none">手工配置
                                                     </button>
                                                 </center>
                                             </div>
                                         </form>
+                                    </form>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="overlord">
+                            <div class="col-lg-12 detailed">
+                                <div class="col-lg-12 detailed">
+                                    <form role="form" class="form-horizontal">
+                                        <div class="form-group col-lg-4">
+                                            <label class="col-lg-4 control-label text-info"
+                                                   style="font-size: 17px"><strong>学院选择</strong></label>
+                                            <div class="col-lg-8">
+                                                <select class="form-control" id="school">
+                                                    <option value="all">全校学生</option>
+                                                    <option>电子信息与电气工程学院</option>
+                                                    <option>农业与生物学院</option>
+                                                    <option>船舶海洋与建筑工程学院</option>
+                                                    <option>安泰经济与管理学院</option>
+                                                    <option>材料科学与工程学院</option>
+                                                    <option>密西根学院</option>
+                                                    <option>机械与动力工程学院</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label class="col-lg-4 control-label text-info"
+                                                   style="font-size: 17px"><strong>专业选择</strong></label>
+                                            <div class="col-lg-8">
+                                                <select class="form-control" id="major">
+                                                    {#                                                    <option value="20">top20</option>#}
+                                                    {#                                                    <option value="30">top30</option>#}
+                                                    {#                                                    <option value="40">top40</option>#}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="row">
+                                    <div class="center-block">
+                                        <div class="bdsharebuttonbox center-block"><a href="#" class="bds_weixin"
+                                                                                      data-cmd="weixin"
+                                                                                      title="分享到微信">微信</a><a href="#"
+                                                                                                             class="bds_qzone"
+                                                                                                             data-cmd="qzone"
+                                                                                                             title="分享到QQ空间">QQ空间</a><a
+                                                href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博">新浪微博</a><a
+                                                href="#"
+                                                class="bds_more"
+                                                data-cmd="more">分享到：</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-library-1" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-library-2" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+
+                                <script>window._bd_share_config = {
+                                    "common": {
+                                        "bdSnsKey": {},
+                                        "bdText": "",
+                                        "bdMini": "1",
+                                        "bdMiniList": false,
+                                        "bdPic": "",
+                                        "bdStyle": "0",
+                                        "bdSize": "24"
+                                    },
+                                    "share": {"bdSize": 16},
+                                    "image": {
+                                        "viewList": ["weixin", "qzone", "tsina"],
+                                        "viewText": "分享到：",
+                                        "viewSize": "24"
+                                    }
+                                };
+                                with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
                             </div>
                         </div>
                     </div>
@@ -405,6 +570,135 @@
 <!--footer end-->
 
 <!-- js placed at the end of the document so the pages load faster -->
+<script>
+    /*
+     * 学霸书目挖掘可视化图
+     */
+    var myChart = echarts.init(document.getElementById('chart-library-1'));
+
+    option = {
+        title: {
+            text: '年级排名与每月借阅书籍次数',
+            subtext: '横坐标为年级排名',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#888'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: false}
+            }
+        },
+        legend: {
+            y: 'bottom'
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: ['Top 30%', 'Top 20%', 'Top 10%', 'Top 5%', 'Top 1%'],
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '借阅次数',
+            }
+        ],
+        series: [
+            {
+                name: '借阅次数',
+                type: 'bar',
+                data: [5, 6, 7, 11, 20],
+                itemStyle: {
+                    normal: {
+                        color: '#4f9D9D',
+                    }
+                }
+            },
+            {
+                name: '借阅次数',
+                type: 'line',
+                data: [5, 6, 7, 11, 20],
+                itemStyle: {
+                    normal: {
+                        color: '#EA7500',
+                    }
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
+<script>
+    var myChart = echarts.init(document.getElementById('chart-library-2'));
+    option = {
+        title: {
+            text: 'Top 10%学生借阅图书分类比例',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1548
+                        }
+                    }
+                },
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        series: [
+            {
+                name: '比例分布',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: 679, name: '数学类'},
+                    {value: 310, name: '语言类'},
+                    {value: 134, name: '哲学类'},
+                    {value: 135, name: '人文小说类'},
+                    {value: 1548, name: '计算机类'}
+                ]
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
 <script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script>
 <script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>
 <script class="include" type="text/javascript" src="/templates/servermaterial/lib/jquery.dcjqaccordion.2.7.js"></script>

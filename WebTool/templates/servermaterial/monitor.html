@@ -531,6 +531,80 @@ $("#searchlog").click(function(){
 			});
 
 
+			//echarts5
+			var myChart5 = echarts.init(document.getElementById('chart-5'));
+			option = {
+				<!--backgroundColor: '#2c343c',-->
+
+				title: {
+					text: '及格与否人数比例图',
+					left: 'center',
+					top: 20,
+					textStyle: {
+						color: 'black'
+					}
+				},
+
+				tooltip : {
+					trigger: 'item',
+					formatter: "{a} <br/>{b} : {c} ({d}%)"
+				},
+
+				visualMap: {
+					show: false,
+					min: 80,
+					max: 600,
+					inRange: {
+						colorLightness: [0, 1]
+					}
+				},
+				series : [
+					{
+						name:'访问来源',
+						type:'pie',
+						radius : '55%',
+						center: ['50%', '50%'],
+						data:[].sort(function (a, b) { return a.value - b.value; }),
+						roseType: 'radius',
+						label: {
+							normal: {
+								textStyle: {
+									color: 'black'
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								lineStyle: {
+									color: 'black'
+								},
+								smooth: 0.2,
+								length: 10,
+								length2: 20
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: '#c23531',
+								shadowBlur: 200,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						},
+
+						animationType: 'scale',
+						animationEasing: 'elasticOut',
+						animationDelay: function (idx) {
+							return Math.random() * 200;
+						}
+					}
+				]
+			};
+            myChart5.setOption(option);
+			myChart5.setOption({
+			series:[{data:retu['cha3']}]
+			});
+
+
 
 
      });
@@ -697,78 +771,78 @@ myChart2.setOption(option);
 
 
 
-var myChart5 = echarts.init(document.getElementById('chart-5'));
-option = {
+<!--var myChart5 = echarts.init(document.getElementById('chart-5'));-->
+<!--option = {-->
 
-    title: {
-        text: '挂科与否比例（包含潜在挂科）',
-        left: 'center',
-        top: 20,
-        textStyle: {
-            color: 'black'
-        }
-    },
+    <!--title: {-->
+        <!--text: '挂科与否比例（包含潜在挂科）',-->
+        <!--left: 'center',-->
+        <!--top: 20,-->
+        <!--textStyle: {-->
+            <!--color: 'black'-->
+        <!--}-->
+    <!--},-->
 
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
+    <!--tooltip : {-->
+        <!--trigger: 'item',-->
+        <!--formatter: "{a} <br/>{b} : {c} ({d}%)"-->
+    <!--},-->
 
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
-    series : [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius : '55%',
-            center: ['50%', '50%'],
-            data:[
-                {value:335, name:'挂科'},
-                {value:310, name:'潜在挂科'},
-                {value:274, name:'挂科并潜在挂科'},
-                {value:900, name:'正常'}
-            ].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
-            label: {
-                normal: {
-                    textStyle: {
-                        color: 'black'
-                    }
-                }
-            },
-            labelLine: {
-                normal: {
-                    lineStyle: {
-                        color: 'black'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
+    <!--visualMap: {-->
+        <!--show: false,-->
+        <!--min: 80,-->
+        <!--max: 600,-->
+        <!--inRange: {-->
+            <!--colorLightness: [0, 1]-->
+        <!--}-->
+    <!--},-->
+    <!--series : [-->
+        <!--{-->
+            <!--name:'访问来源',-->
+            <!--type:'pie',-->
+            <!--radius : '55%',-->
+            <!--center: ['50%', '50%'],-->
+            <!--data:[-->
+                <!--{value:335, name:'挂科'},-->
+                <!--{value:310, name:'潜在挂科'},-->
+                <!--{value:274, name:'挂科并潜在挂科'},-->
+                <!--{value:900, name:'正常'}-->
+            <!--].sort(function (a, b) { return a.value - b.value; }),-->
+            <!--roseType: 'radius',-->
+            <!--label: {-->
+                <!--normal: {-->
+                    <!--textStyle: {-->
+                        <!--color: 'black'-->
+                    <!--}-->
+                <!--}-->
+            <!--},-->
+            <!--labelLine: {-->
+                <!--normal: {-->
+                    <!--lineStyle: {-->
+                        <!--color: 'black'-->
+                    <!--},-->
+                    <!--smooth: 0.2,-->
+                    <!--length: 10,-->
+                    <!--length2: 20-->
+                <!--}-->
+            <!--},-->
+            <!--itemStyle: {-->
+                <!--normal: {-->
+                    <!--color: '#c23531',-->
+                    <!--shadowBlur: 200,-->
+                    <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
+                <!--}-->
+            <!--},-->
 
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-                return Math.random() * 200;
-            }
-        }
-    ]
-};;
-myChart5.setOption(option);
+            <!--animationType: 'scale',-->
+            <!--animationEasing: 'elasticOut',-->
+            <!--animationDelay: function (idx) {-->
+                <!--return Math.random() * 200;-->
+            <!--}-->
+        <!--}-->
+    <!--]-->
+<!--};;-->
+<!--myChart5.setOption(option);-->
 
 
 
