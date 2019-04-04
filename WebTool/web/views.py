@@ -193,7 +193,7 @@ def inquiry(request):
     while i<=9:
         if i==9:
             index=x[i-1]<=a[:,1]<=x[i]
-        else:
+        # else:
     '''
     '''
     while i<=9:
@@ -575,7 +575,7 @@ no1 = yes1 = 0
 
 
 def monitor(request):
-       # 读取学院信息，显示在下拉框上
+    # 读取学院信息，显示在下拉框上
     school_query_list = Basic.objects.values('School')
     school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
 
@@ -595,127 +595,141 @@ def monitor(request):
 
 
 def monitor_engine(request):
-    """
-    需要学院和班级信息
-    """
-    # School
-    School = '电子信息与电气工程学院'
-    #
-    classNo = ['1', '2']
+    if request.method == 'POST':
+        school = request.POST.get('school')
+        major = request.POST.get('major')
+        grade = request.POST.get('grade')
+        clas = request.POST.get('class')
 
-    # 读取学院信息，显示在下拉框上
-    school_query_list = Basic.objects.values('School')
-    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
 
-    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
-    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+        pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
+        print(pastTime)
+        Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
+                                                                                                         '%Y-%m-%d')).days + 1  ###代替126
 
-    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
-    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
 
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
-    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
-
-    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0], classNo=class_list[0]).values('StuID')
-    id_list = list(set([tmp['StuID'] for tmp in id_query_list if tmp['StuID'] != '']))
+        ###查出所有学生
+        stus = Basic.objects.filter(School=school, Major=major, Grade=grade, classNo=clas).values_list('StuID',
+                                                                                                       flat=True)
+        #print(stus)
 
 
 
+        """
+        生活规律
+        """
+        ###访问dorm
+        global dormlist # 给list函数的
+        dormlist = []
+        for stuid in stus:
+            dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+            if len(dtlist) != 0:
+                nlist = np.zeros(Tdelta)
+                for item in dtlist:
+                    nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                                  '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                              '%Y-%m-%d %H:%M:%S'):
+                        delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                        nlist[delta] += 1
+                # print(nlist)
+                nlist = list(nlist)
+                dormc = Tdelta - nlist.count(0)
+                freq4dorm = dormc / float(Tdelta)  ###回寝室不规律
+                if freq4dorm < 0.7:
+                    dormlist.append(stuid)
+        # rat = len(dormlist)/float(len(stus))
+        # print('比例1')
+        # print(rat)
+        # print(dormlist)
+
+        ###食堂等
+        consulist = []
+        for stuid in stus:
+            dtlist = list(Card.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+            costlist = list(Card.objects.filter(StuID=stuid).values_list('Cost', flat=True))
+            if len(dtlist) != 0:
+                nlist = np.zeros(Tdelta)
+                for item in range(len(dtlist)):
+                    nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
+                    if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                                  '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                              '%Y-%m-%d %H:%M:%S'):
+                        delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                        if float(costlist[item]) < 0:
+                            nlist[delta] += float(costlist[item])
+                # print(nlist)
+                nlist = list(nlist)
+                consuc = Tdelta - nlist.count(0)
+                freq4consu = consuc / float(Tdelta)  ###吃饭不规律
+                if freq4consu < 0.7:
+                    consulist.append(stuid)
+        # rat = len(consulist) / float(len(stus))
+        # print('比例2')
+        # print(rat)
+        # print(consulist)
+
+        ###合并
+        dormlist.extend(consulist)
+        dormlist = list(set(dormlist))
+        # rat = len(dormlist)/float(len(stus))
+
+        # print('比例')
+        # print(rat)
+        # print(dormlist)
+        global no1
+        no1 = len(dormlist)
+        no1d = {'value': no1, 'name': '不规律'}
+        global yes1
+        yes1 = len(stus) - no1
+        yes1d = {'value': yes1, 'name': '规律'}
+        cha1 = [no1d, yes1d]
 
 
 
-    pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
-    print(pastTime)
-    Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
-                                                                                                     '%Y-%m-%d')).days + 1  ###代替126
+        """
+        不及格监测
+        """
+        global bujigejiancelist  # 给list函数的
+        global kemushu
+        bujigejiancelist = []
+        kemushu = []
+        for stuid in stus:
+            dtlist1 = list(Score.objects.filter(StuID=stuid).values_list('Low60', flat=True))
+            cccc = 0
+            for it in dtlist1:
+                cccc += int(it)
+            dtlist2 = list(Score.objects.filter(StuID=stuid).values_list('Num0', flat=True))
+            for it in dtlist2:
+                cccc += int(it)
 
-    ###查出所有学生
-    stus = []
-    for ite in classNo:
-        with connection.cursor() as cursor:
-            # 执行sql语句
-            cursor.execute("SELECT StuID FROM web_basic WHERE School = %s and ClassNo = %s", [School, ite])
-            # 查出所有数据
-            re = cursor.fetchall()
-            for row in re:
-                stus.append(row[0])
-    print(stus)
+            if cccc != 0:
+                bujigejiancelist.append(stuid)
+                kemushu.append(cccc)
 
-    ###访问dorm
-    global dormlist
-    dormlist = []
-    for stuid in stus:
-        dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
-        if len(dtlist) != 0:
-            nlist = np.zeros(Tdelta)
-            for item in dtlist:
-                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
-                if datetime.datetime.strptime('2017-02-20 00:00:00',
-                                              '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
-                                                                                                          '%Y-%m-%d %H:%M:%S'):
-                    delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
-                    nlist[delta] += 1
-            # print(nlist)
-            nlist = list(nlist)
-            dormc = Tdelta - nlist.count(0)
-            freq4dorm = dormc / float(Tdelta)  ###回寝室不规律
-            if freq4dorm < 0.7:
-                dormlist.append(stuid)
-    # rat = len(dormlist)/float(len(stus))
-    # print('比例1')
-    # print(rat)
-    # print(dormlist)
+        global no2
+        no2 = len(bujigejiancelist)
+        no2d = {'value': no2, 'name': '不及格'}
+        global yes2
+        yes2 = len(stus) - no2
+        yes2d = {'value': yes2, 'name': '及格'}
+        cha2 = [no2d, yes2d]
 
-    ###食堂等
-    consulist = []
-    for stuid in stus:
-        dtlist = list(Card.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
-        costlist = list(Card.objects.filter(StuID=stuid).values_list('Cost', flat=True))
-        if len(dtlist) != 0:
-            nlist = np.zeros(Tdelta)
-            for item in range(len(dtlist)):
-                nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
-                if datetime.datetime.strptime('2017-02-20 00:00:00',
-                                              '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
-                                                                                                          '%Y-%m-%d %H:%M:%S'):
-                    delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
-                    if float(costlist[item]) < 0:
-                        nlist[delta] += float(costlist[item])
-            # print(nlist)
-            nlist = list(nlist)
-            consuc = Tdelta - nlist.count(0)
-            freq4consu = consuc / float(Tdelta)  ###吃饭不规律
-            if freq4consu < 0.7:
-                consulist.append(stuid)
-    # rat = len(consulist) / float(len(stus))
-    # print('比例2')
-    # print(rat)
-    # print(consulist)
 
-    ###合并
-    dormlist.extend(consulist)
-    dormlist = list(set(dormlist))
-    # rat = len(dormlist)/float(len(stus))
 
-    # print('比例')
-    # print(rat)
-    # print(dormlist)
-    global no1
-    no1 = len(dormlist)
-    no1d = {'value': no1, 'name': '不规律'}
-    global yes1
-    yes1 = len(stus) - no1
-    yes1d = {'value': yes1, 'name': '规律'}
-    cha1 = [no1d, yes1d]
-    retu = {'cha1': cha1}
+        """
+        不及格预警
+        """
+        tst()
+        print('ok')
 
-    print(retu)
-    # return render(request, 'servermaterial/monitor.html', {'retu': json.dumps(retu)})
-    return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
-                                                                     'major_list': major_list,
-                                                                     'grade_list': grade_list,
-                                                                     'class_list': class_list,
-                                                                     'retu': retu})
+
+
+        retu = {'cha1': cha1, 'cha2': cha2}
+
+        print(retu)
+
+        return HttpResponse(json.dumps(retu), content_type="application/json")
 
 
 def list1(request):
@@ -1034,7 +1048,7 @@ def index(request):
     return render(request, "servermaterial/index_main.html")
 
 
-def tst(request):
+def tst():
     np.random.seed(1119)
 
     stuolist = Score.objects.all()
