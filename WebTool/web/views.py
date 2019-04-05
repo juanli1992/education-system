@@ -738,7 +738,49 @@ def monitor_engine(request):
 
 
 
-        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3}
+        """
+        身体健康监测
+        """
+        global jiankangjiancelist  # 给list函数的
+        jiankangjiancelist = []
+        for stuid in stus:
+            dtlist = list(Health.objects.filter(StuID=stuid).values_list('TotalLevel', flat=True))
+            if len(dtlist) != 0 and dtlist[-1] == "不及格":
+                jiankangjiancelist.append(stuid)
+
+
+        for stuid in stus:
+            dtlist = list(HosReg.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+            if len(dtlist) != 0:
+                nlist = np.zeros(Tdelta)
+                for item in dtlist:
+                    nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                                  '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                              '%Y-%m-%d %H:%M:%S'):
+                        delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                        nlist[delta] += 1
+                # print(nlist)
+                nlist = list(nlist)
+                hosc = Tdelta - nlist.count(0)
+                freq4hos = hosc / float(Tdelta)  ###去医院就诊太勤
+                if freq4hos > 0.3:
+                    jiankangjiancelist.append(stuid)
+
+        jiankangjiancelist = list(set(jiankangjiancelist))
+
+
+        global no4
+        no4 = len(jiankangjiancelist)
+        no4d = {'value': no4, 'name': '不健康'}
+        global yes4
+        yes4 = len(stus) - no4
+        yes4d = {'value': yes4, 'name': '健康'}
+        cha4 = [no4d, yes4d]
+
+
+
+        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3, 'cha4': cha4}
 
         print(retu)
 
