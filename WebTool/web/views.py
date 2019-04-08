@@ -144,8 +144,8 @@ def register(request):
 def inquiry(request):
     school = request.POST.get('school')
     time='20151'
-    start_date=date(2014,9,1)
-    end_date=date(2015,2,1)
+    start_date=date(2016,9,1)
+    end_date=date(2017,2,1)
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
 
     # grades
@@ -182,7 +182,6 @@ def inquiry(request):
 
     # score vs. library
     r=Basic.objects.filter(School=school, score__Semester=time, lib__DateTime__gte=start_date, lib__DateTime__lte=end_date).annotate(count=Count("lib__id")).values('count','score__AveScore')
-    #print(r)
     score_lib_ave=[]
     score_lib_max=[]
     score_lib_min=[]
@@ -211,28 +210,104 @@ def inquiry(request):
                 score_lib_min.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Min("score__AveScore"))['score__AveScore__min'])
         i=i+1
 
-    # score vs. library
-    time=list(Lib.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date).values_list('id', flat=True))
-    print(1)
-    print(time)
+    # score vs. dorm
+    start_date=date(2015,10,1)
+    end_date=date(2017,2,1)
+    #其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    r=list(Basic.objects.filter(School=school, score__Semester=time, dorm__DateTime__gte=start_date, dorm__DateTime__lte=end_date).values_list('dorm__DateTime','score__AveScore'))
+    x = [0,6,12,15,18,21,22,23]
+    i=1
+    score_dormtime_ave=[]
+    score_dormtime_max=[]
+    score_dormtime_min=[]
+    while i <= 7:
+        if i==7:
+            re=[float(tmp[1]) for tmp in r if x[i]>=tmp[0].hour>=x[i-1]]
+            if len(re) >0:
+                score_dormtime_ave.append(sum(re)/len(re))
+                score_dormtime_max.append(max(re))
+                score_dormtime_min.append(min(re))
+            else:
+                score_dormtime_ave.append(0)
+                score_dormtime_max.append(0)
+                score_dormtime_min.append(0)
+        else:
+            re=[float(tmp[1]) for tmp in r if x[i]>tmp[0].hour>=x[i-1]]
+            if len(re) >0:
+                score_dormtime_ave.append(sum(re)/len(re))
+                score_dormtime_max.append(max(re))
+                score_dormtime_min.append(min(re))
+            else:
+                score_dormtime_ave.append(0)
+                score_dormtime_max.append(0)
+                score_dormtime_min.append(0)
+        i=i+1
 
 
 
-    # r=Lib.objects.values(basic__StuID)
     # health
     # physical test
     # distribution
-    '''
-    health_score_all = list(Health.objects.filter(Semester=time, School=school).values_list('TotalScore', flat=True))
+    health_score_all = list(Health.objects.filter(Semester=2016, School=school).values_list('TotalScore', flat=True))
     x = [0, 50, 60, 70, 80, 90, 100]
     health_num = getdistribution(x,health_score_all)
-'''
+
+    # 体质测试与性别
+    health_score_male=list(Health.objects.filter(Semester=2016, School=school, basic__Gender='1').values_list('TotalScore', flat=True))
+    ave_health_score_male=sum(float(j) for j in health_score_male)/len(health_score_male)
+
+    health_score_female=list(Health.objects.filter(Semester=2016, School=school, basic__Gender='0').values_list('TotalScore', flat=True))
+    ave_health_score_female=sum(float(j) for j in health_score_female)/len(health_score_female)
+
+    ave_health_score=sum(float(j) for j in health_score_all)/len(health_score_all)
+
+
+    # 体质与回寝时间
+    start_date=date(2015,10,1)
+    end_date=date(2017,2,1)
+    #其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    #这里回寝时间多次用到，可以抽取出来
+    #也可以给每个表格加上school和gender属性，就不用join了
+    #dorm表格和health表格也可以建立多对多的外键
+    r=list(Basic.objects.filter(School=school, health__Semester=2016, dorm__DateTime__gte=start_date, dorm__DateTime__lte=end_date).values_list('dorm__DateTime','health__TotalScore'))
+    x = [0,6,12,15,18,21,22,23]
+    i=1
+    health_dormtime_ave=[]
+    health_dormtime_max=[]
+    health_dormtime_min=[]
+    while i <= 7:
+        if i==7:
+            re=[float(tmp[1]) for tmp in r if x[i]>=tmp[0].hour>=x[i-1]]
+            if len(re) >0:
+                health_dormtime_ave.append(sum(re)/len(re))
+                health_dormtime_max.append(max(re))
+                health_dormtime_min.append(min(re))
+            else:
+                health_dormtime_ave.append(0)
+                health_dormtime_max.append(0)
+                health_dormtime_min.append(0)
+        else:
+            re=[float(tmp[1]) for tmp in r if x[i]>tmp[0].hour>=x[i-1]]
+            if len(re) >0:
+                health_dormtime_ave.append(sum(re)/len(re))
+                health_dormtime_max.append(max(re))
+                health_dormtime_min.append(min(re))
+            else:
+                health_dormtime_ave.append(0)
+                health_dormtime_max.append(0)
+                health_dormtime_min.append(0)
+        i=i+1
+
+
     # hospital
-
-
+    # 去校医院次数分布
     ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num,
            'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score,
-           'score_lib_ave':score_lib_ave, 'score_lib_max':score_lib_max, 'score_lib_min':score_lib_min}
+           'score_lib_ave':score_lib_ave, 'score_lib_max':score_lib_max, 'score_lib_min':score_lib_min,
+           'score_dormtime_ave':score_dormtime_ave, 'score_dormtime_max':score_dormtime_max, 'score_dormtime_min':score_dormtime_min,
+           'health_num':health_num,
+           'ave_health_score_male':ave_health_score_male, 'ave_health_score_female':ave_health_score_female, 'ave_health_score':ave_health_score,
+           'health_dormtime_ave':health_dormtime_ave, 'health_dormtime_max':health_dormtime_max, 'health_dormtime_min':health_dormtime_min}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
