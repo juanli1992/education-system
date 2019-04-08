@@ -14,7 +14,7 @@ import xlrd
 import xlwt
 import numpy as np
 import datetime
-from datetime import *
+# from datetime import *
 from django.db.models import Count, Avg, Max, Min
 import numpy as np
 import pandas as pd
@@ -30,6 +30,7 @@ from keras.layers import Masking
 # from sklearn.metrics import mean_squared_error
 # from keras.layers import Bidirectional
 # #from keras.preprocessing.sequence import pad_sequences
+
 
 
 from django.db import connection
@@ -471,12 +472,14 @@ def query(request):
         dd5 = []
         ccc = 0  # 为了画像
         dtlist = list(Lib.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        print(dtlist)
         Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
                                                                                                          '%Y-%m-%d')).days + 1  ###代替126
         if len(dtlist) != 0:
             nlist = np.zeros(Tdelta)
             for item in dtlist:
-                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
+                nitem = item.replace(tzinfo=None)
+                #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
                 # if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
@@ -497,7 +500,8 @@ def query(request):
         if len(dtlist) != 0:
             nlist = np.zeros(Tdelta)
             for item in dtlist:
-                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                nitem = item.replace(tzinfo=None)
+                #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                           '%Y-%m-%d %H:%M:%S'):
@@ -516,7 +520,7 @@ def query(request):
         if len(dtlist) != 0:
             nlist = np.zeros(Tdelta)
             for item in range(len(dtlist)):
-                nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
+                nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S').replace(tzinfo=None)
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                           '%Y-%m-%d %H:%M:%S'):
@@ -727,7 +731,8 @@ def monitor_engine(request):
             if len(dtlist) != 0:
                 nlist = np.zeros(Tdelta)
                 for item in dtlist:
-                    nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    nitem = item.replace(tzinfo=None)
+                    #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                     if datetime.datetime.strptime('2017-02-20 00:00:00',
                                                   '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                               '%Y-%m-%d %H:%M:%S'):
@@ -752,7 +757,7 @@ def monitor_engine(request):
             if len(dtlist) != 0:
                 nlist = np.zeros(Tdelta)
                 for item in range(len(dtlist)):
-                    nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
+                    nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S').replace(tzinfo=None)
                     if datetime.datetime.strptime('2017-02-20 00:00:00',
                                                   '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                               '%Y-%m-%d %H:%M:%S'):
@@ -855,7 +860,8 @@ def monitor_engine(request):
             if len(dtlist) != 0:
                 nlist = np.zeros(Tdelta)
                 for item in dtlist:
-                    nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    nitem = item.replace(tzinfo=None)
+                    #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                     if datetime.datetime.strptime('2017-02-20 00:00:00',
                                                   '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                               '%Y-%m-%d %H:%M:%S'):
@@ -881,7 +887,41 @@ def monitor_engine(request):
 
 
 
-        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3, 'cha4': cha4}
+        """
+        退学预警
+        """
+        global tuixuelist  # 给list函数的
+        tuixuelist = []
+        tst()
+
+        for stuid in stus:
+            dtlist = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
+            dtlist = list (map(float,dtlist))
+            nsum = 0 # 为了求均值
+            for i in range(len(dtlist)):
+                nsum += dtlist[i]
+
+            preval = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))[0]
+            nsum += float(preval)
+            aaas = nsum/(len(dtlist)+1)
+            #print(aaas)
+            if aaas < 70:
+                tuixuelist.append(stuid)
+
+
+        global no5
+        no5 = len(tuixuelist)
+        no5d = {'value': no5, 'name': '有退学风险'}
+        global yes5
+        yes5 = len(stus) - no5
+        yes5d = {'value': yes5, 'name': '无退学风险'}
+        cha5 = [no5d, yes5d]
+
+
+
+
+
+        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3, 'cha4': cha4, 'cha5': cha5}
 
         print(retu)
 
@@ -1027,8 +1067,8 @@ def query_majors(request):
 
 def query_grades(request):
     """
-     给定 学院+专业 查询所有年级信息
-     :param request: 年级list(json数据格式)
+     给定 学院+专业 查年级list询所有年级信息
+     :param request: (json数据格式)
      :return:
      """
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
@@ -1042,7 +1082,7 @@ def query_grades(request):
 
 def query_class(request):
     """
-    给定 学院+专业+年纪 查询所有班级信息
+    给定 学院+专业+年级 查询所有班级信息
     :param request: 班级list(json数据格式)
     :return:
     """
@@ -1062,7 +1102,7 @@ def query_class(request):
 
 def query_ID(request):
     """
-    给定 学院+专业+年纪+班级 查询所有ID信息
+    给定 学院+专业+年级+班级 查询所有ID信息
     :param request: IDlist(json数据格式)
     :return:
     """
