@@ -14,8 +14,8 @@ import xlrd
 import xlwt
 import numpy as np
 import datetime
-from django.db.models import Count
-###
+from datetime import *
+from django.db.models import Count, Avg, Max, Min
 import numpy as np
 import pandas as pd
 # import csv
@@ -144,6 +144,8 @@ def register(request):
 def inquiry(request):
     school = request.POST.get('school')
     time='20151'
+    start_date=date(2014,9,1)
+    end_date=date(2015,2,1)
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
 
     # grades
@@ -172,45 +174,51 @@ def inquiry(request):
     # the average grade for different gender
     score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
     ave_score_male=sum(float(j) for j in score_male)/len(score_male)
-    #print(len(score_male))
 
     score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
     ave_score_female=sum(float(j) for j in score_female)/len(score_female)
-    #print(len(score_female))
 
     ave_score=sum(float(j) for j in score_all)/len(score_all)
-    #print(len(score_all))
 
     # score vs. library
-    '''
-    r=Basic.objects.filter(School=school, score_Semester=time).annotate(count=Count("lib__id")).values_list('count','score__AveScore')
-    print(r)
-    r=np.array(r)
-'''
-    '''
-    x=[0,10,20,30,40,50,60,70,80,90]
-    i=1
-    while i<=9:
-        if i==9:
-            index=x[i-1]<=a[:,1]<=x[i]
-        # else:
-    '''
-    '''
+    r=Basic.objects.filter(School=school, score__Semester=time, lib__DateTime__gte=start_date, lib__DateTime__lte=end_date).annotate(count=Count("lib__id")).values('count','score__AveScore')
+    #print(r)
+    score_lib_ave=[]
+    score_lib_max=[]
+    score_lib_min=[]
+    x = [0,10,20,30,40,50,60,70,80,90]
+    i = 1
     while i<=9:
         if i==9:
             re=r.filter(count__gte=x[i-1], count__lte=x[i])
-            print(re)
+            if re.count()==0:
+                score_lib_ave.append(0)
+                score_lib_max.append(0)
+                score_lib_min.append(0)
+            else:
+                score_lib_ave.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Avg("score__AveScore"))['score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Max("score__AveScore"))['score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Min("score__AveScore"))['score__AveScore__min'])
         else:
             re=r.filter(count__gte=x[i-1], count__lt=x[i])
-            print(re)
+            if re.count()==0:
+                score_lib_ave.append(0)
+                score_lib_max.append(0)
+                score_lib_min.append(0)
+            else:
+                score_lib_ave.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Avg("score__AveScore"))['score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Max("score__AveScore"))['score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Min("score__AveScore"))['score__AveScore__min'])
         i=i+1
-    '''
+
+    # score vs. library
+    time=list(Lib.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date).values_list('id', flat=True))
+    print(1)
+    print(time)
+
 
 
     # r=Lib.objects.values(basic__StuID)
-
-
-
     # health
     # physical test
     # distribution
@@ -222,7 +230,9 @@ def inquiry(request):
     # hospital
 
 
-    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score}
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num,
+           'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score,
+           'score_lib_ave':score_lib_ave, 'score_lib_max':score_lib_max, 'score_lib_min':score_lib_min}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -248,7 +258,23 @@ def base(request):
 
 
 def supervision(request):
-    return render(request, 'servermaterial/supervision_new_2.html')
+    # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    return render(request, 'servermaterial/supervision_new_2.html', context={'school_list': school_list,
+                                                                     'major_list': major_list,
+                                                                     'grade_list': grade_list,
+                                                                     'class_list': class_list})
 
 
 def result(request):

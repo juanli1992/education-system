@@ -163,7 +163,7 @@ class Moral(models.Model):
 
 class Lib(models.Model):
     StuID = models.CharField(max_length=20)
-    DateTime = models.CharField(max_length=30)
+    DateTime = models.DateTimeField()
     #DateTime = models.DateTimeField()
     Gate = models.CharField(max_length=2)
     basic = models.ForeignKey(to="Basic", to_field="StuID", on_delete = models.CASCADE, null=True)
@@ -311,8 +311,8 @@ class Health(models.Model):
 
 class Dorm(models.Model):
     StuID = models.CharField(max_length=20)
-    DateTime = models.CharField(max_length=30)
-    #DateTime = models.DateTimeField()
+    DateTime = models.DateTimeField()
+    basic = models.ForeignKey(to="Basic", to_field="StuID", on_delete = models.CASCADE, null=True)
 
     def __unicode__(self):
         return self.StuID

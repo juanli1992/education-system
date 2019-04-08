@@ -2464,6 +2464,85 @@ option = {
             };
             myChart.setOption(option);
 
+
+          var myChart = echarts.init(document.getElementById('chart-grade-3'));
+          option = {
+              title : {
+                      text: '成绩与图书馆访问',
+                      subtext: '横坐标为一学期图书馆访问总次数',
+                      x:'center'
+              },
+              tooltip: {
+                  trigger: 'axis',
+                  axisPointer: {
+                      type: 'cross',
+                      crossStyle: {
+                          color: '#999'
+                      }
+                  }
+              },
+              toolbox: {
+                  feature: {
+                      dataView: {show: true, readOnly: false},
+                      magicType: {show: true, type: ['line', 'bar']},
+                      restore: {show: true},
+                      saveAsImage: {show: true}
+                  }
+              },
+              legend: {
+                  data:['平均成绩','最高成绩','最低成绩'],
+                  y: 'bottom'
+              },
+              xAxis: [
+                  {
+                      type: 'category',
+                      data: ['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90'],
+                      axisPointer: {
+                          type: 'shadow'
+                      }
+                  }
+              ],
+              yAxis: [
+                  {
+                      type: 'value',
+                      name: '成绩',
+                      min: 0,
+                      max: 100,
+                      interval: 10,
+                  }
+              ],
+              series: [
+                  {
+                      name:'平均成绩',
+                      type:'bar',
+                      data:ret['score_lib_ave'],
+                      itemStyle:{
+                         normal:{
+                           color:'#4f9D9D',
+                           }
+                    }
+                  },
+                  {
+                      name:'最高成绩',
+                      type:'line',
+                      data:ret['score_lib_max'],
+                      itemStyle:{
+                         normal:{
+                           color:'#EA7500',
+                           }
+                    }
+                  },
+                  {
+                      name:'最低成绩',
+                      type:'line',
+                      data:ret['score_lib_min']
+                  }
+              ]
+          };
+
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.setOption(option);
+
             //累积分布函数
             var myChart = echarts.init(document.getElementById('chart-grade-5'));
             option = {
