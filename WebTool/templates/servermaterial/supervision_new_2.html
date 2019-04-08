@@ -24,6 +24,117 @@
     <!-- Custom styles for this template -->
     <link href="/templates/servermaterial/css/style.css" rel="stylesheet">
     <link href="/templates/servermaterial/css/style-responsive.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            /*
+             学院下拉框改变
+             */
+            $("#school").change(function () {
+                $.ajax({
+                    url: '/web/query_majors',
+                    type: 'POST',
+                    data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#major").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#major").append(newNode);
+                        }
+                        changeMajor();
+                    }
+
+                });
+            });
+
+
+            /*
+             专业下拉框改变
+             */
+            $("#major").change(changeMajor);
+
+            function changeMajor() {
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_grades',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#grade_").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#grade_").append(newNode);
+                        }
+                        changeGrade();
+                    }
+                })
+            }
+
+
+            /*
+             年级下拉框改变
+             */
+            $("#grade_").change(changeGrade);
+
+            function changeGrade() {
+                var grade = $("#grade_").find('option:selected').text();
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_class',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major, "grade": grade}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#class").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#class").append(newNode);
+                        }
+    <!--                        changeClass();-->
+                    }
+                })
+            }
+
+
+    <!--            /*-->
+    <!--             班级下拉框改变-->
+    <!--             */-->
+    <!--            $("#class").change(changeClass);-->
+
+    <!--            function changeClass() {-->
+    <!--                var clas = $("#class").find('option:selected').text();-->
+    <!--                var grade = $("#grade_").find('option:selected').text();-->
+    <!--                var major = $("#major").find('option:selected').text();-->
+    <!--                var school = $("#school").find('option:selected').text();-->
+    <!--                $.ajax({-->
+    <!--                    url: '/web/query_ID',-->
+    <!--                    type: 'POST',-->
+    <!--                    data: JSON.stringify({"school": school, "major": major, "grade": grade, "class":clas}),-->
+    <!--                    dataType: 'JSON',-->
+    <!--                    contentType: 'application/json;charset=utf-8',-->
+    <!--                    success: function (result) {-->
+    <!--                        $("#stuid").empty();-->
+    <!--                        for (var i = 0; i < result.length; i++) {-->
+    <!--                            var newNode = $("<option>" + result[i] + "</option>");-->
+    <!--                            $("#stuid").append(newNode);-->
+    <!--                        }-->
+    <!--                    }-->
+    <!--                })-->
+    <!--            }-->
+
+
+
+        });
+    </script>
 
     <!-- =======================================================
         Template Name: Dashio
@@ -54,52 +165,52 @@
         <div class="col-lg-12 mt">
           <div class="row content-panel">
             <div class="col-lg-12 detailed mt">
-              <h4>查询选项</h4>
-              <form action="/web/inquiry/" method="get" role="form" class="form-horizontal">
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">学院</label>
-                  <div class="col-lg-8">
-                    <select class="form-control" id="school">
-                      <option value="电子信息与电气工程学院">电子信息与电气工程学院</option>
-                      <option value="机械与动力工程学院">机械与动力工程学院</option>
-                      <option value="人文学院">人文学院</option>
-                      <option value="数学科学学院">数学科学学院</option>
-                    </select>
-                  </div>
+              <h4>可视化选项</h4>
+              <div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">学院</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="school">
+                            {% for school in school_list %}
+                                <option>{{ school }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">专业</label>
-                  <div class="col-lg-8">
-                    <input type="text" placeholder="电信" class="form-control">
-                    </select>
-                  </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">专业</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="major">
+                            {% for major in major_list %}
+                                <option> {{ major }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">年级</label>
-                  <div class="col-lg-8">
-                    <select class="form-control">
-                      <option value="volvo">本科一年级</option>
-                      <option value="volvo">本科二年级</option>
-                      <option value="saab">本科三年级</option>
-                      <option value="mercedes">本科四年级</option>
-                    </select>
-                  </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">年级</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="grade_">
+                            {% for grade in grade_list %}
+                                <option> {{ grade }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group col-lg-4">
-                  <label class="col-lg-3 control-label">班级</label>
-                  <div class="col-lg-8">
-                    <select class="form-control">
-                      <option value="volvo">B13033910</option>
-                      <option value="volvo">B14033910</option>
-                      <option value="saab">B15033910</option>
-                      <option value="mercedes">B16033910</option>
-                    </select>
-                  </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">班级</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="class">
+                            {% for class in class_list %}
+                                <option> {{ class }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group col-lg-6">
+              <div class="form-group col-lg-6">
                   <button class="btn btn-theme" id="inquirybtn" type="button" onclick="charts()">查询</button>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
@@ -258,8 +369,8 @@
     <!--footer end-->
 
     <!-- js placed at the end of the document so the pages load faster -->
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <!-- <script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script> -->
+    <!--<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>-->
+     <!-- <script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script>-->
     <script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>
     <script class="include" type="text/javascript" src="/templates/servermaterial/lib/jquery.dcjqaccordion.2.7.js"></script>
     <script src="/templates/servermaterial/lib/jquery.scrollTo.min.js"></script>
