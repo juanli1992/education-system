@@ -904,7 +904,7 @@ def monitor_engine(request):
             preval = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))[0]
             nsum += float(preval)
             aaas = nsum/(len(dtlist)+1)
-            #print(aaas)d
+            #print(aaas)
             if aaas < 70:
                 tuixuelist.append(stuid)
 
