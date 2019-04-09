@@ -853,7 +853,7 @@ def monitor_engine(request):
         # print(rat)
         # print(dormlist)
         global no1
-        no1 = len(dormlist)
+        no1 = len(guilvlist)
         no1d = {'value': no1, 'name': '不规律'}
         global yes1
         yes1 = len(stus) - no1
@@ -900,7 +900,8 @@ def monitor_engine(request):
         bujigeyujinglist = []
         for stuid in stus:
             dtlist = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))
-            if float(dtlist[0]) < 70:
+            print(dtlist)
+            if len(dtlist) != 0 and float(dtlist[0]) < 70:
                 bujigeyujinglist.append(stuid)
 
         global no3
@@ -966,16 +967,17 @@ def monitor_engine(request):
         for stuid in stus:
             dtlist = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
             dtlist = list (map(float,dtlist))
-            nsum = 0 # 为了求均值
-            for i in range(len(dtlist)):
-                nsum += dtlist[i]
+            if len(list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))) != 0:
+                nsum = 0 # 为了求均值
+                for i in range(len(dtlist)):
+                    nsum += dtlist[i]
 
-            preval = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))[0]
-            nsum += float(preval)
-            aaas = nsum/(len(dtlist)+1)
-            #print(aaas)
-            if aaas < 70:
-                tuixuelist.append(stuid)
+                preval = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))[0]
+                nsum += float(preval)
+                aaas = nsum/(len(dtlist)+1)
+                #print(aaas)
+                if aaas < 70:
+                    tuixuelist.append(stuid)
 
 
         global no5
