@@ -1,4 +1,5 @@
 # Create your views here.
+from __future__ import division
 from __future__ import unicode_literals
 
 from django.http import JsonResponse
@@ -30,8 +31,6 @@ from keras.layers import Masking
 # from sklearn.metrics import mean_squared_error
 # from keras.layers import Bidirectional
 # #from keras.preprocessing.sequence import pad_sequences
-
-
 
 from django.db import connection
 from .recommend_util import *
@@ -145,9 +144,26 @@ def register(request):
 def inquiry(request):
     school = request.POST.get('school')
     time='20151'
-    start_date=date(2016,9,1)
-    end_date=date(2017,2,1)
+    start_date=datetime.date(2016,9,1)
+    end_date=datetime.date(2017,2,1)
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
+
+    # geo_distribution
+    r=list(Basic.objects.filter(School=school).values_list('Province', flat=True))
+    province=['四川', '江西', '江苏', '山东', '安徽', '上海', '重庆', '福建', '河南', '河北', '广东', '广西', '山西', '天津', '湖北', '浙江', '陕西', '内蒙古', '海南',
+    '辽宁', '吉林', '黑龙江', '湖南', '贵州', '云南', '甘肃', '青海', '台湾', '北京', '西藏', '宁夏', '新疆', '香港', '澳门']
+    province_num={}
+    for pro in province:
+        province_num[pro]=sum(pro in s for s in r)
+
+    r = list(Score.objects.filter(Semester=time, School=school).values_list('basic__Province', 'AveScore'))
+    score_province={}
+    for pro in province:
+        a = [ float(s[1]) for s in r if pro in s[0]]
+        if len(a) == 0:
+            score_province[pro]=0
+        else:
+            score_province[pro]=sum(a)/len(a)
 
     # grades
     x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -212,8 +228,8 @@ def inquiry(request):
         i=i+1
 
     # score vs. dorm
-    start_date=date(2015,10,1)
-    end_date=date(2017,2,1)
+    start_date=datetime.date(2015,10,1)
+    end_date=datetime.date(2017,2,1)
     #其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
     r=list(Basic.objects.filter(School=school, score__Semester=time, dorm__DateTime__gte=start_date, dorm__DateTime__lte=end_date).values_list('dorm__DateTime','score__AveScore'))
     x = [0,6,12,15,18,21,22,23]
@@ -264,8 +280,8 @@ def inquiry(request):
 
 
     # 体质与回寝时间
-    start_date=date(2015,10,1)
-    end_date=date(2017,2,1)
+    start_date=datetime.date(2015,10,1)
+    end_date=datetime.date(2017,2,1)
     #其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
     #这里回寝时间多次用到，可以抽取出来
     #也可以给每个表格加上school和gender属性，就不用join了
@@ -302,13 +318,63 @@ def inquiry(request):
 
     # hospital
     # 去校医院次数分布
+
+
+    #校园生活
+    #回寝时间分布
+    start_date=datetime.date(2015,10,1)
+    end_date=datetime.date(2017,2,1)
+    dorm_all=list(Dorm.objects.filter(basic__School=school, DateTime__gte=start_date, DateTime__lte=end_date).values_list('DateTime', flat=True))
+
+    x=[0, 6, 12, 18, 22,24]
+    dorm_num=[]
+    i=1
+    while i<=5:
+        if i==5:
+            dorm_num.append(sum(x[i]>=r.hour>=x[i-1] for r in dorm_all))
+        else:
+            dorm_num.append(sum(x[i]>r.hour>=x[i-1] for r in dorm_all))
+        i=i+1
+
+
+    #回寝时间与性别
+    dorm_male=list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school, basic__Gender='1').values_list('DateTime', flat=True))
+    if len(dorm_male)==0:
+        ave_time_male=0
+    else:
+        time_male=[r.hour*3600+r.minute*60+r.second for r in dorm_male]  #把每一个时间点换算成秒
+        ave_time_male=sum(time_male)/len(time_male)
+
+    ave_time_male=ave_time_male // 60     #把秒换算成分钟
+    ave_time_male=ave_time_male // 60    #把分钟换算成小时
+
+    dorm_female=list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school, basic__Gender='0').values_list('DateTime', flat=True))
+    if len(dorm_female)==0:
+        ave_time_female=0
+    else:
+        time_female=[r.hour*3600+r.minute*60+r.second for r in dorm_female]
+        ave_time_female=sum(time_female)/len(time_female)
+    ave_time_female=ave_time_female // 60     #把秒换算成分钟
+    ave_time_female=ave_time_female // 60    #把分钟换算成小时
+
+    if len(dorm_all) == 0:
+        ave_time=0
+    else:
+        ave_time=(sum(time_female)+sum(time_male))/len(dorm_all)
+    ave_time=ave_time // 60     #把秒换算成分钟
+    ave_time=ave_time // 60    #把分钟换算成小时
+
+
     ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num,
            'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score,
            'score_lib_ave':score_lib_ave, 'score_lib_max':score_lib_max, 'score_lib_min':score_lib_min,
            'score_dormtime_ave':score_dormtime_ave, 'score_dormtime_max':score_dormtime_max, 'score_dormtime_min':score_dormtime_min,
            'health_num':health_num,
            'ave_health_score_male':ave_health_score_male, 'ave_health_score_female':ave_health_score_female, 'ave_health_score':ave_health_score,
-           'health_dormtime_ave':health_dormtime_ave, 'health_dormtime_max':health_dormtime_max, 'health_dormtime_min':health_dormtime_min}
+           'health_dormtime_ave':health_dormtime_ave, 'health_dormtime_max':health_dormtime_max, 'health_dormtime_min':health_dormtime_min,
+           'province_num':province_num,'score_province':score_province,
+           'dorm_num':dorm_num,
+           'ave_time_female':ave_time_female, 'ave_time_male':ave_time_male, 'ave_time':ave_time}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
