@@ -153,14 +153,7 @@ option = {
         formatter: "{a} <br/>{b} : {c} ({d}%)"
     },
 
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
+
     series : [
         {
             name:'人数',
@@ -168,7 +161,7 @@ option = {
             radius : '55%',
             center: ['50%', '50%'],
             data:[].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
+
             label: {
                 normal: {
                     textStyle: {
@@ -188,7 +181,7 @@ option = {
             },
             itemStyle: {
                 normal: {
-                    color: '#c23531',
+
                     shadowBlur: 200,
                     shadowColor: 'rgba(0, 0, 0, 0.5)'
                 }
