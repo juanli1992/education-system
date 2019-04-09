@@ -713,8 +713,11 @@ def monitor_engine(request):
                                                                                                          '%Y-%m-%d')).days + 1  ###代替126
 
 
-        ###查出所有学生
-        stus = Basic.objects.filter(School=school, Major=major, Grade=grade, classNo=clas).values_list('StuID',
+        ###查出所有学生 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # stus = Basic.objects.filter(School=school, Major=major, Grade=grade, classNo=clas).values_list('StuID',
+        #                                                                                                flat=True)
+
+        stus = Basic.objects.filter(School=school).values_list('StuID',
                                                                                                        flat=True)
         #print(stus)
 
@@ -724,7 +727,7 @@ def monitor_engine(request):
         生活规律
         """
         ###访问dorm
-        global dormlist # 给list函数的
+        global guilvlist  # 给list函数的
         dormlist = []
         for stuid in stus:
             dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
@@ -777,7 +780,7 @@ def monitor_engine(request):
 
         ###合并
         dormlist.extend(consulist)
-        dormlist = list(set(dormlist))
+        guilvlist = list(set(dormlist))
         # rat = len(dormlist)/float(len(stus))
 
         # print('比例')
@@ -942,8 +945,14 @@ def list1(request):
     ###表格
     res4 = []
     for stuid in bujigejiancelist:
-        objs4 = Basic.objects.filter(StuID=stuid)
-        res4 = [obj.as_dict() for obj in objs4]
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID':objs4.StuID,
+            'School':objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
 
     if len(bujigejiancelist) != 0:
         for ii in range(len(bujigejiancelist)):
@@ -966,8 +975,14 @@ def list2(request):
     ###表格
     res4 = []
     for stuid in bujigeyujinglist:
-        objs4 = Basic.objects.filter(StuID=stuid)
-        res4 = [obj.as_dict() for obj in objs4]
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID':objs4.StuID,
+            'School':objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
     print(res4)
 
 
@@ -987,8 +1002,14 @@ def list3(request):
     ###表格
     res4 = []
     for stuid in tuixuelist:
-        objs4 = Basic.objects.filter(StuID=stuid)
-        res4 = [obj.as_dict() for obj in objs4]
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID':objs4.StuID,
+            'School':objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
     print(res4)
 
 
@@ -997,7 +1018,7 @@ def list3(request):
 
 
 def list4(request):
-    global dormlist
+    global guilvlist
     global no1
     global yes1
     no1d = {'value': no1, 'name': '不规律'}
@@ -1007,9 +1028,15 @@ def list4(request):
 
     ###表格
     res4 = []
-    for stuid in dormlist:
-        objs4 = Basic.objects.filter(StuID=stuid)
-        res4 = [obj.as_dict() for obj in objs4]
+    for stuid in guilvlist:
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID':objs4.StuID,
+            'School':objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
     print(res4)
 
 
