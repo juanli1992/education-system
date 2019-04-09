@@ -1,11 +1,8 @@
 import heapq
-
-from django.test import TestCase
-
-# Create your tests here.
 from keras.layers import Embedding, Flatten, Multiply, Dense, Input
 from keras.models import Model
-import os
+import keras
+keras.backend.clear_session()
 import numpy as np
 
 
@@ -31,18 +28,22 @@ def get_recommend_model(num_users, num_items, latent_dim=8):
     return model
 
 
-def load_dict_map(file_name):
+def load_dict_map(file_name, is_inverse=False):
     """
 
     :param file_name:
-    :return: 训练id与真实id的字典，key为训练id，字典为真实id
+    :param is_inverse: 判断key是真实id，还是训练id
+    :return: 训练id与真实id的字典，key为训练id，value为真实id(is_inverse参数为False时)
     """
     dict_map = {}
     with open(file_name, encoding='UTF-8') as f:
         line = f.readline()
         while line != None and line != '':
             info_list = line.split('\t')
-            dict_map[info_list[0]] = info_list[1].strip('\n')
+            if is_inverse:
+                dict_map[info_list[1].strip('\n')] = info_list[0]
+            else:
+                dict_map[info_list[0]] = info_list[1].strip('\n')
             line = f.readline()
     return dict_map
 
@@ -68,6 +69,9 @@ def load_negative_file(filename):
 
 
 stu_dict = load_dict_map('./web/recommend_data/B5_stuDic.txt')
+print([(k, v) for k, v in stu_dict.items()][0:5])
+stu_inverse_dict = load_dict_map('./web/recommend_data/B5_stuDic.txt', is_inverse=True)
+print([(k, v) for k, v in stu_inverse_dict.items()][0:5])
 book_dict = load_dict_map('./web/recommend_data/B5_bookDic.txt')
 negativeList = load_negative_file('./web/recommend_data/B5.negative')
 
@@ -81,6 +85,7 @@ with open('./web/recommend_data/B5.txt', encoding='UTF-8') as f:
             book_dict2[book_loc] = 1
         else:
             book_dict2[book_loc] += 1
+
 
 def get_hot_book(topK):
     """
@@ -106,11 +111,16 @@ def get_recommend_list(idr):
     """
     global negativeList, model
     items = negativeList[idr]
+    print(idr)
+    print("22222222222222222222", len(items))
     # Get prediction scores
     map_item_score = {}
-    users = np.full(len(items), idr, dtype='int32')
+    users = np.full(len(items), idr, dtype='int32').reshape(-1, 1)
+    print(users.shape)
     # 得到所有这99个item的预估分
-    predictions = model.predict([users, np.array(items)], batch_size=99, verbose=0)
+    print(model.summary())
+    print("=================朱大竞==============", model.predict([np.array([1]), np.array([1])], batch_size=1))
+    predictions = model.predict([users, np.array(items).reshape(-1, 1)], batch_size=199)
     for i in range(len(items)):
         item = items[i]
         map_item_score[item] = predictions[i]
@@ -121,8 +131,8 @@ def get_recommend_list(idr):
 
 
 if __name__ == '__main__':
+    # 测试代码
     pass
-    print(os.getcwd())
     # stu_dict = load_dict_map('./recommend_data/B5_stuDic.txt')
     # print(stu_dict['4432'])
     # model = get_recommend_model(11767, 20089)
@@ -135,4 +145,6 @@ if __name__ == '__main__':
 
 model = get_recommend_model(11767, 20089)
 model.load_weights('./web/trained_model/test2.h5')
-print(model.predict([np.array([1]), np.array([1])], batch_size=1))
+# 测试代码
+print("=================朱大竞==============", model.predict([np.array([1]), np.array([1])], batch_size=1))
+

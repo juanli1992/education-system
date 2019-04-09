@@ -143,12 +143,12 @@ def register(request):
 
 def inquiry(request):
     school = request.POST.get('school')
-    time='20151'
+    time = '20151'
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
 
     # grades
-    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    cdfall=[]
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cdfall = []
     for i in x:
         cdfall.append(sum(float(j) < i for j in score_all) / len(score_all))
 
@@ -166,20 +166,22 @@ def inquiry(request):
         if i == 6:
             num.append(sum(x[i - 1] <= float(j) <= x[i] for j in score_all))
         else:
-            num.append( sum( x[i-1]<=float(j)<x[i] for j in score_all) )
-        i=i+1
+            num.append(sum(x[i - 1] <= float(j) < x[i] for j in score_all))
+        i = i + 1
 
     # the average grade for different gender
-    score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
-    ave_score_male=sum(float(j) for j in score_male)/len(score_male)
-    #print(len(score_male))
+    score_male = list(
+        Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
+    ave_score_male = sum(float(j) for j in score_male) / len(score_male)
+    # print(len(score_male))
 
-    score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
-    ave_score_female=sum(float(j) for j in score_female)/len(score_female)
-    #print(len(score_female))
+    score_female = list(
+        Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
+    ave_score_female = sum(float(j) for j in score_female) / len(score_female)
+    # print(len(score_female))
 
-    ave_score=sum(float(j) for j in score_all)/len(score_all)
-    #print(len(score_all))
+    ave_score = sum(float(j) for j in score_all) / len(score_all)
+    # print(len(score_all))
 
     # score vs. library
     '''
@@ -206,10 +208,7 @@ def inquiry(request):
         i=i+1
     '''
 
-
     # r=Lib.objects.values(basic__StuID)
-
-
 
     # health
     # physical test
@@ -221,26 +220,23 @@ def inquiry(request):
 '''
     # hospital
 
-
-    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num, 'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score}
+    ret = {'cdfall': cdfall, 'pdfall': pdfall, 'num': num, 'ave_score_female': ave_score_female,
+           'ave_score_male': ave_score_male, 'ave_score': ave_score}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
-
-def getdistribution(x,data):
+def getdistribution(x, data):
     # x includes endpoints of intervals
-    l=len(x)
-    num=[]
-    i=1
-    while i<=len(x):
-        if i==len(x):
-            num.append(sum(x[i-1]<=float(j)<=x[i] for j in data))
+    l = len(x)
+    num = []
+    i = 1
+    while i <= len(x):
+        if i == len(x):
+            num.append(sum(x[i - 1] <= float(j) <= x[i] for j in data))
         else:
-            num.append(sum(x[i-1]<=float(j)<x[i] for j in data))
-        i=i+1
+            num.append(sum(x[i - 1] <= float(j) < x[i] for j in data))
+        i = i + 1
     return num
-
-
 
 
 def base(request):
@@ -264,16 +260,18 @@ def result(request):
     grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
     grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
 
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
+        'classNo')
     class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
 
-    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0], classNo=class_list[0]).values('StuID')
+    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0],
+                                         classNo=class_list[0]).values('StuID')
     id_list = list(set([tmp['StuID'] for tmp in id_query_list if tmp['StuID'] != '']))
     return render(request, 'servermaterial/result.html', context={'school_list': school_list,
-                                                                     'major_list': major_list,
-                                                                     'grade_list': grade_list,
-                                                                     'class_list': class_list,
-                                                                     'id_list': id_list})
+                                                                  'major_list': major_list,
+                                                                  'grade_list': grade_list,
+                                                                  'class_list': class_list,
+                                                                  'id_list': id_list})
 
 
 ##查询
@@ -585,13 +583,14 @@ def monitor(request):
     grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
     grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
 
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
+        'classNo')
     class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
 
     return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
-                                                                     'major_list': major_list,
-                                                                     'grade_list': grade_list,
-                                                                     'class_list': class_list})
+                                                                   'major_list': major_list,
+                                                                   'grade_list': grade_list,
+                                                                   'class_list': class_list})
 
 
 def monitor_engine(request):
@@ -601,25 +600,21 @@ def monitor_engine(request):
         grade = request.POST.get('grade')
         clas = request.POST.get('class')
 
-
         pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
         print(pastTime)
         Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
                                                                                                          '%Y-%m-%d')).days + 1  ###代替126
 
-
         ###查出所有学生
         stus = Basic.objects.filter(School=school, Major=major, Grade=grade, classNo=clas).values_list('StuID',
                                                                                                        flat=True)
-        #print(stus)
-
-
+        # print(stus)
 
         """
         生活规律
         """
         ###访问dorm
-        global dormlist # 给list函数的
+        global dormlist  # 给list函数的
         dormlist = []
         for stuid in stus:
             dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
@@ -685,8 +680,6 @@ def monitor_engine(request):
         yes1d = {'value': yes1, 'name': '规律'}
         cha1 = [no1d, yes1d]
 
-
-
         """
         不及格监测
         """
@@ -715,8 +708,6 @@ def monitor_engine(request):
         yes2d = {'value': yes2, 'name': '及格'}
         cha2 = [no2d, yes2d]
 
-
-
         """
         不及格预警
         """
@@ -735,8 +726,6 @@ def monitor_engine(request):
         yes3 = len(stus) - no3
         yes3d = {'value': yes3, 'name': '及格'}
         cha3 = [no3d, yes3d]
-
-
 
         retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3}
 
@@ -891,7 +880,7 @@ def query_grades(request):
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
     grade_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip()).values("Grade")
     grade_list = list(set(tmp['Grade'] for tmp in grade_query_list))
-    if grade_list.__len__()==0:
+    if grade_list.__len__() == 0:
         grade_list.append('NULL')
     print(grade_list)
     return HttpResponse(json.dumps(grade_list), content_type='application/json')
@@ -904,8 +893,8 @@ def query_class(request):
     :return:
     """
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
-    if data['grade'].strip()=='NULL':
-        class_list=['NULL']
+    if data['grade'].strip() == 'NULL':
+        class_list = ['NULL']
     else:
         # print(data)
         class_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
@@ -924,11 +913,11 @@ def query_ID(request):
     :return:
     """
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
-    if data['grade'].strip()=='NULL' or data['class'].strip()=='NULL':
-        id_list=['NULL']
+    if data['grade'].strip() == 'NULL' or data['class'].strip() == 'NULL':
+        id_list = ['NULL']
     else:
         id_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
-                                                Grade=data['grade'].strip(), classNo=data['class'].strip()).values("StuID")
+                                             Grade=data['grade'].strip(), classNo=data['class'].strip()).values("StuID")
         print(id_query_list)
         id_list = list(set(tmp['StuID'] for tmp in id_query_list))
         if id_list.__len__() == 0:
@@ -988,7 +977,7 @@ def get_hot_book_list(request):
     :param request:
     :return:每一本书用一个字典对象(有name属性，values属性，itemStyle属性)
     """
-    topk = 20
+    topk = 10
     if request.method == "POST":
         topk = int(request.POST['k'])
     topk_name_list = []
@@ -1014,7 +1003,7 @@ def recommend(request):
     :return:
     """
     if request.method == "POST":
-        idr = int(request.POST['idr'])
+        idr = int(stu_inverse_dict[request.POST['idr']])
         get_recommend_list(idr)
         book_id_list = get_recommend_list(idr)
         book_loc_list = [book_dict[str(v)].strip() for v in book_id_list]
@@ -1028,20 +1017,13 @@ def recommend(request):
         stu_id = stu_dict[str(idr)]
         return JsonResponse(data=book_name_list, safe=False)
     recommend_dict = {}
-    # for idr in range(0, 10):
-    #     book_id_list = get_recommend_list(idr)
-    #     book_loc_list = [book_dict[str(v)].strip() for v in book_id_list]
-    #     print(book_loc_list)
-    #     book_name_list = []
-    #     with connection.cursor() as cursor:
-    #         for loc in book_loc_list:
-    #             cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
-    #             row = cursor.fetchone()
-    #             book_name_list.append(row[0])
-    #     stu_id = stu_dict[str(idr)]
-    #     recommend_dict[stu_id] = book_name_list
-    # print(recommend_dict)
-    return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict})
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+    return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict,
+                                                                     'school_list': school_list,
+                                                                     'major_list': major_list, })
 
 
 def tt(request):
