@@ -900,7 +900,6 @@ def monitor_engine(request):
         bujigeyujinglist = []
         for stuid in stus:
             dtlist = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))
-            print(dtlist)
             if len(dtlist) != 0 and float(dtlist[0]) < 70:
                 bujigeyujinglist.append(stuid)
 
