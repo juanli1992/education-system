@@ -1,4 +1,5 @@
 # Create your views here.
+from __future__ import division
 from __future__ import unicode_literals
 
 from django.http import JsonResponse
@@ -14,8 +15,8 @@ import xlrd
 import xlwt
 import numpy as np
 import datetime
-from django.db.models import Count
-###
+# from datetime import *
+from django.db.models import Count, Avg, Max, Min, Sum
 import numpy as np
 import pandas as pd
 # import csv
@@ -30,7 +31,6 @@ from keras.layers import Masking
 # from sklearn.metrics import mean_squared_error
 # from keras.layers import Bidirectional
 # #from keras.preprocessing.sequence import pad_sequences
-
 
 from django.db import connection
 from .recommend_util import *
@@ -144,7 +144,27 @@ def register(request):
 def inquiry(request):
     school = request.POST.get('school')
     time = '20151'
+    start_date = datetime.date(2016, 9, 1)
+    end_date = datetime.date(2017, 2, 1)
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
+
+    # geo_distribution
+    r = list(Basic.objects.filter(School=school).values_list('Province', flat=True))
+    province = ['四川', '江西', '江苏', '山东', '安徽', '上海', '重庆', '福建', '河南', '河北', '广东', '广西', '山西', '天津', '湖北', '浙江', '陕西',
+                '内蒙古', '海南',
+                '辽宁', '吉林', '黑龙江', '湖南', '贵州', '云南', '甘肃', '青海', '台湾', '北京', '西藏', '宁夏', '新疆', '香港', '澳门']
+    province_num = {}
+    for pro in province:
+        province_num[pro] = sum(pro in s for s in r)
+
+    r = list(Score.objects.filter(Semester=time, School=school).values_list('basic__Province', 'AveScore'))
+    score_province = {}
+    for pro in province:
+        a = [float(s[1]) for s in r if pro in s[0]]
+        if len(a) == 0:
+            score_province[pro] = 0
+        else:
+            score_province[pro] = sum(a) / len(a)
 
     # grades
     x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -173,55 +193,226 @@ def inquiry(request):
     score_male = list(
         Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
     ave_score_male = sum(float(j) for j in score_male) / len(score_male)
-    # print(len(score_male))
 
     score_female = list(
         Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
     ave_score_female = sum(float(j) for j in score_female) / len(score_female)
-    # print(len(score_female))
 
     ave_score = sum(float(j) for j in score_all) / len(score_all)
-    # print(len(score_all))
 
     # score vs. library
-    '''
-    r=Basic.objects.filter(School=school, score_Semester=time).annotate(count=Count("lib__id")).values_list('count','score__AveScore')
-    print(r)
-    r=np.array(r)
-'''
-    '''
-    x=[0,10,20,30,40,50,60,70,80,90]
-    i=1
-    while i<=9:
-        if i==9:
-            index=x[i-1]<=a[:,1]<=x[i]
-        # else:
-    '''
-    '''
-    while i<=9:
-        if i==9:
-            re=r.filter(count__gte=x[i-1], count__lte=x[i])
-            print(re)
+    r = Basic.objects.filter(School=school, score__Semester=time, lib__DateTime__gte=start_date,
+                             lib__DateTime__lte=end_date).annotate(count=Count("lib__id")).values('count',
+                                                                                                  'score__AveScore')
+    score_lib_ave = []
+    score_lib_max = []
+    score_lib_min = []
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+    i = 1
+    while i <= 9:
+        if i == 9:
+            re = r.filter(count__gte=x[i - 1], count__lte=x[i])
+            if re.count() == 0:
+                score_lib_ave.append(0)
+                score_lib_max.append(0)
+                score_lib_min.append(0)
+            else:
+                score_lib_ave.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Avg("score__AveScore"))[
+                                         'score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Max("score__AveScore"))[
+                                         'score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Min("score__AveScore"))[
+                                         'score__AveScore__min'])
         else:
-            re=r.filter(count__gte=x[i-1], count__lt=x[i])
-            print(re)
-        i=i+1
-    '''
+            re = r.filter(count__gte=x[i - 1], count__lt=x[i])
+            if re.count() == 0:
+                score_lib_ave.append(0)
+                score_lib_max.append(0)
+                score_lib_min.append(0)
+            else:
+                score_lib_ave.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Avg("score__AveScore"))[
+                                         'score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Max("score__AveScore"))[
+                                         'score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Min("score__AveScore"))[
+                                         'score__AveScore__min'])
+        i = i + 1
 
-    # r=Lib.objects.values(basic__StuID)
+    # score vs. dorm
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    # 其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    r = list(Basic.objects.filter(School=school, score__Semester=time, dorm__DateTime__gte=start_date,
+                                  dorm__DateTime__lte=end_date).values_list('dorm__DateTime', 'score__AveScore'))
+    x = [0, 6, 12, 15, 18, 21, 22, 23]
+    i = 1
+    score_dormtime_ave = []
+    score_dormtime_max = []
+    score_dormtime_min = []
+    while i <= 7:
+        if i == 7:
+            re = [float(tmp[1]) for tmp in r if x[i] >= tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                score_dormtime_ave.append(sum(re) / len(re))
+                score_dormtime_max.append(max(re))
+                score_dormtime_min.append(min(re))
+            else:
+                score_dormtime_ave.append(0)
+                score_dormtime_max.append(0)
+                score_dormtime_min.append(0)
+        else:
+            re = [float(tmp[1]) for tmp in r if x[i] > tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                score_dormtime_ave.append(sum(re) / len(re))
+                score_dormtime_max.append(max(re))
+                score_dormtime_min.append(min(re))
+            else:
+                score_dormtime_ave.append(0)
+                score_dormtime_max.append(0)
+                score_dormtime_min.append(0)
+        i = i + 1
 
     # health
     # physical test
     # distribution
-    '''
-    health_score_all = list(Health.objects.filter(Semester=time, School=school).values_list('TotalScore', flat=True))
+    health_score_all = list(Health.objects.filter(Semester=2016, School=school).values_list('TotalScore', flat=True))
     x = [0, 50, 60, 70, 80, 90, 100]
-    health_num = getdistribution(x,health_score_all)
-'''
-    # hospital
+    health_num = getdistribution(x, health_score_all)
 
-    ret = {'cdfall': cdfall, 'pdfall': pdfall, 'num': num, 'ave_score_female': ave_score_female,
-           'ave_score_male': ave_score_male, 'ave_score': ave_score}
+    # 体质测试与性别
+    health_score_male = list(
+        Health.objects.filter(Semester=2016, School=school, basic__Gender='1').values_list('TotalScore', flat=True))
+    ave_health_score_male = sum(float(j) for j in health_score_male) / len(health_score_male)
+
+    health_score_female = list(
+        Health.objects.filter(Semester=2016, School=school, basic__Gender='0').values_list('TotalScore', flat=True))
+    ave_health_score_female = sum(float(j) for j in health_score_female) / len(health_score_female)
+
+    ave_health_score = sum(float(j) for j in health_score_all) / len(health_score_all)
+
+    # 体质与回寝时间
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    # 其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    # 这里回寝时间多次用到，可以抽取出来
+    # 也可以给每个表格加上school和gender属性，就不用join了
+    # dorm表格和health表格也可以建立多对多的外键
+    r = list(Basic.objects.filter(School=school, health__Semester=2016, dorm__DateTime__gte=start_date,
+                                  dorm__DateTime__lte=end_date).values_list('dorm__DateTime', 'health__TotalScore'))
+    x = [0, 6, 12, 15, 18, 21, 22, 23]
+    i = 1
+    health_dormtime_ave = []
+    health_dormtime_max = []
+    health_dormtime_min = []
+    while i <= 7:
+        if i == 7:
+            re = [float(tmp[1]) for tmp in r if x[i] >= tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                health_dormtime_ave.append(sum(re) / len(re))
+                health_dormtime_max.append(max(re))
+                health_dormtime_min.append(min(re))
+            else:
+                health_dormtime_ave.append(0)
+                health_dormtime_max.append(0)
+                health_dormtime_min.append(0)
+        else:
+            re = [float(tmp[1]) for tmp in r if x[i] > tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                health_dormtime_ave.append(sum(re) / len(re))
+                health_dormtime_max.append(max(re))
+                health_dormtime_min.append(min(re))
+            else:
+                health_dormtime_ave.append(0)
+                health_dormtime_max.append(0)
+                health_dormtime_min.append(0)
+        i = i + 1
+
+    # hospital
+    # 去校医院次数分布
+
+    # 校园生活
+    # 回寝时间分布
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    dorm_all = list(
+        Dorm.objects.filter(basic__School=school, DateTime__gte=start_date, DateTime__lte=end_date).values_list(
+            'DateTime', flat=True))
+
+    x = [0, 6, 12, 18, 22, 24]
+    dorm_num = []
+    i = 1
+    while i <= 5:
+        if i == 5:
+            dorm_num.append(sum(x[i] >= r.hour >= x[i - 1] for r in dorm_all))
+        else:
+            dorm_num.append(sum(x[i] > r.hour >= x[i - 1] for r in dorm_all))
+        i = i + 1
+
+    # 回寝时间与性别
+    dorm_male = list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school,
+                                         basic__Gender='1').values_list('DateTime', flat=True))
+    if len(dorm_male) == 0:
+        ave_time_male = 0
+    else:
+        time_male = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_male]  # 把每一个时间点换算成秒
+        ave_time_male = sum(time_male) / len(time_male)
+
+    ave_time_male = ave_time_male // 60  # 把秒换算成分钟
+    ave_time_male = ave_time_male // 60  # 把分钟换算成小时
+
+    dorm_female = list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school,
+                                           basic__Gender='0').values_list('DateTime', flat=True))
+    if len(dorm_female) == 0:
+        ave_time_female = 0
+    else:
+        time_female = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_female]
+        ave_time_female = sum(time_female) / len(time_female)
+    ave_time_female = ave_time_female // 60  # 把秒换算成分钟
+    ave_time_female = ave_time_female // 60  # 把分钟换算成小时
+
+    if len(dorm_all) == 0:
+        ave_time = 0
+    else:
+        ave_time = (sum(time_female) + sum(time_male)) / len(dorm_all)
+    ave_time = ave_time // 60  # 把秒换算成分钟
+    ave_time = ave_time // 60  # 把分钟换算成小时
+
+    # 消费分布
+    stulist = list(Basic.objects.filter(School=school).values_list('StuID', flat=True))
+    cost_dis = []
+    if len(stulist) == 0:
+        cost_dis = [1, 1, 1, 1, 1]
+    else:
+        x = [0, 100, 200, 300, 400, 500]
+        ave_cost = [
+            Card.objects.filter(StuID=stu, DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(
+                Sum("Cost")) for stu in stulist]  # 每个人的平均消费
+        i = 1
+        while i <= 5:
+            if i == 5:
+                print(i)
+                cost_dis.append(
+                    sum(x[i] >= -c['Cost__sum'] / 17 >= x[i - 1] for c in ave_cost if not c['Cost__sum'] is None))
+            else:
+                print(i)
+                cost_dis.append(
+                    sum(x[i] > -c['Cost__sum'] / 17 >= x[i - 1] for c in ave_cost if not c['Cost__sum'] is None))
+            i = i + 1
+
+    ret = {'cdfall': cdfall, 'pdfall': pdfall, 'num': num,
+           'ave_score_female': ave_score_female, 'ave_score_male': ave_score_male, 'ave_score': ave_score,
+           'score_lib_ave': score_lib_ave, 'score_lib_max': score_lib_max, 'score_lib_min': score_lib_min,
+           'score_dormtime_ave': score_dormtime_ave, 'score_dormtime_max': score_dormtime_max,
+           'score_dormtime_min': score_dormtime_min,
+           'health_num': health_num,
+           'ave_health_score_male': ave_health_score_male, 'ave_health_score_female': ave_health_score_female,
+           'ave_health_score': ave_health_score,
+           'health_dormtime_ave': health_dormtime_ave, 'health_dormtime_max': health_dormtime_max,
+           'health_dormtime_min': health_dormtime_min,
+           'province_num': province_num, 'score_province': score_province,
+           'dorm_num': dorm_num,
+           'ave_time_female': ave_time_female, 'ave_time_male': ave_time_male, 'ave_time': ave_time,
+           'cost_dis': cost_dis}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -244,7 +435,24 @@ def base(request):
 
 
 def supervision(request):
-    return render(request, 'servermaterial/supervision_new_2.html')
+    # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
+        'classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    return render(request, 'servermaterial/supervision_new_2.html', context={'school_list': school_list,
+                                                                             'major_list': major_list,
+                                                                             'grade_list': grade_list,
+                                                                             'class_list': class_list})
 
 
 def result(request):
@@ -368,12 +576,14 @@ def query(request):
         dd5 = []
         ccc = 0  # 为了画像
         dtlist = list(Lib.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+        print(dtlist)
         Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
                                                                                                          '%Y-%m-%d')).days + 1  ###代替126
         if len(dtlist) != 0:
             nlist = np.zeros(Tdelta)
             for item in dtlist:
-                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
+                nitem = item.replace(tzinfo=None)
+                # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
                 # if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
@@ -394,7 +604,8 @@ def query(request):
         if len(dtlist) != 0:
             nlist = np.zeros(Tdelta)
             for item in dtlist:
-                nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                nitem = item.replace(tzinfo=None)
+                # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                           '%Y-%m-%d %H:%M:%S'):
@@ -413,7 +624,7 @@ def query(request):
         if len(dtlist) != 0:
             nlist = np.zeros(Tdelta)
             for item in range(len(dtlist)):
-                nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
+                nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S').replace(tzinfo=None)
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                           '%Y-%m-%d %H:%M:%S'):
@@ -605,23 +816,27 @@ def monitor_engine(request):
         Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
                                                                                                          '%Y-%m-%d')).days + 1  ###代替126
 
-        ###查出所有学生
-        stus = Basic.objects.filter(School=school, Major=major, Grade=grade, classNo=clas).values_list('StuID',
-                                                                                                       flat=True)
+        ###查出所有学生 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # stus = Basic.objects.filter(School=school, Major=major, Grade=grade, classNo=clas).values_list('StuID',
+        #                                                                                                flat=True)
+
+        stus = Basic.objects.filter(School=school).values_list('StuID',
+                                                               flat=True)
         # print(stus)
 
         """
         生活规律
         """
         ###访问dorm
-        global dormlist  # 给list函数的
+        global guilvlist  # 给list函数的
         dormlist = []
         for stuid in stus:
             dtlist = list(Dorm.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
             if len(dtlist) != 0:
                 nlist = np.zeros(Tdelta)
                 for item in dtlist:
-                    nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    nitem = item.replace(tzinfo=None)
+                    # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                     if datetime.datetime.strptime('2017-02-20 00:00:00',
                                                   '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                               '%Y-%m-%d %H:%M:%S'):
@@ -646,7 +861,7 @@ def monitor_engine(request):
             if len(dtlist) != 0:
                 nlist = np.zeros(Tdelta)
                 for item in range(len(dtlist)):
-                    nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S')
+                    nitem = datetime.datetime.strptime(dtlist[item], '%Y-%m-%d %H:%M:%S').replace(tzinfo=None)
                     if datetime.datetime.strptime('2017-02-20 00:00:00',
                                                   '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                               '%Y-%m-%d %H:%M:%S'):
@@ -666,14 +881,14 @@ def monitor_engine(request):
 
         ###合并
         dormlist.extend(consulist)
-        dormlist = list(set(dormlist))
+        guilvlist = list(set(dormlist))
         # rat = len(dormlist)/float(len(stus))
 
         # print('比例')
         # print(rat)
         # print(dormlist)
         global no1
-        no1 = len(dormlist)
+        no1 = len(guilvlist)
         no1d = {'value': no1, 'name': '不规律'}
         global yes1
         yes1 = len(stus) - no1
@@ -716,7 +931,7 @@ def monitor_engine(request):
         bujigeyujinglist = []
         for stuid in stus:
             dtlist = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))
-            if float(dtlist[0]) < 70:
+            if len(dtlist) != 0 and float(dtlist[0]) < 70:
                 bujigeyujinglist.append(stuid)
 
         global no3
@@ -727,7 +942,76 @@ def monitor_engine(request):
         yes3d = {'value': yes3, 'name': '及格'}
         cha3 = [no3d, yes3d]
 
-        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3}
+        """
+        身体健康监测
+        """
+        global jiankangjiancelist  # 给list函数的
+        jiankangjiancelist = []
+        for stuid in stus:
+            dtlist = list(Health.objects.filter(StuID=stuid).values_list('TotalLevel', flat=True))
+            if len(dtlist) != 0 and dtlist[-1] == "不及格":
+                jiankangjiancelist.append(stuid)
+
+        for stuid in stus:
+            dtlist = list(HosReg.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
+            if len(dtlist) != 0:
+                nlist = np.zeros(Tdelta)
+                for item in dtlist:
+                    nitem = item.replace(tzinfo=None)
+                    # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    if datetime.datetime.strptime('2017-02-20 00:00:00',
+                                                  '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
+                                                                                                              '%Y-%m-%d %H:%M:%S'):
+                        delta = (nitem - datetime.datetime.strptime('2017-02-20', '%Y-%m-%d')).days
+                        nlist[delta] += 1
+                # print(nlist)
+                nlist = list(nlist)
+                hosc = Tdelta - nlist.count(0)
+                freq4hos = hosc / float(Tdelta)  ###去医院就诊太勤
+                if freq4hos > 0.3:
+                    jiankangjiancelist.append(stuid)
+
+        jiankangjiancelist = list(set(jiankangjiancelist))
+
+        global no4
+        no4 = len(jiankangjiancelist)
+        no4d = {'value': no4, 'name': '不健康'}
+        global yes4
+        yes4 = len(stus) - no4
+        yes4d = {'value': yes4, 'name': '健康'}
+        cha4 = [no4d, yes4d]
+
+        """
+        退学预警
+        """
+        global tuixuelist  # 给list函数的
+        tuixuelist = []
+        tst()
+
+        for stuid in stus:
+            dtlist = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
+            dtlist = list(map(float, dtlist))
+            if len(list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))) != 0:
+                nsum = 0  # 为了求均值
+                for i in range(len(dtlist)):
+                    nsum += dtlist[i]
+
+                preval = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))[0]
+                nsum += float(preval)
+                aaas = nsum / (len(dtlist) + 1)
+                # print(aaas)
+                if aaas < 70:
+                    tuixuelist.append(stuid)
+
+        global no5
+        no5 = len(tuixuelist)
+        no5d = {'value': no5, 'name': '有退学风险'}
+        global yes5
+        yes5 = len(stus) - no5
+        yes5d = {'value': yes5, 'name': '无退学风险'}
+        cha5 = [no5d, yes5d]
+
+        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3, 'cha4': cha4, 'cha5': cha5}
 
         print(retu)
 
@@ -735,7 +1019,87 @@ def monitor_engine(request):
 
 
 def list1(request):
-    global dormlist
+    global bujigejiancelist
+    global kemushu
+    global no2
+    global yes2
+    no2d = {'value': no2, 'name': '不及格'}
+    yes2d = {'value': yes2, 'name': '及格'}
+    cha1 = [no2d, yes2d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in bujigejiancelist:
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID': objs4.StuID,
+            'School': objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
+
+    if len(bujigejiancelist) != 0:
+        for ii in range(len(bujigejiancelist)):
+            res4[ii].update({'bujici': kemushu[ii]})
+    print(res4)
+
+    return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+
+
+def list2(request):
+    global bujigeyujinglist
+    global no3
+    global yes3
+    no3d = {'value': no3, 'name': '不及格'}
+    yes3d = {'value': yes3, 'name': '及格'}
+    cha1 = [no3d, yes3d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in bujigeyujinglist:
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID': objs4.StuID,
+            'School': objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
+    print(res4)
+
+    return render(request, 'servermaterial/list2.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+
+
+def list3(request):
+    global tuixuelist
+    global no5
+    global yes5
+    no5d = {'value': no5, 'name': '有退学风险'}
+    yes5d = {'value': yes5, 'name': '无退学风险'}
+    cha1 = [no5d, yes5d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in tuixuelist:
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID': objs4.StuID,
+            'School': objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
+    print(res4)
+
+    return render(request, 'servermaterial/list3.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+
+
+def list4(request):
+    global guilvlist
     global no1
     global yes1
     no1d = {'value': no1, 'name': '不规律'}
@@ -744,22 +1108,38 @@ def list1(request):
     retu = {'cha1': cha1}
 
     ###表格
-    for stuid in dormlist:
+    res4 = []
+    for stuid in guilvlist:
+        objs4 = Basic.objects.filter(StuID=stuid)[0]
+        data = {
+            'StuID': objs4.StuID,
+            'School': objs4.School,
+            'Major': objs4.Major,
+            'classNo': objs4.classNo
+        }
+        res4.append(data)
+    print(res4)
+
+    return render(request, 'servermaterial/list4.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+
+
+def list5(request):
+    global jiankangjiancelist
+    global no4
+    global yes4
+    no4d = {'value': no4, 'name': '不健康'}
+    yes4d = {'value': yes4, 'name': '健康'}
+    cha1 = [no4d, yes4d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in jiankangjiancelist:
         objs4 = Basic.objects.filter(StuID=stuid)
+        res4 = [obj.as_dict() for obj in objs4]
+    print(res4)
 
-    return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu)})
-
-
-def list2(request):
-    return render(request, 'servermaterial/list2.html')
-
-
-def list3(request):
-    return render(request, 'servermaterial/list3.html')
-
-
-def list4(request):
-    return render(request, 'servermaterial/list4.html')
+    return render(request, 'servermaterial/list5.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
 
 
 def data_import_export(request):
@@ -873,8 +1253,8 @@ def query_majors(request):
 
 def query_grades(request):
     """
-     给定 学院+专业 查询所有年级信息
-     :param request: 年级list(json数据格式)
+     给定 学院+专业 查年级list询所有年级信息
+     :param request: (json数据格式)
      :return:
      """
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
@@ -888,7 +1268,7 @@ def query_grades(request):
 
 def query_class(request):
     """
-    给定 学院+专业+年纪 查询所有班级信息
+    给定 学院+专业+年级 查询所有班级信息
     :param request: 班级list(json数据格式)
     :return:
     """
@@ -908,7 +1288,7 @@ def query_class(request):
 
 def query_ID(request):
     """
-    给定 学院+专业+年纪+班级 查询所有ID信息
+    给定 学院+专业+年级+班级 查询所有ID信息
     :param request: IDlist(json数据格式)
     :return:
     """

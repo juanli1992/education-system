@@ -223,9 +223,9 @@
             <h4>不及格监测</h4>
 
                   <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                    <div class="col-lg-5 col-lg-offset-4 detailed">
                       <div id="chart-3" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list3">查看需要关注学生名单</a>
+                      <a href="/web/list1">查看不及格学生信息</a>
                     </div>
 
                   </div>
@@ -241,9 +241,9 @@
             <h4>不及格预警</h4>
 
                   <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                    <div class="col-lg-5 col-lg-offset-4 detailed">
                       <div id="chart-5" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list3">查看需要关注学生名单</a>
+                      <a href="/web/list2">查看预计不及格学生信息</a>
                     </div>
 
                   </div>
@@ -261,9 +261,9 @@
 
                   <div class="row mt">
 
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                    <div class="col-lg-5 col-lg-offset-4 detailed">
                       <div id="chart-4" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list4">查看需要关注学生名单</a>
+                      <a href="/web/list3">查看有退学风险学生信息</a>
                     </div>
                   </div>
 
@@ -282,9 +282,9 @@
               <div>
 
                   <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                    <div class="col-lg-5 col-lg-offset-4 detailed">
                       <div id="chart-1" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list1">查看需要关注学生名单</a>
+                        <a href="/web/list4">查看生活不规律学生信息</a>
                     </div>
                     <!--<div class="col-lg-5 col-lg-offset-1 detailed">-->
                       <!--<div id="chart-2" style="width: 450px;height:400px;"></div>-->
@@ -308,11 +308,29 @@
             <h4>身体健康监测</h4>
 
                   <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                    <div class="col-lg-5 col-lg-offset-4 detailed">
                       <div id="chart-2" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list2">查看需要关注学生名单</a>
+                        <a href="/web/list5">查看身体不健康学生信息</a>
                     </div>
                   </div>
+
+
+
+          </div>
+        </div>
+
+
+         <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+
+
+
+
+          </div>
+        </div>
+       <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+
 
 
 
@@ -388,7 +406,7 @@ $("#searchlog").click(function(){
 				<!--backgroundColor: '#2c343c',-->
 
 				title: {
-					text: '规律与否人数比例图',
+					text: '生活规律与否人数比例图',
 					left: 'center',
 					top: 20,
 					textStyle: {
@@ -401,22 +419,15 @@ $("#searchlog").click(function(){
 					formatter: "{a} <br/>{b} : {c} ({d}%)"
 				},
 
-				visualMap: {
-					show: false,
-					min: 80,
-					max: 600,
-					inRange: {
-						colorLightness: [0, 1]
-					}
-				},
+
 				series : [
 					{
-						name:'访问来源',
+						name:'人数',
 						type:'pie',
 						radius : '55%',
 						center: ['50%', '50%'],
 						data:[].sort(function (a, b) { return a.value - b.value; }),
-						roseType: 'radius',
+
 						label: {
 							normal: {
 								textStyle: {
@@ -436,7 +447,7 @@ $("#searchlog").click(function(){
 						},
 						itemStyle: {
 							normal: {
-								color: '#c23531',
+
 								shadowBlur: 200,
 								shadowColor: 'rgba(0, 0, 0, 0.5)'
 							}
@@ -476,22 +487,15 @@ $("#searchlog").click(function(){
 					formatter: "{a} <br/>{b} : {c} ({d}%)"
 				},
 
-				visualMap: {
-					show: false,
-					min: 80,
-					max: 600,
-					inRange: {
-						colorLightness: [0, 1]
-					}
-				},
+
 				series : [
 					{
-						name:'访问来源',
+						name:'人数',
 						type:'pie',
 						radius : '55%',
 						center: ['50%', '50%'],
 						data:[].sort(function (a, b) { return a.value - b.value; }),
-						roseType: 'radius',
+
 						label: {
 							normal: {
 								textStyle: {
@@ -511,7 +515,7 @@ $("#searchlog").click(function(){
 						},
 						itemStyle: {
 							normal: {
-								color: '#c23531',
+
 								shadowBlur: 200,
 								shadowColor: 'rgba(0, 0, 0, 0.5)'
 							}
@@ -550,22 +554,15 @@ $("#searchlog").click(function(){
 					formatter: "{a} <br/>{b} : {c} ({d}%)"
 				},
 
-				visualMap: {
-					show: false,
-					min: 80,
-					max: 600,
-					inRange: {
-						colorLightness: [0, 1]
-					}
-				},
+
 				series : [
 					{
-						name:'访问来源',
+						name:'人数',
 						type:'pie',
 						radius : '55%',
 						center: ['50%', '50%'],
 						data:[].sort(function (a, b) { return a.value - b.value; }),
-						roseType: 'radius',
+
 						label: {
 							normal: {
 								textStyle: {
@@ -585,7 +582,7 @@ $("#searchlog").click(function(){
 						},
 						itemStyle: {
 							normal: {
-								color: '#c23531',
+
 								shadowBlur: 200,
 								shadowColor: 'rgba(0, 0, 0, 0.5)'
 							}
@@ -606,10 +603,151 @@ $("#searchlog").click(function(){
 
 
 
+			//echarts2
+			var myChart2 = echarts.init(document.getElementById('chart-2'));
+			option = {
+				<!--backgroundColor: '#2c343c',-->
+
+				title: {
+					text: '身体健康与否人数比例图',
+					left: 'center',
+					top: 20,
+					textStyle: {
+						color: 'black'
+					}
+				},
+
+				tooltip : {
+					trigger: 'item',
+					formatter: "{a} <br/>{b} : {c} ({d}%)"
+				},
+
+
+				series : [
+					{
+						name:'人数',
+						type:'pie',
+						radius : '55%',
+						center: ['50%', '50%'],
+						data:[].sort(function (a, b) { return a.value - b.value; }),
+
+						label: {
+							normal: {
+								textStyle: {
+									color: 'black'
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								lineStyle: {
+									color: 'black'
+								},
+								smooth: 0.2,
+								length: 10,
+								length2: 20
+							}
+						},
+						itemStyle: {
+							normal: {
+
+								shadowBlur: 200,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						},
+
+						animationType: 'scale',
+						animationEasing: 'elasticOut',
+						animationDelay: function (idx) {
+							return Math.random() * 200;
+						}
+					}
+				]
+			};
+            myChart2.setOption(option);
+			myChart2.setOption({
+			series:[{data:retu['cha4']}]
+			});
+
+
+			//echarts4
+			var myChart4 = echarts.init(document.getElementById('chart-4'));
+			option = {
+				<!--backgroundColor: '#2c343c',-->
+
+				title: {
+					text: '退学风险有无人数比例图',
+					left: 'center',
+					top: 20,
+					textStyle: {
+						color: 'black'
+					}
+				},
+
+				tooltip : {
+					trigger: 'item',
+					formatter: "{a} <br/>{b} : {c} ({d}%)"
+				},
+
+
+				series : [
+					{
+						name:'人数',
+						type:'pie',
+						radius : '55%',
+						center: ['50%', '50%'],
+						data:[].sort(function (a, b) { return a.value - b.value; }),
+
+						label: {
+							normal: {
+								textStyle: {
+									color: 'black'
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								lineStyle: {
+									color: 'black'
+								},
+								smooth: 0.2,
+								length: 10,
+								length2: 20
+							}
+						},
+						itemStyle: {
+							normal: {
+
+								shadowBlur: 200,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						},
+
+						animationType: 'scale',
+						animationEasing: 'elasticOut',
+						animationDelay: function (idx) {
+							return Math.random() * 200;
+						}
+					}
+				]
+			};
+            myChart4.setOption(option);
+			myChart4.setOption({
+			series:[{data:retu['cha5']}]
+			});
+
+
+
+
+
+
+
 
      });
 
 });
+
+
 
 
 
@@ -649,12 +787,12 @@ $("#searchlog").click(function(){
     <!--},-->
     <!--series : [-->
         <!--{-->
-            <!--name:'访问来源',-->
+            <!--name:'人数',-->
             <!--type:'pie',-->
             <!--radius : '55%',-->
             <!--center: ['50%', '50%'],-->
             <!--data:[].sort(function (a, b) { return a.value - b.value; }),-->
-            <!--roseType: 'radius',-->
+            <!-- -->
             <!--label: {-->
                 <!--normal: {-->
                     <!--textStyle: {-->
@@ -674,7 +812,7 @@ $("#searchlog").click(function(){
             <!--},-->
             <!--itemStyle: {-->
                 <!--normal: {-->
-                    <!--color: '#c23531',-->
+                    <!-- -->
                     <!--shadowBlur: 200,-->
                     <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
                 <!--}-->
@@ -698,84 +836,11 @@ $("#searchlog").click(function(){
 
 
 
-var myChart2 = echarts.init(document.getElementById('chart-2'));
-option = {
-
-    title: {
-        text: '健康状况比例',
-        left: 'center',
-        top: 20,
-        textStyle: {
-            color: 'black'
-        }
-    },
-
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
-
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
-    series : [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius : '55%',
-            center: ['50%', '50%'],
-            data:[
-                {value:335, name:'不健康'},
-                {value:900, name:'健康'}
-            ].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
-            label: {
-                normal: {
-                    textStyle: {
-                        color: 'black'
-                    }
-                }
-            },
-            labelLine: {
-                normal: {
-                    lineStyle: {
-                        color: 'black'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
-
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-                return Math.random() * 200;
-            }
-        }
-    ]
-};;
-myChart2.setOption(option);
-
-
-
-<!--var myChart5 = echarts.init(document.getElementById('chart-5'));-->
+<!--var myChart2 = echarts.init(document.getElementById('chart-2'));-->
 <!--option = {-->
 
     <!--title: {-->
-        <!--text: '挂科与否比例（包含潜在挂科）',-->
+        <!--text: '健康状况比例',-->
         <!--left: 'center',-->
         <!--top: 20,-->
         <!--textStyle: {-->
@@ -798,17 +863,15 @@ myChart2.setOption(option);
     <!--},-->
     <!--series : [-->
         <!--{-->
-            <!--name:'访问来源',-->
+            <!--name:'人数',-->
             <!--type:'pie',-->
             <!--radius : '55%',-->
             <!--center: ['50%', '50%'],-->
             <!--data:[-->
-                <!--{value:335, name:'挂科'},-->
-                <!--{value:310, name:'潜在挂科'},-->
-                <!--{value:274, name:'挂科并潜在挂科'},-->
-                <!--{value:900, name:'正常'}-->
+                <!--{value:335, name:'不健康'},-->
+                <!--{value:900, name:'健康'}-->
             <!--].sort(function (a, b) { return a.value - b.value; }),-->
-            <!--roseType: 'radius',-->
+            <!-- -->
             <!--label: {-->
                 <!--normal: {-->
                     <!--textStyle: {-->
@@ -828,7 +891,7 @@ myChart2.setOption(option);
             <!--},-->
             <!--itemStyle: {-->
                 <!--normal: {-->
-                    <!--color: '#c23531',-->
+                    <!-- -->
                     <!--shadowBlur: 200,-->
                     <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
                 <!--}-->
@@ -842,80 +905,84 @@ myChart2.setOption(option);
         <!--}-->
     <!--]-->
 <!--};;-->
-<!--myChart5.setOption(option);-->
+<!--myChart2.setOption(option);-->
 
 
 
-var myChart4 = echarts.init(document.getElementById('chart-4'));
-option = {
 
-    title: {
-        text: '有劝退风险与否比例',
-        left: 'center',
-        top: 20,
-        textStyle: {
-            color: 'black'
-        }
-    },
 
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
 
-    visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-            colorLightness: [0, 1]
-        }
-    },
-    series : [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius : '55%',
-            center: ['50%', '50%'],
-            data:[
-                {value:335, name:'有劝退风险'},
-                {value:900, name:'无劝退风险'}
-            ].sort(function (a, b) { return a.value - b.value; }),
-            roseType: 'radius',
-            label: {
-                normal: {
-                    textStyle: {
-                        color: 'black'
-                    }
-                }
-            },
-            labelLine: {
-                normal: {
-                    lineStyle: {
-                        color: 'black'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
 
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: function (idx) {
-                return Math.random() * 200;
-            }
-        }
-    ]
-};;
-myChart4.setOption(option);
+<!--var myChart4 = echarts.init(document.getElementById('chart-4'));-->
+<!--option = {-->
+
+    <!--title: {-->
+        <!--text: '有劝退风险与否比例',-->
+        <!--left: 'center',-->
+        <!--top: 20,-->
+        <!--textStyle: {-->
+            <!--color: 'black'-->
+        <!--}-->
+    <!--},-->
+
+    <!--tooltip : {-->
+        <!--trigger: 'item',-->
+        <!--formatter: "{a} <br/>{b} : {c} ({d}%)"-->
+    <!--},-->
+
+    <!--visualMap: {-->
+        <!--show: false,-->
+        <!--min: 80,-->
+        <!--max: 600,-->
+        <!--inRange: {-->
+            <!--colorLightness: [0, 1]-->
+        <!--}-->
+    <!--},-->
+    <!--series : [-->
+        <!--{-->
+            <!--name:'人数',-->
+            <!--type:'pie',-->
+            <!--radius : '55%',-->
+            <!--center: ['50%', '50%'],-->
+            <!--data:[-->
+                <!--{value:335, name:'有劝退风险'},-->
+                <!--{value:900, name:'无劝退风险'}-->
+            <!--].sort(function (a, b) { return a.value - b.value; }),-->
+            <!-- -->
+            <!--label: {-->
+                <!--normal: {-->
+                    <!--textStyle: {-->
+                        <!--color: 'black'-->
+                    <!--}-->
+                <!--}-->
+            <!--},-->
+            <!--labelLine: {-->
+                <!--normal: {-->
+                    <!--lineStyle: {-->
+                        <!--color: 'black'-->
+                    <!--},-->
+                    <!--smooth: 0.2,-->
+                    <!--length: 10,-->
+                    <!--length2: 20-->
+                <!--}-->
+            <!--},-->
+            <!--itemStyle: {-->
+                <!--normal: {-->
+                    <!-- -->
+                    <!--shadowBlur: 200,-->
+                    <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
+                <!--}-->
+            <!--},-->
+
+            <!--animationType: 'scale',-->
+            <!--animationEasing: 'elasticOut',-->
+            <!--animationDelay: function (idx) {-->
+                <!--return Math.random() * 200;-->
+            <!--}-->
+        <!--}-->
+    <!--]-->
+<!--};;-->
+<!--myChart4.setOption(option);-->
 
 
     </script>
