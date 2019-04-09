@@ -207,6 +207,7 @@ class HosReg(models.Model):
     DateTime = models.DateTimeField()
     Department = models.TextField()
     RegCost = models.CharField(max_length=5)
+    basic = models.ForeignKey(to="Basic", to_field="StuID", on_delete = models.CASCADE, null=True)
 
     def __unicode__(self):
         return self.StuID
