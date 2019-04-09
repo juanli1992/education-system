@@ -928,7 +928,75 @@ def monitor_engine(request):
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
 
+
 def list1(request):
+    global bujigejiancelist
+    global kemushu
+    global no2
+    global yes2
+    no2d = {'value': no2, 'name': '不及格'}
+    yes2d = {'value': yes2, 'name': '及格'}
+    cha1 = [no2d, yes2d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in bujigejiancelist:
+        objs4 = Basic.objects.filter(StuID=stuid)
+        res4 = [obj.as_dict() for obj in objs4]
+
+    if len(bujigejiancelist) != 0:
+        for ii in range(len(bujigejiancelist)):
+            res4[ii].update({'bujici': kemushu[ii]})
+    print(res4)
+
+
+    return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+
+
+def list2(request):
+    global bujigeyujinglist
+    global no3
+    global yes3
+    no3d = {'value': no3, 'name': '不及格'}
+    yes3d = {'value': yes3, 'name': '及格'}
+    cha1 = [no3d, yes3d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in bujigeyujinglist:
+        objs4 = Basic.objects.filter(StuID=stuid)
+        res4 = [obj.as_dict() for obj in objs4]
+    print(res4)
+
+
+    return render(request, 'servermaterial/list2.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+
+
+
+def list3(request):
+    global tuixuelist
+    global no5
+    global yes5
+    no5d = {'value': no5, 'name': '有退学风险'}
+    yes5d = {'value': yes5, 'name': '无退学风险'}
+    cha1 = [no5d, yes5d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in tuixuelist:
+        objs4 = Basic.objects.filter(StuID=stuid)
+        res4 = [obj.as_dict() for obj in objs4]
+    print(res4)
+
+
+    return render(request, 'servermaterial/list3.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+
+
+
+def list4(request):
     global dormlist
     global no1
     global yes1
@@ -938,22 +1006,35 @@ def list1(request):
     retu = {'cha1': cha1}
 
     ###表格
+    res4 = []
     for stuid in dormlist:
         objs4 = Basic.objects.filter(StuID=stuid)
-
-    return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu)})
-
-
-def list2(request):
-    return render(request, 'servermaterial/list2.html')
+        res4 = [obj.as_dict() for obj in objs4]
+    print(res4)
 
 
-def list3(request):
-    return render(request, 'servermaterial/list3.html')
+    return render(request, 'servermaterial/list4.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
 
 
-def list4(request):
-    return render(request, 'servermaterial/list4.html')
+
+def list5(request):
+    global jiankangjiancelist
+    global no4
+    global yes4
+    no4d = {'value': no4, 'name': '不健康'}
+    yes4d = {'value': yes4, 'name': '健康'}
+    cha1 = [no4d, yes4d]
+    retu = {'cha1': cha1}
+
+    ###表格
+    res4 = []
+    for stuid in jiankangjiancelist:
+        objs4 = Basic.objects.filter(StuID=stuid)
+        res4 = [obj.as_dict() for obj in objs4]
+    print(res4)
+
+
+    return render(request, 'servermaterial/list5.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
 
 
 def data_import_export(request):
