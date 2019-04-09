@@ -2777,6 +2777,66 @@
 
 
 
+        var myChart = echarts.init(document.getElementById('chart-life-3'));
+
+        option = {
+          title : {
+              text: '消费分布',
+              subtext: '研究每人的平均每月消费',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-100','100-200','200-300','300-400','400-500']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['cost_dis'][0], name:'0-100'},
+                      {value:ret['cost_dis'][1], name:'100-200'},
+                      {value:ret['cost_dis'][2], name:'200-300'},
+                      {value:ret['cost_dis'][3], name:'300-400'},
+                      {value:ret['cost_dis'][4], name:'400-500'}
+                  ]
+              }
+          ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+
+
         });
       }
 

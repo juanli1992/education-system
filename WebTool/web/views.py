@@ -16,7 +16,7 @@ import xlwt
 import numpy as np
 import datetime
 # from datetime import *
-from django.db.models import Count, Avg, Max, Min
+from django.db.models import Count, Avg, Max, Min, Sum
 import numpy as np
 import pandas as pd
 # import csv
@@ -364,6 +364,24 @@ def inquiry(request):
     ave_time=ave_time // 60     #把秒换算成分钟
     ave_time=ave_time // 60    #把分钟换算成小时
 
+    #消费分布
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID', flat=True))
+    cost_dis=[]
+    if len(stulist) ==0:
+        cost_dis=[1,1,1,1,1]
+    else:
+        x=[0,100,200,300,400,500]
+        ave_cost = [Card.objects.filter(StuID = stu, DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(Sum("Cost")) for stu in stulist] #每个人的平均消费
+        i=1
+        while i <= 5:
+            if i==5:
+                print(i)
+                cost_dis.append(sum(x[i]>=-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+            else:
+                print(i)
+                cost_dis.append(sum(x[i]>-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+            i=i+1
+
 
     ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num,
            'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score,
@@ -374,7 +392,8 @@ def inquiry(request):
            'health_dormtime_ave':health_dormtime_ave, 'health_dormtime_max':health_dormtime_max, 'health_dormtime_min':health_dormtime_min,
            'province_num':province_num,'score_province':score_province,
            'dorm_num':dorm_num,
-           'ave_time_female':ave_time_female, 'ave_time_male':ave_time_male, 'ave_time':ave_time}
+           'ave_time_female':ave_time_female, 'ave_time_male':ave_time_male, 'ave_time':ave_time,
+           'cost_dis':cost_dis}
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
