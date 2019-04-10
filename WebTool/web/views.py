@@ -143,31 +143,32 @@ def register(request):
 
 def inquiry(request):
     school = request.POST.get('school')
-    time='20151'
-    start_date=datetime.date(2016,9,1)
-    end_date=datetime.date(2017,2,1)
+    time = '20151'
+    start_date = datetime.date(2016, 9, 1)
+    end_date = datetime.date(2017, 2, 1)
     score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
 
     # geo_distribution
-    r=list(Basic.objects.filter(School=school).values_list('Province', flat=True))
-    province=['四川', '江西', '江苏', '山东', '安徽', '上海', '重庆', '福建', '河南', '河北', '广东', '广西', '山西', '天津', '湖北', '浙江', '陕西', '内蒙古', '海南',
-    '辽宁', '吉林', '黑龙江', '湖南', '贵州', '云南', '甘肃', '青海', '台湾', '北京', '西藏', '宁夏', '新疆', '香港', '澳门']
-    province_num={}
+    r = list(Basic.objects.filter(School=school).values_list('Province', flat=True))
+    province = ['四川', '江西', '江苏', '山东', '安徽', '上海', '重庆', '福建', '河南', '河北', '广东', '广西', '山西', '天津', '湖北', '浙江', '陕西',
+                '内蒙古', '海南',
+                '辽宁', '吉林', '黑龙江', '湖南', '贵州', '云南', '甘肃', '青海', '台湾', '北京', '西藏', '宁夏', '新疆', '香港', '澳门']
+    province_num = {}
     for pro in province:
-        province_num[pro]=sum(pro in s for s in r)
+        province_num[pro] = sum(pro in s for s in r)
 
     r = list(Score.objects.filter(Semester=time, School=school).values_list('basic__Province', 'AveScore'))
-    score_province={}
+    score_province = {}
     for pro in province:
-        a = [ float(s[1]) for s in r if pro in s[0]]
+        a = [float(s[1]) for s in r if pro in s[0]]
         if len(a) == 0:
-            score_province[pro]=0
+            score_province[pro] = 0
         else:
-            score_province[pro]=sum(a)/len(a)
+            score_province[pro] = sum(a) / len(a)
 
     # grades
-    x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    cdfall=[]
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cdfall = []
     for i in x:
         cdfall.append(sum(float(j) < i for j in score_all) / len(score_all))
 
@@ -185,63 +186,74 @@ def inquiry(request):
         if i == 6:
             num.append(sum(x[i - 1] <= float(j) <= x[i] for j in score_all))
         else:
-            num.append( sum( x[i-1]<=float(j)<x[i] for j in score_all) )
-        i=i+1
+            num.append(sum(x[i - 1] <= float(j) < x[i] for j in score_all))
+        i = i + 1
 
     # the average grade for different gender
-    score_male=list(Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
-    ave_score_male=sum(float(j) for j in score_male)/len(score_male)
+    score_male = list(
+        Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
+    ave_score_male = sum(float(j) for j in score_male) / len(score_male)
 
-    score_female=list(Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
-    ave_score_female=sum(float(j) for j in score_female)/len(score_female)
+    score_female = list(
+        Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
+    ave_score_female = sum(float(j) for j in score_female) / len(score_female)
 
-    ave_score=sum(float(j) for j in score_all)/len(score_all)
+    ave_score = sum(float(j) for j in score_all) / len(score_all)
 
     # score vs. library
-    r=Basic.objects.filter(School=school, score__Semester=time, lib__DateTime__gte=start_date, lib__DateTime__lte=end_date).annotate(count=Count("lib__id")).values('count','score__AveScore')
-    score_lib_ave=[]
-    score_lib_max=[]
-    score_lib_min=[]
-    x = [0,10,20,30,40,50,60,70,80,90]
+    r = Basic.objects.filter(School=school, score__Semester=time, lib__DateTime__gte=start_date,
+                             lib__DateTime__lte=end_date).annotate(count=Count("lib__id")).values('count',
+                                                                                                  'score__AveScore')
+    score_lib_ave = []
+    score_lib_max = []
+    score_lib_min = []
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
     i = 1
-    while i<=9:
-        if i==9:
-            re=r.filter(count__gte=x[i-1], count__lte=x[i])
-            if re.count()==0:
+    while i <= 9:
+        if i == 9:
+            re = r.filter(count__gte=x[i - 1], count__lte=x[i])
+            if re.count() == 0:
                 score_lib_ave.append(0)
                 score_lib_max.append(0)
                 score_lib_min.append(0)
             else:
-                score_lib_ave.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Avg("score__AveScore"))['score__AveScore__avg'])
-                score_lib_max.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Max("score__AveScore"))['score__AveScore__max'])
-                score_lib_min.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Min("score__AveScore"))['score__AveScore__min'])
+                score_lib_ave.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Avg("score__AveScore"))[
+                                         'score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Max("score__AveScore"))[
+                                         'score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Min("score__AveScore"))[
+                                         'score__AveScore__min'])
         else:
-            re=r.filter(count__gte=x[i-1], count__lt=x[i])
-            if re.count()==0:
+            re = r.filter(count__gte=x[i - 1], count__lt=x[i])
+            if re.count() == 0:
                 score_lib_ave.append(0)
                 score_lib_max.append(0)
                 score_lib_min.append(0)
             else:
-                score_lib_ave.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Avg("score__AveScore"))['score__AveScore__avg'])
-                score_lib_max.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Max("score__AveScore"))['score__AveScore__max'])
-                score_lib_min.append(r.filter(count__gte=x[i-1], count__lte=x[i]).aggregate(Min("score__AveScore"))['score__AveScore__min'])
-        i=i+1
+                score_lib_ave.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Avg("score__AveScore"))[
+                                         'score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Max("score__AveScore"))[
+                                         'score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Min("score__AveScore"))[
+                                         'score__AveScore__min'])
+        i = i + 1
 
     # score vs. dorm
-    start_date=datetime.date(2015,10,1)
-    end_date=datetime.date(2017,2,1)
-    #其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
-    r=list(Basic.objects.filter(School=school, score__Semester=time, dorm__DateTime__gte=start_date, dorm__DateTime__lte=end_date).values_list('dorm__DateTime','score__AveScore'))
-    x = [0,6,12,15,18,21,22,23]
-    i=1
-    score_dormtime_ave=[]
-    score_dormtime_max=[]
-    score_dormtime_min=[]
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    # 其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    r = list(Basic.objects.filter(School=school, score__Semester=time, dorm__DateTime__gte=start_date,
+                                  dorm__DateTime__lte=end_date).values_list('dorm__DateTime', 'score__AveScore'))
+    x = [0, 6, 12, 15, 18, 21, 22, 23]
+    i = 1
+    score_dormtime_ave = []
+    score_dormtime_max = []
+    score_dormtime_min = []
     while i <= 7:
-        if i==7:
-            re=[float(tmp[1]) for tmp in r if x[i]>=tmp[0].hour>=x[i-1]]
-            if len(re) >0:
-                score_dormtime_ave.append(sum(re)/len(re))
+        if i == 7:
+            re = [float(tmp[1]) for tmp in r if x[i] >= tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                score_dormtime_ave.append(sum(re) / len(re))
                 score_dormtime_max.append(max(re))
                 score_dormtime_min.append(min(re))
             else:
@@ -249,54 +261,54 @@ def inquiry(request):
                 score_dormtime_max.append(0)
                 score_dormtime_min.append(0)
         else:
-            re=[float(tmp[1]) for tmp in r if x[i]>tmp[0].hour>=x[i-1]]
-            if len(re) >0:
-                score_dormtime_ave.append(sum(re)/len(re))
+            re = [float(tmp[1]) for tmp in r if x[i] > tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                score_dormtime_ave.append(sum(re) / len(re))
                 score_dormtime_max.append(max(re))
                 score_dormtime_min.append(min(re))
             else:
                 score_dormtime_ave.append(0)
                 score_dormtime_max.append(0)
                 score_dormtime_min.append(0)
-        i=i+1
-
-
+        i = i + 1
 
     # health
     # physical test
     # distribution
     health_score_all = list(Health.objects.filter(Semester=2016, School=school).values_list('TotalScore', flat=True))
     x = [0, 50, 60, 70, 80, 90, 100]
-    health_num = getdistribution(x,health_score_all)
+    health_num = getdistribution(x, health_score_all)
 
     # 体质测试与性别
-    health_score_male=list(Health.objects.filter(Semester=2016, School=school, basic__Gender='1').values_list('TotalScore', flat=True))
-    ave_health_score_male=sum(float(j) for j in health_score_male)/len(health_score_male)
+    health_score_male = list(
+        Health.objects.filter(Semester=2016, School=school, basic__Gender='1').values_list('TotalScore', flat=True))
+    ave_health_score_male = sum(float(j) for j in health_score_male) / len(health_score_male)
 
-    health_score_female=list(Health.objects.filter(Semester=2016, School=school, basic__Gender='0').values_list('TotalScore', flat=True))
-    ave_health_score_female=sum(float(j) for j in health_score_female)/len(health_score_female)
+    health_score_female = list(
+        Health.objects.filter(Semester=2016, School=school, basic__Gender='0').values_list('TotalScore', flat=True))
+    ave_health_score_female = sum(float(j) for j in health_score_female) / len(health_score_female)
 
-    ave_health_score=sum(float(j) for j in health_score_all)/len(health_score_all)
-
+    ave_health_score = sum(float(j) for j in health_score_all) / len(health_score_all)
 
     # 体质与回寝时间
-    start_date=datetime.date(2015,10,1)
-    end_date=datetime.date(2017,2,1)
-    #其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
-    #这里回寝时间多次用到，可以抽取出来
-    #也可以给每个表格加上school和gender属性，就不用join了
-    #dorm表格和health表格也可以建立多对多的外键
-    r=list(Basic.objects.filter(School=school, health__Semester=2016, dorm__DateTime__gte=start_date, dorm__DateTime__lte=end_date).values_list('dorm__DateTime','health__TotalScore'))
-    x = [0,6,12,15,18,21,22,23]
-    i=1
-    health_dormtime_ave=[]
-    health_dormtime_max=[]
-    health_dormtime_min=[]
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    # 其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    # 这里回寝时间多次用到，可以抽取出来
+    # 也可以给每个表格加上school和gender属性，就不用join了
+    # dorm表格和health表格也可以建立多对多的外键
+    r = list(Basic.objects.filter(School=school, health__Semester=2016, dorm__DateTime__gte=start_date,
+                                  dorm__DateTime__lte=end_date).values_list('dorm__DateTime', 'health__TotalScore'))
+    x = [0, 6, 12, 15, 18, 21, 22, 23]
+    i = 1
+    health_dormtime_ave = []
+    health_dormtime_max = []
+    health_dormtime_min = []
     while i <= 7:
-        if i==7:
-            re=[float(tmp[1]) for tmp in r if x[i]>=tmp[0].hour>=x[i-1]]
-            if len(re) >0:
-                health_dormtime_ave.append(sum(re)/len(re))
+        if i == 7:
+            re = [float(tmp[1]) for tmp in r if x[i] >= tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                health_dormtime_ave.append(sum(re) / len(re))
                 health_dormtime_max.append(max(re))
                 health_dormtime_min.append(min(re))
             else:
@@ -304,61 +316,62 @@ def inquiry(request):
                 health_dormtime_max.append(0)
                 health_dormtime_min.append(0)
         else:
-            re=[float(tmp[1]) for tmp in r if x[i]>tmp[0].hour>=x[i-1]]
-            if len(re) >0:
-                health_dormtime_ave.append(sum(re)/len(re))
+            re = [float(tmp[1]) for tmp in r if x[i] > tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                health_dormtime_ave.append(sum(re) / len(re))
                 health_dormtime_max.append(max(re))
                 health_dormtime_min.append(min(re))
             else:
                 health_dormtime_ave.append(0)
                 health_dormtime_max.append(0)
                 health_dormtime_min.append(0)
-        i=i+1
-
+        i = i + 1
 
     # hospital
     # 去校医院次数分布
 
+    # 校园生活
+    # 回寝时间分布
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    dorm_all = list(
+        Dorm.objects.filter(basic__School=school, DateTime__gte=start_date, DateTime__lte=end_date).values_list(
+            'DateTime', flat=True))
 
-    #校园生活
-    #回寝时间分布
-    start_date=datetime.date(2015,10,1)
-    end_date=datetime.date(2017,2,1)
-    dorm_all=list(Dorm.objects.filter(basic__School=school, DateTime__gte=start_date, DateTime__lte=end_date).values_list('DateTime', flat=True))
-
-    x=[0, 6, 12, 18, 22,24]
-    dorm_num=[]
-    i=1
-    while i<=5:
-        if i==5:
-            dorm_num.append(sum(x[i]>=r.hour>=x[i-1] for r in dorm_all))
+    x = [0, 6, 12, 18, 22, 24]
+    dorm_num = []
+    i = 1
+    while i <= 5:
+        if i == 5:
+            dorm_num.append(sum(x[i] >= r.hour >= x[i - 1] for r in dorm_all))
         else:
-            dorm_num.append(sum(x[i]>r.hour>=x[i-1] for r in dorm_all))
-        i=i+1
+            dorm_num.append(sum(x[i] > r.hour >= x[i - 1] for r in dorm_all))
+        i = i + 1
 
-
-    #回寝时间与性别
-    dorm_male=list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school, basic__Gender='1').values_list('DateTime', flat=True))
-    if len(dorm_male)==0:
-        ave_time_male=0
+    # 回寝时间与性别
+    dorm_male = list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school,
+                                         basic__Gender='1').values_list('DateTime', flat=True))
+    if len(dorm_male) == 0:
+        ave_time_male = 0
     else:
-        time_male=[r.hour*3600+r.minute*60+r.second for r in dorm_male]  #把每一个时间点换算成秒
-        ave_time_male=sum(time_male)/len(time_male)
+        time_male = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_male]  # 把每一个时间点换算成秒
+        ave_time_male = sum(time_male) / len(time_male)
 
-    ave_time_male=ave_time_male // 60     #把秒换算成分钟
-    ave_time_male=ave_time_male // 60    #把分钟换算成小时
+    ave_time_male = ave_time_male // 60  # 把秒换算成分钟
+    ave_time_male = ave_time_male // 60  # 把分钟换算成小时
 
-    dorm_female=list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school, basic__Gender='0').values_list('DateTime', flat=True))
-    if len(dorm_female)==0:
-        ave_time_female=0
+    dorm_female = list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school,
+                                           basic__Gender='0').values_list('DateTime', flat=True))
+    if len(dorm_female) == 0:
+        ave_time_female = 0
     else:
-        time_female=[r.hour*3600+r.minute*60+r.second for r in dorm_female]
-        ave_time_female=sum(time_female)/len(time_female)
-    ave_time_female=ave_time_female // 60     #把秒换算成分钟
-    ave_time_female=ave_time_female // 60    #把分钟换算成小时
+        time_female = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_female]
+        ave_time_female = sum(time_female) / len(time_female)
+    ave_time_female = ave_time_female // 60  # 把秒换算成分钟
+    ave_time_female = ave_time_female // 60  # 把分钟换算成小时
 
     if len(dorm_all) == 0:
-        ave_time=0
+        ave_time = 0
     else:
         ave_time=(sum(time_female)+sum(time_male))/len(dorm_all)
     ave_time=ave_time // 60     #把秒换算成分钟
@@ -530,21 +543,18 @@ def inquiry(request):
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
-
-def getdistribution(x,data):
+def getdistribution(x, data):
     # x includes endpoints of intervals
-    l=len(x)
-    num=[]
-    i=1
-    while i<=len(x):
-        if i==len(x):
-            num.append(sum(x[i-1]<=float(j)<=x[i] for j in data))
+    l = len(x)
+    num = []
+    i = 1
+    while i <= len(x):
+        if i == len(x):
+            num.append(sum(x[i - 1] <= float(j) <= x[i] for j in data))
         else:
-            num.append(sum(x[i-1]<=float(j)<x[i] for j in data))
-        i=i+1
+            num.append(sum(x[i - 1] <= float(j) < x[i] for j in data))
+        i = i + 1
     return num
-
-
 
 
 def base(request):
@@ -562,13 +572,14 @@ def supervision(request):
     grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
     grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
 
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
+        'classNo')
     class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
 
     return render(request, 'servermaterial/supervision_new_2.html', context={'school_list': school_list,
-                                                                     'major_list': major_list,
-                                                                     'grade_list': grade_list,
-                                                                     'class_list': class_list})
+                                                                             'major_list': major_list,
+                                                                             'grade_list': grade_list,
+                                                                             'class_list': class_list})
 
 
 def result(request):
@@ -584,16 +595,18 @@ def result(request):
     grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
     grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
 
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
+        'classNo')
     class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
 
-    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0], classNo=class_list[0]).values('StuID')
+    id_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0],
+                                         classNo=class_list[0]).values('StuID')
     id_list = list(set([tmp['StuID'] for tmp in id_query_list if tmp['StuID'] != '']))
     return render(request, 'servermaterial/result.html', context={'school_list': school_list,
-                                                                     'major_list': major_list,
-                                                                     'grade_list': grade_list,
-                                                                     'class_list': class_list,
-                                                                     'id_list': id_list})
+                                                                  'major_list': major_list,
+                                                                  'grade_list': grade_list,
+                                                                  'class_list': class_list,
+                                                                  'id_list': id_list})
 
 
 ##查询
@@ -697,7 +710,7 @@ def query(request):
             nlist = np.zeros(Tdelta)
             for item in dtlist:
                 nitem = item.replace(tzinfo=None)
-                #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
+                # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
                 # if datetime.datetime.strptime('2017-02-20 00:00:00', '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime('2017-06-25 23:59:59', '%Y-%m-%d %H:%M:%S'):
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
@@ -719,7 +732,7 @@ def query(request):
             nlist = np.zeros(Tdelta)
             for item in dtlist:
                 nitem = item.replace(tzinfo=None)
-                #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                 if datetime.datetime.strptime('2017-02-20 00:00:00',
                                               '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                           '%Y-%m-%d %H:%M:%S'):
@@ -908,13 +921,14 @@ def monitor(request):
     grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
     grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
 
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values('classNo')
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
+        'classNo')
     class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
 
     return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
-                                                                     'major_list': major_list,
-                                                                     'grade_list': grade_list,
-                                                                     'class_list': class_list})
+                                                                   'major_list': major_list,
+                                                                   'grade_list': grade_list,
+                                                                   'class_list': class_list})
 
 
 def monitor_engine(request):
@@ -924,22 +938,18 @@ def monitor_engine(request):
         grade = request.POST.get('grade')
         clas = request.POST.get('class')
 
-
         pastTime = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d %H:%M:%S')  # 过去3年时间
         print(pastTime)
         Tdelta = (datetime.datetime.strptime(pastTime, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime('2017-02-20',
                                                                                                          '%Y-%m-%d')).days + 1  ###代替126
-
 
         ###查出所有学生 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # stus = Basic.objects.filter(School=school, Major=major, Grade=grade, classNo=clas).values_list('StuID',
         #                                                                                                flat=True)
 
         stus = Basic.objects.filter(School=school).values_list('StuID',
-                                                                                                       flat=True)
-        #print(stus)
-
-
+                                                               flat=True)
+        # print(stus)
 
         """
         生活规律
@@ -953,7 +963,7 @@ def monitor_engine(request):
                 nlist = np.zeros(Tdelta)
                 for item in dtlist:
                     nitem = item.replace(tzinfo=None)
-                    #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                     if datetime.datetime.strptime('2017-02-20 00:00:00',
                                                   '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                               '%Y-%m-%d %H:%M:%S'):
@@ -1012,8 +1022,6 @@ def monitor_engine(request):
         yes1d = {'value': yes1, 'name': '规律'}
         cha1 = [no1d, yes1d]
 
-
-
         """
         不及格监测
         """
@@ -1042,8 +1050,6 @@ def monitor_engine(request):
         yes2d = {'value': yes2, 'name': '及格'}
         cha2 = [no2d, yes2d]
 
-
-
         """
         不及格预警
         """
@@ -1063,8 +1069,6 @@ def monitor_engine(request):
         yes3d = {'value': yes3, 'name': '及格'}
         cha3 = [no3d, yes3d]
 
-
-
         """
         身体健康监测
         """
@@ -1075,14 +1079,13 @@ def monitor_engine(request):
             if len(dtlist) != 0 and dtlist[-1] == "不及格":
                 jiankangjiancelist.append(stuid)
 
-
         for stuid in stus:
             dtlist = list(HosReg.objects.filter(StuID=stuid).values_list('DateTime', flat=True))
             if len(dtlist) != 0:
                 nlist = np.zeros(Tdelta)
                 for item in dtlist:
                     nitem = item.replace(tzinfo=None)
-                    #nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
+                    # nitem = datetime.datetime.strptime(item, '%Y-%m-%d %H:%M:%S.000000')
                     if datetime.datetime.strptime('2017-02-20 00:00:00',
                                                   '%Y-%m-%d %H:%M:%S') <= nitem <= datetime.datetime.strptime(pastTime,
                                                                                                               '%Y-%m-%d %H:%M:%S'):
@@ -1097,7 +1100,6 @@ def monitor_engine(request):
 
         jiankangjiancelist = list(set(jiankangjiancelist))
 
-
         global no4
         no4 = len(jiankangjiancelist)
         no4d = {'value': no4, 'name': '不健康'}
@@ -1105,8 +1107,6 @@ def monitor_engine(request):
         yes4 = len(stus) - no4
         yes4d = {'value': yes4, 'name': '健康'}
         cha4 = [no4d, yes4d]
-
-
 
         """
         退学预警
@@ -1117,19 +1117,18 @@ def monitor_engine(request):
 
         for stuid in stus:
             dtlist = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
-            dtlist = list (map(float,dtlist))
+            dtlist = list(map(float, dtlist))
             if len(list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))) != 0:
-                nsum = 0 # 为了求均值
+                nsum = 0  # 为了求均值
                 for i in range(len(dtlist)):
                     nsum += dtlist[i]
 
                 preval = list(PredScore.objects.filter(StuID=stuid).values_list('Score', flat=True))[0]
                 nsum += float(preval)
-                aaas = nsum/(len(dtlist)+1)
-                #print(aaas)
+                aaas = nsum / (len(dtlist) + 1)
+                # print(aaas)
                 if aaas < 70:
                     tuixuelist.append(stuid)
-
 
         global no5
         no5 = len(tuixuelist)
@@ -1139,16 +1138,11 @@ def monitor_engine(request):
         yes5d = {'value': yes5, 'name': '无退学风险'}
         cha5 = [no5d, yes5d]
 
-
-
-
-
         retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3, 'cha4': cha4, 'cha5': cha5}
 
         print(retu)
 
         return HttpResponse(json.dumps(retu), content_type="application/json")
-
 
 
 def list1(request):
@@ -1166,8 +1160,8 @@ def list1(request):
     for stuid in bujigejiancelist:
         objs4 = Basic.objects.filter(StuID=stuid)[0]
         data = {
-            'StuID':objs4.StuID,
-            'School':objs4.School,
+            'StuID': objs4.StuID,
+            'School': objs4.School,
             'Major': objs4.Major,
             'classNo': objs4.classNo
         }
@@ -1177,7 +1171,6 @@ def list1(request):
         for ii in range(len(bujigejiancelist)):
             res4[ii].update({'bujici': kemushu[ii]})
     print(res4)
-
 
     return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
 
@@ -1196,17 +1189,15 @@ def list2(request):
     for stuid in bujigeyujinglist:
         objs4 = Basic.objects.filter(StuID=stuid)[0]
         data = {
-            'StuID':objs4.StuID,
-            'School':objs4.School,
+            'StuID': objs4.StuID,
+            'School': objs4.School,
             'Major': objs4.Major,
             'classNo': objs4.classNo
         }
         res4.append(data)
     print(res4)
 
-
     return render(request, 'servermaterial/list2.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
-
 
 
 def list3(request):
@@ -1223,17 +1214,15 @@ def list3(request):
     for stuid in tuixuelist:
         objs4 = Basic.objects.filter(StuID=stuid)[0]
         data = {
-            'StuID':objs4.StuID,
-            'School':objs4.School,
+            'StuID': objs4.StuID,
+            'School': objs4.School,
             'Major': objs4.Major,
             'classNo': objs4.classNo
         }
         res4.append(data)
     print(res4)
 
-
     return render(request, 'servermaterial/list3.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
-
 
 
 def list4(request):
@@ -1250,17 +1239,15 @@ def list4(request):
     for stuid in guilvlist:
         objs4 = Basic.objects.filter(StuID=stuid)[0]
         data = {
-            'StuID':objs4.StuID,
-            'School':objs4.School,
+            'StuID': objs4.StuID,
+            'School': objs4.School,
             'Major': objs4.Major,
             'classNo': objs4.classNo
         }
         res4.append(data)
     print(res4)
 
-
     return render(request, 'servermaterial/list4.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
-
 
 
 def list5(request):
@@ -1278,7 +1265,6 @@ def list5(request):
         objs4 = Basic.objects.filter(StuID=stuid)
         res4 = [obj.as_dict() for obj in objs4]
     print(res4)
-
 
     return render(request, 'servermaterial/list5.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
 
@@ -1401,7 +1387,7 @@ def query_grades(request):
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
     grade_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip()).values("Grade")
     grade_list = list(set(tmp['Grade'] for tmp in grade_query_list))
-    if grade_list.__len__()==0:
+    if grade_list.__len__() == 0:
         grade_list.append('NULL')
     print(grade_list)
     return HttpResponse(json.dumps(grade_list), content_type='application/json')
@@ -1414,8 +1400,8 @@ def query_class(request):
     :return:
     """
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
-    if data['grade'].strip()=='NULL':
-        class_list=['NULL']
+    if data['grade'].strip() == 'NULL':
+        class_list = ['NULL']
     else:
         # print(data)
         class_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
@@ -1434,11 +1420,11 @@ def query_ID(request):
     :return:
     """
     data = json.loads(request.body.decode())  # 浏览器端用ajax传来json字典数据
-    if data['grade'].strip()=='NULL' or data['class'].strip()=='NULL':
-        id_list=['NULL']
+    if data['grade'].strip() == 'NULL' or data['class'].strip() == 'NULL':
+        id_list = ['NULL']
     else:
         id_query_list = Basic.objects.filter(School=data['school'].strip(), Major=data['major'].strip(),
-                                                Grade=data['grade'].strip(), classNo=data['class'].strip()).values("StuID")
+                                             Grade=data['grade'].strip(), classNo=data['class'].strip()).values("StuID")
         print(id_query_list)
         id_list = list(set(tmp['StuID'] for tmp in id_query_list))
         if id_list.__len__() == 0:
@@ -1498,7 +1484,7 @@ def get_hot_book_list(request):
     :param request:
     :return:每一本书用一个字典对象(有name属性，values属性，itemStyle属性)
     """
-    topk = 20
+    topk = 10
     if request.method == "POST":
         topk = int(request.POST['k'])
     topk_name_list = []
@@ -1524,7 +1510,7 @@ def recommend(request):
     :return:
     """
     if request.method == "POST":
-        idr = int(request.POST['idr'])
+        idr = int(stu_inverse_dict[request.POST['idr']])
         get_recommend_list(idr)
         book_id_list = get_recommend_list(idr)
         book_loc_list = [book_dict[str(v)].strip() for v in book_id_list]
@@ -1538,20 +1524,13 @@ def recommend(request):
         stu_id = stu_dict[str(idr)]
         return JsonResponse(data=book_name_list, safe=False)
     recommend_dict = {}
-    # for idr in range(0, 10):
-    #     book_id_list = get_recommend_list(idr)
-    #     book_loc_list = [book_dict[str(v)].strip() for v in book_id_list]
-    #     print(book_loc_list)
-    #     book_name_list = []
-    #     with connection.cursor() as cursor:
-    #         for loc in book_loc_list:
-    #             cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
-    #             row = cursor.fetchone()
-    #             book_name_list.append(row[0])
-    #     stu_id = stu_dict[str(idr)]
-    #     recommend_dict[stu_id] = book_name_list
-    # print(recommend_dict)
-    return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict})
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+    return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict,
+                                                                     'school_list': school_list,
+                                                                     'major_list': major_list, })
 
 
 def tt(request):

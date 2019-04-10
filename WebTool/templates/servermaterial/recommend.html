@@ -25,6 +25,12 @@
     <script src="/templates/servermaterial/lib/echarts.min.js"></script>
     <script src="/templates/servermaterial/js/echarts-wordcloud.min.js"></script>
     <script>
+        var topKData;
+        var isCloud = True;
+    </script>
+    <script>
+
+
         function createRandomItemStyle() {
             return {
                 normal: {
@@ -39,6 +45,7 @@
 
         $(document).ready(function () {
             $("#query_option").change(function () {
+                $("#man_set").hide();
                 {#alert($('#query_option').val());#}
                 $("tbody").empty();
                 if ($(this).val() == 'student') {
@@ -54,33 +61,25 @@
                 }
             });
 
-            $("#school").change(function () {
-                $.ajax({
-                    url: '/web/query_majors',
-                    type: 'POST',
-                    data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
-                    dataType: 'JSON',
-                    contentType: 'application/json;charset=utf-8',
-                    success: function (result) {
-                        $("#major").empty();
-                        for (var i = 0; i < result.length; i++) {
-                            var newNode = $("<option>" + result[i] + "</option>");
-                            $("#major").append(newNode);
-                        }
-                    }
-
-                });
-            });
 
             $.ajax({
                 url: '/web/hot_book',
                 type: 'GET',
                 dataType: 'JSON',
                 success: function (result) {
+                    $("tbody[class='777']").children().remove();
+                    for (var i = 0; i < result.length; i++) {
+                        var newTableNode = $("<tr>\n" + "<td class=\"text-center\"> top" + (i + 1) + "</td>\n" +
+                            "<td class=\"text-center\">" + result[i]['name'] + "</td>\n" + "<td class=\"text-center\">"
+                            + result[i]['value'] + "</td>\n" + "</tr>");
+                        $("tbody[class='777']").append(newTableNode);
+                    }
+
+
                     var chart = echarts.init(document.getElementById('hotBookChart'));
                     option = {
                         title: {
-                            text: '',
+                            text: 'top5%最常借的五本书',
                         },
                         tooltip: {
                             show: true
@@ -122,6 +121,18 @@
 
             });
 
+            $("a[href='###']").click(function () {
+                if (isCloud) {
+                    $("table[id='777']").show();
+                    $("#hotBookChart").hide();
+                    isCloud = false;
+                } else {
+                    $("table[id='777']").hide();
+                    $("#hotBookChart").show();
+                    isCloud = true;
+                }
+            });
+
             $("#query_button").click(function () {
                 idr = $("#stuNo").val();
                 $.ajax({
@@ -130,13 +141,13 @@
                     dataType: "json",
                     data: {'idr': idr},
                     success: function (result) {
-                        // 查询到对应该学生的干预意见，展示在表格上
+                        // 查询到对应该学生的推荐意见，展示在表格上
                         var newTableNode = $("<tr>\n" + "<td>" + result[0] + "</td>\n" + "<td>" + result[1]
                             + "</td>\n" + "<td>" + result[2] + "</td>\n" + "<td>" + result[3] + "</td>\n"
                             + "<td>" + result[4] + "</td>\n" + "</tr>");
-                        $("tbody").children().remove();
-                        $("tbody").append(newTableNode);
-                        $("table").show();
+                        $("tbody[class='888']").children().remove();
+                        $("tbody[class='888']").append(newTableNode);
+                        $("table[id='888']").show();
                         $("#man_set").show();
                     }
                 })
@@ -165,6 +176,13 @@
                     dataType: 'JSON',
                     data: {'k': k},
                     success: function (result) {
+                        $("tbody[class='777']").children().remove();
+                        for (var i = 0; i < result.length; i++) {
+                            var newTableNode = $("<tr>\n" + "<td class=\"text-center\"> top" + (i + 1) + "</td>\n" +
+                                "<td class=\"text-center\">" + result[i]['name'] + "</td>\n" + "<td class=\"text-center\">"
+                                + result[i]['value'] + "</td>\n" + "</tr>");
+                            $("tbody[class='777']").append(newTableNode);
+                        }
                         var chart = echarts.init(document.getElementById('hotBookChart'));
                         option = {
                             title: {
@@ -249,7 +267,7 @@
                             <a data-toggle="tab" href="#personalize">个性化推荐配置</a>
                         </li>
                         <li>
-                            <a data-toggle="tab" href="#overlord">学霸书目挖掘</a>
+                            <a data-toggle="tab" href="#overlord">学霸书目分析</a>
                         </li>
                     </ul>
                 </div>
@@ -281,9 +299,9 @@
                                                    style="font-size: 17px"><strong>榜单范围</strong></label>
                                             <div class="col-lg-8">
                                                 <select class="form-control" id="query_option2">
+                                                    <option value="10">top10</option>
+                                                    <option value="15">top15</option>
                                                     <option value="20">top20</option>
-                                                    <option value="30">top30</option>
-                                                    <option value="40">top40</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -306,8 +324,24 @@
                                     </div>
                                 </div>
                                 <div class="row mt">
+                                    <a class="col-lg-offset-11" href="###">切换视图</a>
                                     <div id="hotBookChart" class="center-block"
-                                         style="width: 650px;height:500px;"></div>
+                                         style="width: 700px;height:700px; display: none;"></div>
+                                    <table id="777" class="table table-bordered table-striped table-hover"
+                                    >
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">排名</th>
+                                            <th class="text-center">题名</th>
+                                            <th class="text-center">借阅次数</th>
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="777">
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <script>window._bd_share_config = {
                                     "common": {
@@ -442,7 +476,7 @@
                                         {#                                                <li class="list-group-item"><<{{ book }}>></li>#}
                                         {#                                            {% endfor %}#}
                                         {#                                        </ul>#}
-                                        <table class="table table-bordered table-striped table-hover"
+                                        <table id="888" class="table table-bordered table-striped table-hover"
                                                style="display: none;">
                                             <thead>
                                             <tr class="info">
@@ -454,13 +488,9 @@
                                                 <th>推荐5</th>
                                             </tr>
                                             <tr>
-                                                {#                                                    <td> {{ k }} </td>#}
-                                                {#                                                {% for book in v %}#}
-                                                {#                                                    <td> {{ book }}</td>#}
-                                                {#                                                {% endfor %}#}
                                             </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody class="888">
                                             </tbody>
                                         </table>
                                         <form class="form-horizontal">
@@ -534,6 +564,10 @@
                                         <div id="chart-library-2" style="width: 450px;height:400px;"></div>
                                     </div>
                                 </div>
+                                <div class="row mt">
+                                    <div id="top5BookChart" class="center-block"
+                                         style="width: 700px;height:400px"></div>
+                                </div>
 
                                 <script>window._bd_share_config = {
                                     "common": {
@@ -571,10 +605,76 @@
 
 <!-- js placed at the end of the document so the pages load faster -->
 <script>
+    var chart = echarts.init(document.getElementById('top5BookChart'));
+    var namelist = ['数学分析讲义', '数学建模大全', '英语六级全通关', '平凡的世界', '面向未来'];
+    var chart_data = [];
+
+    for (var i = 0; i < 5; i++){
+        chart_data.push({'name': namelist[i], 'value': 20});
+    }
+
+    option = {
+        title: {
+            text: 'top5%最常借的五本书',
+            x: 'center'
+        },
+        tooltip: {
+            show: true
+        },
+
+        series: [{
+            type: 'wordCloud',
+            textRotation: [0, 0, 0, 0],
+            sizeRange: [12, 60],
+            textPadding: 0,
+            autoSize: {
+                enable: true,
+                minSize: 14
+            },
+            textStyle: {
+                normal: {
+                    fontFamily: 'sans-serif',
+                    fontWeight: 'bold',
+                    // Color can be a callback function or a color string
+                    color: function () {
+                        // Random color
+                        return 'rgb(' + [
+                            Math.round(Math.random() * 160),
+                            Math.round(Math.random() * 160),
+                            Math.round(Math.random() * 160)
+                        ].join(',') + ')';
+                    }
+                },
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowColor: '#333'
+                }
+            },
+            data: chart_data
+        }]
+    };
+    chart.setOption(option);
+    var array = new Array();  //定义数组
+    $("#school option").each(function () {  //遍历全部option
+        var txt = $(this).val();   //获取option值
+        if (txt == 'all') {
+            return;
+        }
+        if (txt != '') {
+            array.push(txt);  //加入到数组中
+        }
+    });
+
+    var char2_data = new Array();
+
+    for (var i = 0; i < array.length; i++) {
+        char2_data.push({"name": array[i], "value": 100});
+    }
+
     /*
      * 学霸书目挖掘可视化图
      */
-    var myChart = echarts.init(document.getElementById('chart-library-1'));
+    var myChart1 = echarts.init(document.getElementById('chart-library-1'));
 
     option = {
         title: {
@@ -605,7 +705,7 @@
         xAxis: [
             {
                 type: 'category',
-                data: ['Top 30%', 'Top 20%', 'Top 10%', 'Top 5%', 'Top 1%'],
+                data: ['后Top 30%', 'Top 10%', 'Top 5%', 'Top 1%'],
                 axisPointer: {
                     type: 'shadow'
                 }
@@ -621,7 +721,7 @@
             {
                 name: '借阅次数',
                 type: 'bar',
-                data: [5, 6, 7, 11, 20],
+                data: [1, 7, 11, 20],
                 itemStyle: {
                     normal: {
                         color: '#4f9D9D',
@@ -631,7 +731,7 @@
             {
                 name: '借阅次数',
                 type: 'line',
-                data: [5, 6, 7, 11, 20],
+                data: [1, 7, 11, 20],
                 itemStyle: {
                     normal: {
                         color: '#EA7500',
@@ -642,14 +742,12 @@
     };
 
     // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
-</script>
+    myChart1.setOption(option);
 
-<script>
-    var myChart = echarts.init(document.getElementById('chart-library-2'));
+    var myChart2 = echarts.init(document.getElementById('chart-library-2'));
     option = {
         title: {
-            text: 'Top 10%学生借阅图书分类比例',
+            text: '不同学院专业Top 10%学生平均借书比例',
             x: 'center'
         },
         tooltip: {
@@ -684,19 +782,80 @@
                 type: 'pie',
                 radius: '55%',
                 center: ['50%', '60%'],
-                data: [
-                    {value: 679, name: '数学类'},
-                    {value: 310, name: '语言类'},
-                    {value: 134, name: '哲学类'},
-                    {value: 135, name: '人文小说类'},
-                    {value: 1548, name: '计算机类'}
-                ]
+                data: char2_data,
             }
         ]
     };
 
     // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
+    myChart2.setOption(option);
+
+    var flag = 0;
+
+    /*
+    暂时把数据写死
+    */
+    $("#school").change(function () {
+        $.ajax({
+            url: '/web/query_majors',
+            type: 'POST',
+            data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
+            dataType: 'JSON',
+            contentType: 'application/json;charset=utf-8',
+            success: function (result) {
+                $("#major").empty();
+                for (var i = 0; i < result.length; i++) {
+                    var newNode = $("<option>" + result[i] + "</option>");
+                    $("#major").append(newNode);
+                }
+                var char2_data = new Array();
+
+                for (var i = 0; i < result.length; i++) {
+                    char2_data.push({"name": result[i], "value": parseInt(Math.random() * (30 - 20 + 1) + 20)});
+                }
+                myChart2.setOption({
+                    series: [{data: char2_data}]
+                });
+                var chart_1_data1 = [2, 6, 9, 17];
+                var chart_1_data2 = [1, 7, 11, 20];
+
+                if (flag == 0) {
+                    myChart1.setOption({
+                        series: [{data: chart_1_data1}, {data: chart_1_data1}]
+                    });
+                    flag = 1;
+                } else {
+                    myChart1.setOption({
+                        series: [{data: chart_1_data2}, {data: chart_1_data2}]
+                    });
+                    flag = 0;
+                }
+            }
+
+        });
+
+    });
+
+    $("#major").change(function () {
+        /*
+         暂时把数据写死
+         */
+        var chart_1_data1 = [1, 6, 15, 21];
+        var chart_1_data2 = [3, 7, 15, 17];
+
+        if (flag == 0) {
+            myChart1.setOption({
+                series: [{data: chart_1_data1}, {data: chart_1_data1}]
+            });
+            flag = 1;
+        } else {
+            myChart1.setOption({
+                series: [{data: chart_1_data2}, {data: chart_1_data2}]
+            });
+            flag = 0;
+        }
+    });
+
 </script>
 
 <script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script>
