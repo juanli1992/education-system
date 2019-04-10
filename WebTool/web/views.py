@@ -167,17 +167,23 @@ def inquiry(request):
             score_province[pro] = sum(a) / len(a)
 
     # grades
-    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    cdfall = []
-    for i in x:
-        cdfall.append(sum(float(j) < i for j in score_all) / len(score_all))
+    if len(score_all)==0:
+        cdfall=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    else:
+        x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        cdfall = []
+        for i in x:
+            cdfall.append(sum(float(j) < i for j in score_all) / len(score_all))
 
-    x = [-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
-    pdfall = []
-    i = 1
-    while i <= 11:
-        pdfall.append(sum((x[i - 1] + x[i]) / 2 < float(j) < (x[i] + x[i + 1]) / 2 for j in score_all) / len(score_all))
-        i = i + 1
+    if len(score_all)==0:
+        cdfall=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    else:
+        x = [-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
+        pdfall = []
+        i = 1
+        while i <= 11:
+            pdfall.append(sum((x[i - 1] + x[i]) / 2 < float(j) < (x[i] + x[i + 1]) / 2 for j in score_all) / len(score_all))
+            i = i + 1
 
     x = [0, 50, 60, 70, 80, 90, 100]
     num = []
@@ -192,13 +198,23 @@ def inquiry(request):
     # the average grade for different gender
     score_male = list(
         Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
-    ave_score_male = sum(float(j) for j in score_male) / len(score_male)
+    if len(score_male) == 0:
+        ave_score_male = 0
+    else:
+        ave_score_male = sum(float(j) for j in score_male) / len(score_male)
 
     score_female = list(
         Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
-    ave_score_female = sum(float(j) for j in score_female) / len(score_female)
+    if len(score_female)==0:
+        ave_score_female = 0
+    else:
+        ave_score_female = sum(float(j) for j in score_female) / len(score_female)
 
-    ave_score = sum(float(j) for j in score_all) / len(score_all)
+    if len(score_all) ==0:
+        ave_score = 0
+    else:
+        ave_score = sum(float(j) for j in score_all) / len(score_all)
+
 
     # score vs. library
     r = Basic.objects.filter(School=school, score__Semester=time, lib__DateTime__gte=start_date,
@@ -282,13 +298,25 @@ def inquiry(request):
     # 体质测试与性别
     health_score_male = list(
         Health.objects.filter(Semester=2016, School=school, basic__Gender='1').values_list('TotalScore', flat=True))
-    ave_health_score_male = sum(float(j) for j in health_score_male) / len(health_score_male)
+    if len(health_score_male) ==0:
+        ave_health_score_male = 0
+    else:
+        ave_health_score_male = sum(float(j) for j in health_score_male) / len(health_score_male)
 
     health_score_female = list(
         Health.objects.filter(Semester=2016, School=school, basic__Gender='0').values_list('TotalScore', flat=True))
-    ave_health_score_female = sum(float(j) for j in health_score_female) / len(health_score_female)
+    if len(health_score_female) ==0:
+        ave_health_score_female = 0
+    else:
+        ave_health_score_female = sum(float(j) for j in health_score_female) / len(health_score_female)
 
-    ave_health_score = sum(float(j) for j in health_score_all) / len(health_score_all)
+    if len(health_score_all) == 0:
+        ave_health_score = 0
+    else:
+        ave_health_score = sum(float(j) for j in health_score_all) / len(health_score_all)
+
+
+
 
     # 体质与回寝时间
     start_date = datetime.date(2015, 10, 1)
@@ -329,6 +357,80 @@ def inquiry(request):
 
     # hospital
     # 去校医院次数分布
+    # 去校医院次数与性别
+    # 去校医院次数与体质
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+
+    if len(stulist) ==0:
+        hos_dis=[1,1,1,1,1]
+        ave_hos_male=0
+        ave_hos_female=0
+    else:
+        x=[0, 10, 20, 30, 40, 50]
+        ave_hos = [HosReg.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人一学期去校医院总次数
+        i=1
+        hos_dis=[]
+        while i <= 5:
+            if i==5:
+                hos_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_hos))
+            else:
+                hos_dis.append(sum(x[i]>c>=x[i-1] for c in ave_hos))
+            i=i+1
+        #性别
+        a=[ave_hos[i] for i in range(len(ave_hos)) if stulist[i][1] == '1']
+        if len(a)==0:
+            ave_hos_male=0
+        else:
+            ave_hos_male=sum(a)/len(a)
+
+        b=[ave_hos[i] for i in range(len(ave_hos)) if stulist[i][1] == '0']
+        if len(b)==0:
+            ave_hos_female=0
+        else:
+            ave_hos_female=sum(b)/len(b)
+        ave_hos = sum(ave_hos)/(len(a)+len(b))
+
+
+
+
+    #去校医院次数与体质
+    stulist=list(Basic.objects.filter(School=school, health__Semester = 2016).values_list('StuID','health__TotalScore'))
+    if len(stulist) ==0:
+        hos_health=[0,0,0,0,0,0,0,0,0,0]
+        hos_health_max=[0,0,0,0,0,0,0,0,0,0]
+        hos_health_min=[0,0,0,0,0,0,0,0,0,0]
+    else:
+        x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        hos = [HosReg.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人一学期去校医院总次数
+        i=1
+        hos_health=[]
+        hos_health_min=[]
+        hos_health_max=[]
+        while i <= 10:
+            if i==10:
+                a=[float(hos[j]) for j in range(len(hos)) if x[i]>=float(stulist[j][1])>=x[i-1]]
+                if len(a)==0:
+                    hos_health.append(0)
+                    hos_health_min.append(0)
+                    hos_health_max.append(0)
+                else:
+                    hos_health.append(sum(a)/len(a))
+                    hos_health_min.append(max(a))
+                    hos_health_max.append(min(a))
+            else:
+                a=[float(hos[j]) for j in range(len(hos)) if x[i]>float(stulist[j][1])>=x[i-1]]
+                if len(a)==0:
+                    hos_health.append(0)
+                    hos_health_min.append(0)
+                    hos_health_max.append(0)
+                else:
+                    hos_health.append(sum(a)/len(a))
+                    hos_health_min.append(max(a))
+                    hos_health_max.append(min(a))
+            i=i+1
+
 
     # 校园生活
     # 回寝时间分布
@@ -353,9 +455,11 @@ def inquiry(request):
                                          basic__Gender='1').values_list('DateTime', flat=True))
     if len(dorm_male) == 0:
         ave_time_male = 0
+        a=0
     else:
         time_male = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_male]  # 把每一个时间点换算成秒
         ave_time_male = sum(time_male) / len(time_male)
+        a = sum(time_male)
 
     ave_time_male = ave_time_male // 60  # 把秒换算成分钟
     ave_time_male = ave_time_male // 60  # 把分钟换算成小时
@@ -364,16 +468,18 @@ def inquiry(request):
                                            basic__Gender='0').values_list('DateTime', flat=True))
     if len(dorm_female) == 0:
         ave_time_female = 0
+        b=0
     else:
         time_female = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_female]
         ave_time_female = sum(time_female) / len(time_female)
+        b = sum(time_female)
     ave_time_female = ave_time_female // 60  # 把秒换算成分钟
     ave_time_female = ave_time_female // 60  # 把分钟换算成小时
 
     if len(dorm_all) == 0:
         ave_time = 0
     else:
-        ave_time=(sum(time_female)+sum(time_male))/len(dorm_all)
+        ave_time=(a+b)/len(dorm_all)
     ave_time=ave_time // 60     #把秒换算成分钟
     ave_time=ave_time // 60    #把分钟换算成小时
 
@@ -394,6 +500,7 @@ def inquiry(request):
     '''
 
     #用python的方法处理
+    '''
     start_date=datetime.date(2016,7,1)
     end_date=datetime.date(2017,2,1)
     stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
@@ -405,6 +512,48 @@ def inquiry(request):
     else:
         x=[0,100,200,300,400,500]
         ave_cost = [Card.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(Sum("Cost")) for stu in stulist] #每个人的平均消费
+        tmp=[]
+        for c in ave_cost:
+            if not c['Cost__sum'] is None:
+                tmp.append(-c['Cost__sum']/5)
+            else:
+                tmp.append(0)
+        ave_cost=tmp
+        i=1
+        while i <= 5:
+            if i==5:
+                cost_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_cost))
+            else:
+                cost_dis.append(sum(x[i]>c>=x[i-1] for c in ave_cost))
+            i=i+1
+
+        a=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '1' and ave_cost[i]!=0]
+        if len(a)==0:
+            ave_cost_male=0
+        else:
+            ave_cost_male=sum(a)/len(a)
+
+        b=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '0'and ave_cost[i]!=0]
+        if len(b)==0:
+            ave_cost_female=0
+        else:
+            ave_cost_female=sum(b)/len(b)
+
+        ave_cost = sum(ave_cost)/(len(a)+len(b))
+        '''
+    #python的方法处理，只考虑10个学生
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+    cost_dis=[]
+    if len(stulist) ==0:
+        cost_dis=[1,1,1,1,1]
+        ave_cost_male=0
+        ave_cost_female=0
+    else:
+        u=25
+        x=[0,100,200,300,400,500]
+        ave_cost = [Card.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(Sum("Cost")) for stu in stulist[1:u]] #每个人的平均消费
         tmp=[]
         for c in ave_cost:
             if not c['Cost__sum'] is None:
@@ -525,7 +674,6 @@ def inquiry(request):
 
 
     #借书，图书馆访问和消费分布的代码一模一样，可以抽取成函数
-
     ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num,
            'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score,
            'score_lib_ave':score_lib_ave, 'score_lib_max':score_lib_max, 'score_lib_min':score_lib_min,
@@ -538,7 +686,9 @@ def inquiry(request):
            'ave_time_female':ave_time_female, 'ave_time_male':ave_time_male, 'ave_time':ave_time,
            'cost_dis':cost_dis, 'ave_cost_male':ave_cost_male, 'ave_cost_female':ave_cost_female, 'ave_cost':ave_cost,
            'visit_dis':visit_dis, 'ave_visit_male':ave_visit_male, 'ave_visit_female':ave_visit_female, 'ave_visit':ave_visit,
-           'book_dis':book_dis, 'ave_book_male':ave_book_male, 'ave_book_female':ave_book_female, 'ave_book':ave_book}
+           'book_dis':book_dis, 'ave_book_male':ave_book_male, 'ave_book_female':ave_book_female, 'ave_book':ave_book,
+           'hos_dis':hos_dis, 'ave_hos_male':ave_hos_male, 'ave_hos_female':ave_hos_female, 'ave_hos':ave_hos,
+           'hos_health_min':hos_health_min, 'hos_health_max':hos_health_max, 'hos_health':hos_health}
 
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
@@ -925,10 +1075,32 @@ def monitor(request):
         'classNo')
     class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
 
+
     return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
                                                                    'major_list': major_list,
                                                                    'grade_list': grade_list,
                                                                    'class_list': class_list})
+
+def monitor_return(request):
+    # 读取学院信息，显示在下拉框上
+    school_query_list = Basic.objects.values('School')
+    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+
+    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+
+    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
+    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
+
+    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
+        'classNo')
+    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
+    return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
+                                                                   'major_list': major_list,
+                                                                   'grade_list': grade_list,
+                                                                   'class_list': class_list})
+
 
 
 def monitor_engine(request):
