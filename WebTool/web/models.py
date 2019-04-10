@@ -63,7 +63,7 @@ class Book(models.Model):
 
 class Card(models.Model):
     StuID = models.CharField(max_length=20)
-    DateTime = models.DateTimeField()
+    DateTime = models.CharField(max_length=20)
     Cost = models.CharField(max_length=10)
     POS = models.CharField(max_length=5)
     Meal = models.CharField(max_length=2)

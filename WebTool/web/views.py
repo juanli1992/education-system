@@ -365,23 +365,153 @@ def inquiry(request):
     ave_time=ave_time // 60    #把分钟换算成小时
 
     #消费分布
-    stulist=list(Basic.objects.filter(School=school).values_list('StuID', flat=True))
+    #消费与性别
+    #给Card表格加上外键,很慢，17万条数据估计要几个小时
+    #可以建立一个中间表格，记录每个人一学期的总消费，或者每个月的平均消费
+    '''
+    re=Card.objects.all()
+    i=1
+    for r in re:
+        print(i)
+        i=i+1
+        if r.basic is None:
+            tmp=Basic.objects.filter(StuID=r.StuID)
+            if tmp.count() >0:
+                Card.objects.filter(StuID = r.StuID).update(StuID=r.StuID)
+    '''
+
+    #用python的方法处理
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
     cost_dis=[]
     if len(stulist) ==0:
         cost_dis=[1,1,1,1,1]
+        ave_cost_male=0
+        ave_cost_female=0
     else:
         x=[0,100,200,300,400,500]
-        ave_cost = [Card.objects.filter(StuID = stu, DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(Sum("Cost")) for stu in stulist] #每个人的平均消费
+        ave_cost = [Card.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(Sum("Cost")) for stu in stulist] #每个人的平均消费
+        tmp=[]
+        for c in ave_cost:
+            if not c['Cost__sum'] is None:
+                tmp.append(-c['Cost__sum']/5)
+            else:
+                tmp.append(0)
+        ave_cost=tmp
         i=1
         while i <= 5:
             if i==5:
-                print(i)
-                cost_dis.append(sum(x[i]>=-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+                cost_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_cost))
             else:
-                print(i)
-                cost_dis.append(sum(x[i]>-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+                cost_dis.append(sum(x[i]>c>=x[i-1] for c in ave_cost))
             i=i+1
 
+        a=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '1' and ave_cost[i]!=0]
+        if len(a)==0:
+            ave_cost_male=0
+        else:
+            ave_cost_male=sum(a)/len(a)
+
+        b=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '0'and ave_cost[i]!=0]
+        if len(b)==0:
+            ave_cost_female=0
+        else:
+            ave_cost_female=sum(b)/len(b)
+
+        ave_cost = sum(ave_cost)/(len(a)+len(b))
+
+    '''
+    #用数据库的方法处理
+    ave_cost=list(Basic.objects.filter(School=school, card__DateTime__gte=start_date, card__DateTime__lte=end_date, card__Cost__lte=0).annotate(Sum("card__Cost")).values_list('card__Cost', flat=True))
+    print(ave_cost)
+    x=[0,100,200,300,400,500]
+    cost_dis=[]
+    i=1
+    while i <= 5:
+        if i==5:
+            print(i)
+            cost_dis.append(sum(x[i]>=-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+        else:
+            print(i)
+            cost_dis.append(sum(x[i]>-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+        i=i+1
+    '''
+
+    #图书馆访问
+    #之前用数据库方法，其实不对，因为我只考虑了cost等table里有的stuID，其实应该先把全班的stuID查出来
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+
+    if len(stulist) ==0:
+        visit_dis=[1,1,1,1,1]
+        ave_visit_male=0
+        ave_visit_female=0
+    else:
+        x=[0,20,40,60,80,100]
+        ave_visit = [Lib.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人的平均消费
+        i=1
+        visit_dis=[]
+        while i <= 5:
+            if i==5:
+                visit_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_visit))
+            else:
+                visit_dis.append(sum(x[i]>c>=x[i-1] for c in ave_visit))
+            i=i+1
+
+        a=[ave_visit[i] for i in range(len(ave_visit)) if stulist[i][1] == '1']
+        if len(a)==0:
+            ave_visit_male=0
+        else:
+            ave_visit_male=sum(a)/len(a)
+
+        b=[ave_visit[i] for i in range(len(ave_visit)) if stulist[i][1] == '0']
+        if len(b)==0:
+            ave_visit_female=0
+        else:
+            ave_visit_female=sum(b)/len(b)
+
+        ave_visit = sum(ave_visit)/(len(a)+len(b))
+
+
+    #借书
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+
+    if len(stulist) ==0:
+        book_dis=[1,1,1,1,1]
+        ave_book_male=0
+        ave_book_female=0
+    else:
+        x=[0,20,40,60,80,100]
+        ave_book = [Book.objects.filter(StuID = stu[0], Date__gte=start_date, Date__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人一学期的借书总数
+        i=1
+        book_dis=[]
+        while i <= 5:
+            if i==5:
+                book_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_book))
+            else:
+                book_dis.append(sum(x[i]>c>=x[i-1] for c in ave_book))
+            i=i+1
+
+        a=[ave_book[i] for i in range(len(ave_book)) if stulist[i][1] == '1']
+        if len(a)==0:
+            ave_book_male=0
+        else:
+            ave_book_male=sum(a)/len(a)
+
+        b=[ave_book[i] for i in range(len(ave_book)) if stulist[i][1] == '0']
+        if len(b)==0:
+            ave_book_female=0
+        else:
+            ave_book_female=sum(b)/len(b)
+
+        ave_book = sum(ave_book)/(len(a)+len(b))
+
+
+    #借书，图书馆访问和消费分布的代码一模一样，可以抽取成函数
 
     ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num,
            'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score,
@@ -393,7 +523,10 @@ def inquiry(request):
            'province_num':province_num,'score_province':score_province,
            'dorm_num':dorm_num,
            'ave_time_female':ave_time_female, 'ave_time_male':ave_time_male, 'ave_time':ave_time,
-           'cost_dis':cost_dis}
+           'cost_dis':cost_dis, 'ave_cost_male':ave_cost_male, 'ave_cost_female':ave_cost_female, 'ave_cost':ave_cost,
+           'visit_dis':visit_dis, 'ave_visit_male':ave_visit_male, 'ave_visit_female':ave_visit_female, 'ave_visit':ave_visit,
+           'book_dis':book_dis, 'ave_book_male':ave_book_male, 'ave_book_female':ave_book_female, 'ave_book':ave_book}
+
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
