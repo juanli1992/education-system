@@ -693,6 +693,557 @@ def inquiry(request):
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
+
+def inquiry_initial(school):
+    time = '20151'
+    start_date = datetime.date(2016, 9, 1)
+    end_date = datetime.date(2017, 2, 1)
+    score_all = list(Score.objects.filter(Semester=time, School=school).values_list('AveScore', flat=True))
+
+    # geo_distribution
+    r = list(Basic.objects.filter(School=school).values_list('Province', flat=True))
+    province = ['四川', '江西', '江苏', '山东', '安徽', '上海', '重庆', '福建', '河南', '河北', '广东', '广西', '山西', '天津', '湖北', '浙江', '陕西',
+                '内蒙古', '海南',
+                '辽宁', '吉林', '黑龙江', '湖南', '贵州', '云南', '甘肃', '青海', '台湾', '北京', '西藏', '宁夏', '新疆', '香港', '澳门']
+    province_num = {}
+    for pro in province:
+        province_num[pro] = sum(pro in s for s in r)
+
+    r = list(Score.objects.filter(Semester=time, School=school).values_list('basic__Province', 'AveScore'))
+    score_province = {}
+    for pro in province:
+        a = [float(s[1]) for s in r if pro in s[0]]
+        if len(a) == 0:
+            score_province[pro] = 0
+        else:
+            score_province[pro] = sum(a) / len(a)
+
+    # grades
+    if len(score_all)==0:
+        cdfall=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    else:
+        x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        cdfall = []
+        for i in x:
+            cdfall.append(sum(float(j) < i for j in score_all) / len(score_all))
+
+    if len(score_all)==0:
+        cdfall=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    else:
+        x = [-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
+        pdfall = []
+        i = 1
+        while i <= 11:
+            pdfall.append(sum((x[i - 1] + x[i]) / 2 < float(j) < (x[i] + x[i + 1]) / 2 for j in score_all) / len(score_all))
+            i = i + 1
+
+    x = [0, 50, 60, 70, 80, 90, 100]
+    num = []
+    i = 1
+    while i <= 6:
+        if i == 6:
+            num.append(sum(x[i - 1] <= float(j) <= x[i] for j in score_all))
+        else:
+            num.append(sum(x[i - 1] <= float(j) < x[i] for j in score_all))
+        i = i + 1
+
+    # the average grade for different gender
+    score_male = list(
+        Score.objects.filter(Semester=time, School=school, basic__Gender='1').values_list('AveScore', flat=True))
+    if len(score_male) == 0:
+        ave_score_male = 0
+    else:
+        ave_score_male = sum(float(j) for j in score_male) / len(score_male)
+
+    score_female = list(
+        Score.objects.filter(Semester=time, School=school, basic__Gender='0').values_list('AveScore', flat=True))
+    if len(score_female)==0:
+        ave_score_female = 0
+    else:
+        ave_score_female = sum(float(j) for j in score_female) / len(score_female)
+
+    if len(score_all) ==0:
+        ave_score = 0
+    else:
+        ave_score = sum(float(j) for j in score_all) / len(score_all)
+
+
+    # score vs. library
+    r = Basic.objects.filter(School=school, score__Semester=time, lib__DateTime__gte=start_date,
+                             lib__DateTime__lte=end_date).annotate(count=Count("lib__id")).values('count',
+                                                                                                  'score__AveScore')
+    score_lib_ave = []
+    score_lib_max = []
+    score_lib_min = []
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+    i = 1
+    while i <= 9:
+        if i == 9:
+            re = r.filter(count__gte=x[i - 1], count__lte=x[i])
+            if re.count() == 0:
+                score_lib_ave.append(0)
+                score_lib_max.append(0)
+                score_lib_min.append(0)
+            else:
+                score_lib_ave.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Avg("score__AveScore"))[
+                                         'score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Max("score__AveScore"))[
+                                         'score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Min("score__AveScore"))[
+                                         'score__AveScore__min'])
+        else:
+            re = r.filter(count__gte=x[i - 1], count__lt=x[i])
+            if re.count() == 0:
+                score_lib_ave.append(0)
+                score_lib_max.append(0)
+                score_lib_min.append(0)
+            else:
+                score_lib_ave.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Avg("score__AveScore"))[
+                                         'score__AveScore__avg'])
+                score_lib_max.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Max("score__AveScore"))[
+                                         'score__AveScore__max'])
+                score_lib_min.append(r.filter(count__gte=x[i - 1], count__lte=x[i]).aggregate(Min("score__AveScore"))[
+                                         'score__AveScore__min'])
+        i = i + 1
+
+    # score vs. dorm
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    # 其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    r = list(Basic.objects.filter(School=school, score__Semester=time, dorm__DateTime__gte=start_date,
+                                  dorm__DateTime__lte=end_date).values_list('dorm__DateTime', 'score__AveScore'))
+    x = [0, 6, 12, 15, 18, 21, 22, 23]
+    i = 1
+    score_dormtime_ave = []
+    score_dormtime_max = []
+    score_dormtime_min = []
+    while i <= 7:
+        if i == 7:
+            re = [float(tmp[1]) for tmp in r if x[i] >= tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                score_dormtime_ave.append(sum(re) / len(re))
+                score_dormtime_max.append(max(re))
+                score_dormtime_min.append(min(re))
+            else:
+                score_dormtime_ave.append(0)
+                score_dormtime_max.append(0)
+                score_dormtime_min.append(0)
+        else:
+            re = [float(tmp[1]) for tmp in r if x[i] > tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                score_dormtime_ave.append(sum(re) / len(re))
+                score_dormtime_max.append(max(re))
+                score_dormtime_min.append(min(re))
+            else:
+                score_dormtime_ave.append(0)
+                score_dormtime_max.append(0)
+                score_dormtime_min.append(0)
+        i = i + 1
+
+    # health
+    # physical test
+    # distribution
+    health_score_all = list(Health.objects.filter(Semester=2016, School=school).values_list('TotalScore', flat=True))
+    x = [0, 50, 60, 70, 80, 90, 100]
+    health_num = getdistribution(x, health_score_all)
+
+    # 体质测试与性别
+    health_score_male = list(
+        Health.objects.filter(Semester=2016, School=school, basic__Gender='1').values_list('TotalScore', flat=True))
+    if len(health_score_male) ==0:
+        ave_health_score_male = 0
+    else:
+        ave_health_score_male = sum(float(j) for j in health_score_male) / len(health_score_male)
+
+    health_score_female = list(
+        Health.objects.filter(Semester=2016, School=school, basic__Gender='0').values_list('TotalScore', flat=True))
+    if len(health_score_female) ==0:
+        ave_health_score_female = 0
+    else:
+        ave_health_score_female = sum(float(j) for j in health_score_female) / len(health_score_female)
+
+    if len(health_score_all) == 0:
+        ave_health_score = 0
+    else:
+        ave_health_score = sum(float(j) for j in health_score_all) / len(health_score_all)
+
+
+
+
+    # 体质与回寝时间
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    # 其实应该算一下每个人的平均回寝时间，存在一张表中，再算;这里为了方便，用了一个近似的算法
+    # 这里回寝时间多次用到，可以抽取出来
+    # 也可以给每个表格加上school和gender属性，就不用join了
+    # dorm表格和health表格也可以建立多对多的外键
+    r = list(Basic.objects.filter(School=school, health__Semester=2016, dorm__DateTime__gte=start_date,
+                                  dorm__DateTime__lte=end_date).values_list('dorm__DateTime', 'health__TotalScore'))
+    x = [0, 6, 12, 15, 18, 21, 22, 23]
+    i = 1
+    health_dormtime_ave = []
+    health_dormtime_max = []
+    health_dormtime_min = []
+    while i <= 7:
+        if i == 7:
+            re = [float(tmp[1]) for tmp in r if x[i] >= tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                health_dormtime_ave.append(sum(re) / len(re))
+                health_dormtime_max.append(max(re))
+                health_dormtime_min.append(min(re))
+            else:
+                health_dormtime_ave.append(0)
+                health_dormtime_max.append(0)
+                health_dormtime_min.append(0)
+        else:
+            re = [float(tmp[1]) for tmp in r if x[i] > tmp[0].hour >= x[i - 1]]
+            if len(re) > 0:
+                health_dormtime_ave.append(sum(re) / len(re))
+                health_dormtime_max.append(max(re))
+                health_dormtime_min.append(min(re))
+            else:
+                health_dormtime_ave.append(0)
+                health_dormtime_max.append(0)
+                health_dormtime_min.append(0)
+        i = i + 1
+
+    # hospital
+    # 去校医院次数分布
+    # 去校医院次数与性别
+    # 去校医院次数与体质
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+
+    if len(stulist) ==0:
+        hos_dis=[1,1,1,1,1]
+        ave_hos_male=0
+        ave_hos_female=0
+    else:
+        x=[0, 10, 20, 30, 40, 50]
+        ave_hos = [HosReg.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人一学期去校医院总次数
+        i=1
+        hos_dis=[]
+        while i <= 5:
+            if i==5:
+                hos_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_hos))
+            else:
+                hos_dis.append(sum(x[i]>c>=x[i-1] for c in ave_hos))
+            i=i+1
+        #性别
+        a=[ave_hos[i] for i in range(len(ave_hos)) if stulist[i][1] == '1']
+        if len(a)==0:
+            ave_hos_male=0
+        else:
+            ave_hos_male=sum(a)/len(a)
+
+        b=[ave_hos[i] for i in range(len(ave_hos)) if stulist[i][1] == '0']
+        if len(b)==0:
+            ave_hos_female=0
+        else:
+            ave_hos_female=sum(b)/len(b)
+        ave_hos = sum(ave_hos)/(len(a)+len(b))
+
+
+
+
+    #去校医院次数与体质
+    stulist=list(Basic.objects.filter(School=school, health__Semester = 2016).values_list('StuID','health__TotalScore'))
+    if len(stulist) ==0:
+        hos_health=[0,0,0,0,0,0,0,0,0,0]
+        hos_health_max=[0,0,0,0,0,0,0,0,0,0]
+        hos_health_min=[0,0,0,0,0,0,0,0,0,0]
+    else:
+        x=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        hos = [HosReg.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人一学期去校医院总次数
+        i=1
+        hos_health=[]
+        hos_health_min=[]
+        hos_health_max=[]
+        while i <= 10:
+            if i==10:
+                a=[float(hos[j]) for j in range(len(hos)) if x[i]>=float(stulist[j][1])>=x[i-1]]
+                if len(a)==0:
+                    hos_health.append(0)
+                    hos_health_min.append(0)
+                    hos_health_max.append(0)
+                else:
+                    hos_health.append(sum(a)/len(a))
+                    hos_health_min.append(max(a))
+                    hos_health_max.append(min(a))
+            else:
+                a=[float(hos[j]) for j in range(len(hos)) if x[i]>float(stulist[j][1])>=x[i-1]]
+                if len(a)==0:
+                    hos_health.append(0)
+                    hos_health_min.append(0)
+                    hos_health_max.append(0)
+                else:
+                    hos_health.append(sum(a)/len(a))
+                    hos_health_min.append(max(a))
+                    hos_health_max.append(min(a))
+            i=i+1
+
+
+    # 校园生活
+    # 回寝时间分布
+    start_date = datetime.date(2015, 10, 1)
+    end_date = datetime.date(2017, 2, 1)
+    dorm_all = list(
+        Dorm.objects.filter(basic__School=school, DateTime__gte=start_date, DateTime__lte=end_date).values_list(
+            'DateTime', flat=True))
+
+    x = [0, 6, 12, 18, 22, 24]
+    dorm_num = []
+    i = 1
+    while i <= 5:
+        if i == 5:
+            dorm_num.append(sum(x[i] >= r.hour >= x[i - 1] for r in dorm_all))
+        else:
+            dorm_num.append(sum(x[i] > r.hour >= x[i - 1] for r in dorm_all))
+        i = i + 1
+
+    # 回寝时间与性别
+    dorm_male = list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school,
+                                         basic__Gender='1').values_list('DateTime', flat=True))
+    if len(dorm_male) == 0:
+        ave_time_male = 0
+        a=0
+    else:
+        time_male = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_male]  # 把每一个时间点换算成秒
+        ave_time_male = sum(time_male) / len(time_male)
+        a = sum(time_male)
+
+    ave_time_male = ave_time_male // 60  # 把秒换算成分钟
+    ave_time_male = ave_time_male // 60  # 把分钟换算成小时
+
+    dorm_female = list(Dorm.objects.filter(DateTime__gte=start_date, DateTime__lte=end_date, basic__School=school,
+                                           basic__Gender='0').values_list('DateTime', flat=True))
+    if len(dorm_female) == 0:
+        ave_time_female = 0
+        b=0
+    else:
+        time_female = [r.hour * 3600 + r.minute * 60 + r.second for r in dorm_female]
+        ave_time_female = sum(time_female) / len(time_female)
+        b = sum(time_female)
+    ave_time_female = ave_time_female // 60  # 把秒换算成分钟
+    ave_time_female = ave_time_female // 60  # 把分钟换算成小时
+
+    if len(dorm_all) == 0:
+        ave_time = 0
+    else:
+        ave_time=(a+b)/len(dorm_all)
+    ave_time=ave_time // 60     #把秒换算成分钟
+    ave_time=ave_time // 60    #把分钟换算成小时
+
+    #消费分布
+    #消费与性别
+    #给Card表格加上外键,很慢，17万条数据估计要几个小时
+    #可以建立一个中间表格，记录每个人一学期的总消费，或者每个月的平均消费
+    '''
+    re=Card.objects.all()
+    i=1
+    for r in re:
+        print(i)
+        i=i+1
+        if r.basic is None:
+            tmp=Basic.objects.filter(StuID=r.StuID)
+            if tmp.count() >0:
+                Card.objects.filter(StuID = r.StuID).update(StuID=r.StuID)
+    '''
+
+    #用python的方法处理
+    '''
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+    cost_dis=[]
+    if len(stulist) ==0:
+        cost_dis=[1,1,1,1,1]
+        ave_cost_male=0
+        ave_cost_female=0
+    else:
+        x=[0,100,200,300,400,500]
+        ave_cost = [Card.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(Sum("Cost")) for stu in stulist] #每个人的平均消费
+        tmp=[]
+        for c in ave_cost:
+            if not c['Cost__sum'] is None:
+                tmp.append(-c['Cost__sum']/5)
+            else:
+                tmp.append(0)
+        ave_cost=tmp
+        i=1
+        while i <= 5:
+            if i==5:
+                cost_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_cost))
+            else:
+                cost_dis.append(sum(x[i]>c>=x[i-1] for c in ave_cost))
+            i=i+1
+
+        a=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '1' and ave_cost[i]!=0]
+        if len(a)==0:
+            ave_cost_male=0
+        else:
+            ave_cost_male=sum(a)/len(a)
+
+        b=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '0'and ave_cost[i]!=0]
+        if len(b)==0:
+            ave_cost_female=0
+        else:
+            ave_cost_female=sum(b)/len(b)
+
+        ave_cost = sum(ave_cost)/(len(a)+len(b))
+        '''
+    #python的方法处理，只考虑10个学生
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+    cost_dis=[]
+    if len(stulist) ==0:
+        cost_dis=[1,1,1,1,1]
+        ave_cost_male=0
+        ave_cost_female=0
+    else:
+        u=25
+        x=[0,100,200,300,400,500]
+        ave_cost = [Card.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date, Cost__lt=0).aggregate(Sum("Cost")) for stu in stulist[1:u]] #每个人的平均消费
+        tmp=[]
+        for c in ave_cost:
+            if not c['Cost__sum'] is None:
+                tmp.append(-c['Cost__sum']/5)
+            else:
+                tmp.append(0)
+        ave_cost=tmp
+        i=1
+        while i <= 5:
+            if i==5:
+                cost_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_cost))
+            else:
+                cost_dis.append(sum(x[i]>c>=x[i-1] for c in ave_cost))
+            i=i+1
+
+        a=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '1' and ave_cost[i]!=0]
+        if len(a)==0:
+            ave_cost_male=0
+        else:
+            ave_cost_male=sum(a)/len(a)
+
+        b=[ave_cost[i] for i in range(len(ave_cost)) if stulist[i][1] == '0'and ave_cost[i]!=0]
+        if len(b)==0:
+            ave_cost_female=0
+        else:
+            ave_cost_female=sum(b)/len(b)
+
+        ave_cost = sum(ave_cost)/(len(a)+len(b))
+
+    '''
+    #用数据库的方法处理
+    ave_cost=list(Basic.objects.filter(School=school, card__DateTime__gte=start_date, card__DateTime__lte=end_date, card__Cost__lte=0).annotate(Sum("card__Cost")).values_list('card__Cost', flat=True))
+    print(ave_cost)
+    x=[0,100,200,300,400,500]
+    cost_dis=[]
+    i=1
+    while i <= 5:
+        if i==5:
+            print(i)
+            cost_dis.append(sum(x[i]>=-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+        else:
+            print(i)
+            cost_dis.append(sum(x[i]>-c['Cost__sum']/17>=x[i-1] for c in ave_cost if not c['Cost__sum'] is None))
+        i=i+1
+    '''
+
+    #图书馆访问
+    #之前用数据库方法，其实不对，因为我只考虑了cost等table里有的stuID，其实应该先把全班的stuID查出来
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+
+    if len(stulist) ==0:
+        visit_dis=[1,1,1,1,1]
+        ave_visit_male=0
+        ave_visit_female=0
+    else:
+        x=[0,20,40,60,80,100]
+        ave_visit = [Lib.objects.filter(StuID = stu[0], DateTime__gte=start_date, DateTime__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人的平均消费
+        i=1
+        visit_dis=[]
+        while i <= 5:
+            if i==5:
+                visit_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_visit))
+            else:
+                visit_dis.append(sum(x[i]>c>=x[i-1] for c in ave_visit))
+            i=i+1
+
+        a=[ave_visit[i] for i in range(len(ave_visit)) if stulist[i][1] == '1']
+        if len(a)==0:
+            ave_visit_male=0
+        else:
+            ave_visit_male=sum(a)/len(a)
+
+        b=[ave_visit[i] for i in range(len(ave_visit)) if stulist[i][1] == '0']
+        if len(b)==0:
+            ave_visit_female=0
+        else:
+            ave_visit_female=sum(b)/len(b)
+
+        ave_visit = sum(ave_visit)/(len(a)+len(b))
+
+
+    #借书
+    start_date=datetime.date(2016,7,1)
+    end_date=datetime.date(2017,2,1)
+    stulist=list(Basic.objects.filter(School=school).values_list('StuID','Gender'))
+
+    if len(stulist) ==0:
+        book_dis=[1,1,1,1,1]
+        ave_book_male=0
+        ave_book_female=0
+    else:
+        x=[0,20,40,60,80,100]
+        ave_book = [Book.objects.filter(StuID = stu[0], Date__gte=start_date, Date__lte=end_date).aggregate(c=Count("id"))['c'] for stu in stulist] #每个人一学期的借书总数
+        i=1
+        book_dis=[]
+        while i <= 5:
+            if i==5:
+                book_dis.append(sum(x[i]>=c>=x[i-1] for c in ave_book))
+            else:
+                book_dis.append(sum(x[i]>c>=x[i-1] for c in ave_book))
+            i=i+1
+
+        a=[ave_book[i] for i in range(len(ave_book)) if stulist[i][1] == '1']
+        if len(a)==0:
+            ave_book_male=0
+        else:
+            ave_book_male=sum(a)/len(a)
+
+        b=[ave_book[i] for i in range(len(ave_book)) if stulist[i][1] == '0']
+        if len(b)==0:
+            ave_book_female=0
+        else:
+            ave_book_female=sum(b)/len(b)
+
+        ave_book = sum(ave_book)/(len(a)+len(b))
+
+
+    #借书，图书馆访问和消费分布的代码一模一样，可以抽取成函数
+    ret = {'cdfall':cdfall, 'pdfall':pdfall, 'num':num,
+           'ave_score_female':ave_score_female, 'ave_score_male':ave_score_male, 'ave_score':ave_score,
+           'score_lib_ave':score_lib_ave, 'score_lib_max':score_lib_max, 'score_lib_min':score_lib_min,
+           'score_dormtime_ave':score_dormtime_ave, 'score_dormtime_max':score_dormtime_max, 'score_dormtime_min':score_dormtime_min,
+           'health_num':health_num,
+           'ave_health_score_male':ave_health_score_male, 'ave_health_score_female':ave_health_score_female, 'ave_health_score':ave_health_score,
+           'health_dormtime_ave':health_dormtime_ave, 'health_dormtime_max':health_dormtime_max, 'health_dormtime_min':health_dormtime_min,
+           'province_num':province_num,'score_province':score_province,
+           'dorm_num':dorm_num,
+           'ave_time_female':ave_time_female, 'ave_time_male':ave_time_male, 'ave_time':ave_time,
+           'cost_dis':cost_dis, 'ave_cost_male':ave_cost_male, 'ave_cost_female':ave_cost_female, 'ave_cost':ave_cost,
+           'visit_dis':visit_dis, 'ave_visit_male':ave_visit_male, 'ave_visit_female':ave_visit_female, 'ave_visit':ave_visit,
+           'book_dis':book_dis, 'ave_book_male':ave_book_male, 'ave_book_female':ave_book_female, 'ave_book':ave_book,
+           'hos_dis':hos_dis, 'ave_hos_male':ave_hos_male, 'ave_hos_female':ave_hos_female, 'ave_hos':ave_hos,
+           'hos_health_min':hos_health_min, 'hos_health_max':hos_health_max, 'hos_health':hos_health}
+    return ret
+
+
 def getdistribution(x, data):
     # x includes endpoints of intervals
     l = len(x)
@@ -716,6 +1267,12 @@ def supervision(request):
     school_query_list = Basic.objects.values('School')
     school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
 
+    for i in range(len(school_list)):
+        if school_list[i]=='电子信息与电气工程学院':
+            school_list[i]=school_list[0]
+            school_list[0]='电子信息与电气工程学院'
+            break
+
     major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
     major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
 
@@ -725,6 +1282,7 @@ def supervision(request):
     class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
         'classNo')
     class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+
 
     return render(request, 'servermaterial/supervision_new_2.html', context={'school_list': school_list,
                                                                              'major_list': major_list,
