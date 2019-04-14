@@ -352,7 +352,7 @@
                                name="repassword">
                     </div>
                     <div class="col-lg-12">
-                        <h5 id="registerInfo" style="visibility: hidden; color: red">成都机场能见度</h5>
+                        <h5 id="registerInfo" style="visibility: hidden; color: red"></h5>
                     </div>
                     <button class="btn btn-theme btn-block" type="button" id="registerSubmit"><i class="fa fa-lock"></i>提交注册信息
                     </button>
@@ -371,11 +371,29 @@
                     <!--custom chart end-->
                     <div class="row mt">
                         <!-- SERVER STATUS PANELS -->
+                        <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/monitor'">
+                            <!-- REVENUE PANEL -->
+                            <div class="green-panel pn">
+                                <div class="green-header">
+                                    <h3>数据可视化</h3>
+                                </div>
+                                <div class="chart mt">
+                                    <div class="sparkline" data-type="line" data-resize="true" data-height="75"
+                                         data-width="90%" data-line-width="1" data-line-color="#fff"
+                                         data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff"
+                                         data-spot-radius="4"
+                                         data-data="[200,135,667,333,526,996,564,123,890,464,655]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /col-md-4-->
                         <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/supervision'">
                             <div class="darkblue-panel pn">
                                 <div class="darkblue-header">
-                                    <h3><font color="white">数据可视化</font></h3>
+                                    <h3><font color="white">监测预警</font></h3>
                                 </div>
+                                <p>
+                                </p>
                                 <canvas id="serverstatus02" height="120" width="120"></canvas>
                                 <script>
                                     var doughnutData = [{
@@ -392,22 +410,6 @@
                             </div>
                             <!--  /darkblue panel -->
                         </div>
-                        <!-- /col-md-4-->
-                        <div class="col-md-4 col-sm-4 mb" onclick="window.location.href='/web/monitor'">
-                            <!-- REVENUE PANEL -->
-                            <div class="green-panel pn">
-                                <div class="green-header">
-                                    <h3>预警监测</h3>
-                                </div>
-                                <div class="chart mt">
-                                    <div class="sparkline" data-type="line" data-resize="true" data-height="75"
-                                         data-width="90%" data-line-width="1" data-line-color="#fff"
-                                         data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff"
-                                         data-spot-radius="4"
-                                         data-data="[200,135,667,333,526,996,564,123,890,464,655]"></div>
-                                </div>
-                            </div>
-                        </div>
                         <!-- /col-md-4 -->
                         <div class="col-md-4 mb" onclick="window.location.href='/web/result'">
                             <!-- WHITE PANEL - TOP USER -->
@@ -416,9 +418,8 @@
                                     <h3><font color="black">学生画像</font></h3>
                                 </div>
                                 <br/>
-                                <br/>
-                                <p><img src="/templates/servermaterial/img/icon.jpg" class="img-circle" width="70"></p>
-                                <p><font color="black">朱大竞</font></p>
+                                <p><img src="/templates/servermaterial/img/profile.PNG" class="img-circle" height="120"
+                                        width="120"></p>
                             </div>
                         </div>
                         <!-- /col-md-4 -->
@@ -434,19 +435,21 @@
                                 <div class="grey-header">
                                     <h3>图书推荐</h3>
                                 </div>
-                                <canvas id="serverstatus01" height="120" width="120"></canvas>
-                                <script>
-                                    var doughnutData = [{
-                                        value: 70,
-                                        color: "#FF6B6B"
-                                    },
-                                        {
-                                            value: 30,
-                                            color: "#fdfdfd"
-                                        }
-                                    ];
-                                    var myDoughnut = new Chart(document.getElementById("serverstatus01").getContext("2d")).Doughnut(doughnutData);
-                                </script>
+                                <p><img src="/templates/servermaterial/img/book.png" class="img-circle" height="120"
+                                        width="120"></p>
+                                {#                                <canvas id="serverstatus01" height="120" width="120"></canvas>#}
+                                {#                                <script>#}
+                                {#                                    var doughnutData = [{#}
+                                {#                                        value: 70,#}
+                                {#                                        color: "#FF6B6B"#}
+                                {#                                    },#}
+                                {#                                        {#}
+                                {#                                            value: 30,#}
+                                {#                                            color: "#fdfdfd"#}
+                                {#                                        }#}
+                                {#                                    ];#}
+                                {#                                    var myDoughnut = new Chart(document.getElementById("serverstatus01").getContext("2d")).Doughnut(doughnutData);#}
+                                {#                                </script>#}
                             </div>
                             <!-- /grey-panel -->
                         </div>
