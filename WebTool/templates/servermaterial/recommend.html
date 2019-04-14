@@ -79,7 +79,7 @@
                     var chart = echarts.init(document.getElementById('hotBookChart'));
                     option = {
                         title: {
-                            text: 'top5%最常借的五本书',
+                            text: '',
                         },
                         tooltip: {
                             show: true
@@ -169,12 +169,73 @@
 
             $("#query_option2").change(function () {
                 var k = $(this).val();
-
+                var schoolName = $("#query_option3").find('option:selected').text();
                 $.ajax({
                     url: '/web/hot_book',
                     type: 'POST',
                     dataType: 'JSON',
-                    data: {'k': k},
+                    data: {'k': k, "schoolName": schoolName},
+                    success: function (result) {
+                        $("tbody[class='777']").children().remove();
+                        for (var i = 0; i < result.length; i++) {
+                            var newTableNode = $("<tr>\n" + "<td class=\"text-center\"> top" + (i + 1) + "</td>\n" +
+                                "<td class=\"text-center\">" + result[i]['name'] + "</td>\n" + "<td class=\"text-center\">"
+                                + result[i]['value'] + "</td>\n" + "</tr>");
+                            $("tbody[class='777']").append(newTableNode);
+                        }
+                        var chart = echarts.init(document.getElementById('hotBookChart'));
+                        option = {
+                            title: {
+                                text: '',
+                            },
+                            tooltip: {
+                                show: true
+                            },
+
+                            series: [{
+                                type: 'wordCloud',
+                                textRotation: [0, 0, 0, 0],
+                                sizeRange: [12, 60],
+                                textPadding: 0,
+                                autoSize: {
+                                    enable: true,
+                                    minSize: 14
+                                },
+                                textStyle: {
+                                    normal: {
+                                        fontFamily: 'sans-serif',
+                                        fontWeight: 'bold',
+                                        // Color can be a callback function or a color string
+                                        color: function () {
+                                            // Random color
+                                            return 'rgb(' + [
+                                                Math.round(Math.random() * 160),
+                                                Math.round(Math.random() * 160),
+                                                Math.round(Math.random() * 160)
+                                            ].join(',') + ')';
+                                        }
+                                    },
+                                    emphasis: {
+                                        shadowBlur: 10,
+                                        shadowColor: '#333'
+                                    }
+                                },
+                                data: result
+                            }]
+                        };
+                        chart.setOption(option);
+                    }
+
+                });
+            });
+            $("#query_option3").change(function () {
+                var k = $("#query_option2").val();
+                var schoolName = $("#query_option3").find('option:selected').text();
+                $.ajax({
+                    url: '/web/hot_book',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {'k': k, "schoolName": schoolName},
                     success: function (result) {
                         $("tbody[class='777']").children().remove();
                         for (var i = 0; i < result.length; i++) {
@@ -283,13 +344,9 @@
                                             <div class="col-lg-8">
                                                 <select class="form-control" id="query_option3">
                                                     <option value="all">全校学生</option>
-                                                    <option>电子信息与电气工程学院</option>
-                                                    <option>农业与生物学院</option>
-                                                    <option>船舶海洋与建筑工程学院</option>
-                                                    <option>安泰经济与管理学院</option>
-                                                    <option>材料科学与工程学院</option>
-                                                    <option>密西根学院</option>
-                                                    <option>机械与动力工程学院</option>
+                                                    {% for school in school_list %}
+                                                        <option> {{ school }}</option>
+                                                    {% endfor %}
 
                                                 </select>
                                             </div>
@@ -516,13 +573,9 @@
                                             <div class="col-lg-8">
                                                 <select class="form-control" id="school">
                                                     <option value="all">全校学生</option>
-                                                    <option>电子信息与电气工程学院</option>
-                                                    <option>农业与生物学院</option>
-                                                    <option>船舶海洋与建筑工程学院</option>
-                                                    <option>安泰经济与管理学院</option>
-                                                    <option>材料科学与工程学院</option>
-                                                    <option>密西根学院</option>
-                                                    <option>机械与动力工程学院</option>
+                                                    {% for school in school_list %}
+                                                        <option>{{ school }}</option>
+                                                    {% endfor %}
 
                                                 </select>
                                             </div>
@@ -609,7 +662,7 @@
     var namelist = ['数学分析讲义', '数学建模大全', '英语六级全通关', '平凡的世界', '面向未来'];
     var chart_data = [];
 
-    for (var i = 0; i < 5; i++){
+    for (var i = 0; i < 5; i++) {
         chart_data.push({'name': namelist[i], 'value': 20});
     }
 

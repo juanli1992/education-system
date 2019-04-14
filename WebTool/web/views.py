@@ -2215,17 +2215,14 @@ def get_hot_book_list(request):
     :return:每一本书用一个字典对象(有name属性，values属性，itemStyle属性)
     """
     topk = 10
+    school_name = "全校学生"
     if request.method == "POST":
         topk = int(request.POST['k'])
+        school_name = request.POST['schoolName'].strip()
+        print(school_name)
     topk_name_list = []
     print(topk)
-    topk_loc_list, topk_count_list = get_hot_book(topk)
-    with connection.cursor() as cursor:
-        for loc in topk_loc_list:
-            cursor.execute('select book_name from book_info where location=' + '\'' + loc + '\'')
-            row = cursor.fetchone()
-            topk_name_list.append(row[0])
-
+    topk_name_list, topk_count_list = get_hot_book(topk, school_name)
     data = []
     for i in range(len(topk_name_list)):
         book = {'name': topk_name_list[i], 'value': topk_count_list[i]}
@@ -2256,6 +2253,7 @@ def recommend(request):
     recommend_dict = {}
     school_query_list = Basic.objects.values('School')
     school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+    print(school_list)
     major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
     major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
     return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict,
