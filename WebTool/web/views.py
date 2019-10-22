@@ -18,14 +18,15 @@ import datetime
 # from datetime import *
 from django.db.models import Count, Avg, Max, Min, Sum
 import numpy as np
+from web.visualization_util import *
 import pandas as pd
 # import csv
 # import matplotlib.pyplot as plt
-import keras
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
-from keras.layers import Masking
+# import keras
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.layers import LSTM
+# from keras.layers import Masking
 # from sklearn.model_selection import train_test_split
 # from sklearn.preprocessing import MinMaxScaler
 # from sklearn.metrics import mean_squared_error
@@ -33,7 +34,7 @@ from keras.layers import Masking
 # #from keras.preprocessing.sequence import pad_sequences
 
 from django.db import connection
-from .recommend_util import *
+# from .recommend_util import *
 
 
 # Create your views here.
@@ -1262,32 +1263,27 @@ def base(request):
     return render(request, 'servermaterial/base.html')
 
 
-def supervision(request):
-    # 读取学院信息，显示在下拉框上
-    school_query_list = Basic.objects.values('School')
-    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
 
-    for i in range(len(school_list)):
-        if school_list[i]=='电子信息与电气工程学院':
-            school_list[i]=school_list[0]
-            school_list[0]='电子信息与电气工程学院'
-            break
+def visualization(request):
+    """
+    可视化模块页面的接口
+    :param request:
+    :return:
+    """
 
-    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
-    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
-
-    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
-    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
-
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
-        'classNo')
-    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
+    return render(request, 'servermaterial/supervision_v2.html')
 
 
-    return render(request, 'servermaterial/supervision_new_2.html', context={'school_list': school_list,
-                                                                             'major_list': major_list,
-                                                                             'grade_list': grade_list,
-                                                                             'class_list': class_list})
+def get_vdata(request):
+    """
+    获取需要可视化展示的所有数据
+    :param request:
+    :return: 可视化的数据(json数据格式)
+    """
+    study_period = request.POST["sp"]                        # 获取对应学段
+    hw_data = get_hw_data(study_period=int(study_period))    # 得到体重身高数据
+
+    return JsonResponse(data=hw_data, safe=False)
 
 
 def result(request):
@@ -1768,7 +1764,7 @@ def monitor_engine(request):
         """
         不及格预警
         """
-        tst()
+        # tst()
         global bujigeyujinglist  # 给list函数的
         bujigeyujinglist = []
         for stuid in stus:
@@ -1828,7 +1824,7 @@ def monitor_engine(request):
         """
         global tuixuelist  # 给list函数的
         tuixuelist = []
-        tst()
+        # tst()
 
         for stuid in stus:
             dtlist = list(Score.objects.filter(StuID=stuid).values_list('AveScore', flat=True))
@@ -2268,72 +2264,80 @@ def index(request):
     return render(request, "servermaterial/index_main.html")
 
 
-def tst():
-    np.random.seed(1119)
-
-    stuolist = Score.objects.all()
-    stulist = []
-    for i in stuolist:
-        if i.StuID not in stulist:
-            stulist.append(i.StuID)
-    # print(stulist)
-
-    # x_test = np.array( pd.read_csv("x_test.csv",header=None) )
-    # x_test = np.reshape(x_test,(x_test.shape[0],7,1))
+def query_vdata(request):
     """
-    上面是文件格式
-    下面是一个个学生，list格式
+    查询可视化页面所需要的数据
+    :param request:
+    :return:
     """
-    # x_test = np.array([78.86,74.89,-2,-2,-2,-2,-2])
-    # x_test = np.reshape(x_test,(1,7,1))
+    pass
 
-    scorlists = []
-    for u in stulist:
-        scorlist = list(Score.objects.filter(StuID=u).values_list('AveScore', flat=True))
-        scorlist = list(map(float, scorlist))
-        num = 7 - scorlist.__len__()
-        for i in range(num):
-            scorlist.append(-2)
 
-        scorlists.append(scorlist)
-
-    x_test = np.array(scorlists)
-    print(x_test)
-    x_test = np.reshape(x_test, (x_test.shape[0], 7, 1))
-
-    batch_size = 32  # 超参
-    epochs = 1000  # 超参
-    units = 6  # 超参 4不行
-
-    keras.backend.clear_session()
-    model = Sequential()
-    model.add(Masking(mask_value=-2., input_shape=(7, 1)))
-    model.add(LSTM(units))
-    model.add(Dense(1))
-    print(model.summary())
-    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['mse', 'mape'])
-
-    # filepath = './lstmfc/model-ep{epoch:03d}-mse{mean_squared_error:.3f}-val_mse{val_mean_squared_error:.3f}-val_mape{val_mean_absolute_percentage_error}.h5'
-    # checkpoint = keras.callbacks.ModelCheckpoint(filepath, monitor='val_mean_squared_error', verbose=1, save_best_only=True, mode='min')
-    # model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=1, validation_data=(x_test, y_test), shuffle=True, callbacks=[checkpoint])
-
-    ###predict
-    # model.load_weights('C:\\Users\\ICE\\education-system\\WebTool\\web\\lstmfc\\model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
-    model.load_weights('./web/lstmfc/model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
-    print('load weights...')
-    reeee = model.predict(x_test)
-    reeee = np.reshape(reeee, (len(stulist),))
-    print(reeee)
-    print(reeee.shape)  # （200,1）-->(200,)
-
-    PredScore.objects.all().delete()
-    # print('deeeeeeeeeeeeeeeeel')
-    addlist = []
-    for i in range(len(stulist)):
-        obj = PredScore(
-            StuID=stulist[i],
-            Score=reeee[i]
-        )
-        addlist.append(obj)
-    PredScore.objects.bulk_create(addlist)
-    # print('inssssssssssssssssssssss')
+# def tst():
+#     np.random.seed(1119)
+# 
+#     stuolist = Score.objects.all()
+#     stulist = []
+#     for i in stuolist:
+#         if i.StuID not in stulist:
+#     # print(stulist)
+# 
+#     # x_test = np.array( pd.read_csv("x_test.csv",header=None) )
+#     # x_test = np.reshape(x_test,(x_test.shape[0],7,1))
+#     #     """
+#     # 上面是文件格式
+#     # 下面是一个个学生，list格式
+#     # """
+#     # x_test = np.array([78.86,74.89,-2,-2,-2,-2,-2])
+#     # x_test = np.reshape(x_test,(1,7,1))
+# 
+#     scorlists = []
+#     for u in stulist:
+#         scorlist = list(Score.objects.filter(StuID=u).values_list('AveScore', flat=True))
+#         scorlist = list(map(float, scorlist))
+#         num = 7 - scorlist.__len__()
+#         for i in range(num):
+#             scorlist.append(-2)
+# 
+#         scorlists.append(scorlist)
+# 
+#     x_test = np.array(scorlists)
+#     print(x_test)
+#     x_test = np.reshape(x_test, (x_test.shape[0], 7, 1))
+# 
+#     batch_size = 32  # 超参
+#     epochs = 1000  # 超参
+#     units = 6  # 超参 4不行
+# 
+#     keras.backend.clear_session()
+#     model = Sequential()
+#     model.add(Masking(mask_value=-2., input_shape=(7, 1)))
+#     model.add(LSTM(units))
+#     model.add(Dense(1))
+#     print(model.summary())
+#     model.compile(loss='mean_squared_error', optimizer='adam', metrics=['mse', 'mape'])
+# 
+#     # filepath = './lstmfc/model-ep{epoch:03d}-mse{mean_squared_error:.3f}-val_mse{val_mean_squared_error:.3f}-val_mape{val_mean_absolute_percentage_error}.h5'
+#     # checkpoint = keras.callbacks.ModelCheckpoint(filepath, monitor='val_mean_squared_error', verbose=1, save_best_only=True, mode='min')
+#     # model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=1, validation_data=(x_test, y_test), shuffle=True, callbacks=[checkpoint])
+# 
+#     ###predict
+#     # model.load_weights('C:\\Users\\ICE\\education-system\\WebTool\\web\\lstmfc\\model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
+#     model.load_weights('./web/lstmfc/model-ep995-mse28.667-val_mse28.815-val_mape4.917600361394993.h5')
+#     print('load weights...')
+#     reeee = model.predict(x_test)
+#     reeee = np.reshape(reeee, (len(stulist),))
+#     print(reeee)
+#     print(reeee.shape)  # （200,1）-->(200,)
+# 
+#     PredScore.objects.all().delete()
+#     # print('deeeeeeeeeeeeeeeeel')
+#     addlist = []
+#     for i in range(len(stulist)):
+#         obj = PredScore(
+#             StuID=stulist[i],
+#             Score=reeee[i]
+#         )
+#         addlist.append(obj)
+#     PredScore.objects.bulk_create(addlist)
+#     # print('inssssssssssssssssssssss')

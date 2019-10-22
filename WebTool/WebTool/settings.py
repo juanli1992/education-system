@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
@@ -37,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'web',
+    'web'
 ]
 
 MIDDLEWARE = [
@@ -74,13 +73,23 @@ WSGI_APPLICATION = 'WebTool.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "student_db",
+        'USER': 'root',
+        'PASSWORD': 'sjtu_zhuDajing#9',
+        'HOST': '119.3.129.143',
+        'PORT': 3306,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
@@ -123,3 +132,8 @@ STATIC_URL = '/templates/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "templates"),
 )
+
+
+# import djcelery
+# djcelery.setup_loader() # 初始化celery的队列
+# BROKER_URL = 'redis'
