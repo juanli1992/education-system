@@ -8,10 +8,13 @@ $(document).ready(function () {
         // dataType: 'JSON',
         // contentType: 'application/json;charset=utf-8',
         success: function (result) {
-            draw_avg_height(result);
-            draw_std_height(result);
-            draw_avg_weight(result);
-            draw_std_weight(result);
+            draw_avg_height(result[0]);
+            draw_std_height(result[0]);
+            draw_avg_weight(result[0]);
+            draw_std_weight(result[0]);
+            draw_bmi(result[0]);
+            draw_vision_level(result[2]);
+            draw_tooth_level(result[3]);
         }
 
     });
@@ -24,10 +27,11 @@ $(document).ready(function () {
             // dataType: 'JSON',
             // contentType: 'application/json;charset=utf-8',
             success: function (result) {
-                draw_avg_height(result);
-                draw_std_height(result);
-                draw_avg_weight(result);
-                draw_std_weight(result);
+                draw_avg_height(result[0]);
+                draw_std_height(result[0]);
+                draw_avg_weight(result[0]);
+                draw_std_weight(result[0]);
+                draw_bmi(result[0])
             }
 
         });
@@ -333,6 +337,481 @@ function draw_std_weight(data) {
     };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
+}
+
+function draw_bmi(data) {
+    var myChart = echarts.init(document.getElementById('chart-grade-5'));
+    option = {
+        title: {
+            text: '学生BMI分布',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: data["level"]
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1548
+                        }
+                    }
+                },
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        series: [
+            {
+                name: '所有学生BMI分布',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: data['ratio'][0], name: data['level'][0]},
+                    {value: data['ratio'][1], name: data['level'][1]},
+                    {value: data['ratio'][2], name: data['level'][2]},
+                    {value: data['ratio'][3], name: data['level'][3]},
+                ]
+            }
+        ]
+    };
+    myChart.setOption(option);
+
+    myChart = echarts.init(document.getElementById('chart-grade-6'));
+    var grade_count = data['grade_id'].length;
+    var boy_fat = new Array();
+    var girl_fat = new Array();
+    var boy_thin = new Array();
+    var girl_thin = new Array();
+    for (var i = 0; i < grade_count; i++) {
+        var id2 = data['grade_id'][i];
+        boy_fat[i] = data["dict_2"][id2]["1"][3];
+        girl_fat[i] = data["dict_2"][id2]["2"][3];
+        boy_thin[i] = data["dict_2"][id2]["1"][0];
+        girl_thin[i] = data["dict_2"][id2]["2"][0];
+    }
+    option = {
+
+        // Make gradient line here
+        visualMap: [{
+            show: false,
+            type: 'continuous',
+            seriesIndex: 0,
+            min: 0,
+            max: 400
+        }, {
+            show: false,
+            type: 'continuous',
+            seriesIndex: 1,
+            dimension: 0,
+            min: 0,
+            max: data['grade'].length - 1
+        }],
+
+
+        title: [{
+            left: 'center',
+            text: '肥胖率男女生对比图'
+        }, {
+            top: '55%',
+            left: 'center',
+            text: '低体重率男女生对比图'
+        }],
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: [{
+            data: ['男生', '女生'],
+            orient: 'vertical',
+            x: 'left',
+        }
+        ],
+        xAxis: [{
+            data: data['grade'],
+            axisLabel: {
+                interval: 0,
+                rotate: 40
+            }
+        }, {
+            data: data['grade'],
+            gridIndex: 1,
+            axisLabel: {
+                interval: 0,
+                rotate: 40
+            }
+        }],
+        yAxis: [{
+            splitLine: {show: false}
+        }, {
+            splitLine: {show: false},
+            gridIndex: 1
+        }],
+        grid: [{
+            bottom: '60%'
+        }, {
+            top: '60%'
+        }],
+        series: [{
+            name: '男生',
+            type: 'line',
+            showSymbol: false,
+            data: boy_fat,
+            lineStyle: {
+                normal: {
+                    color: '#B22222',
+                }
+            }
+        },
+            {
+                name: '女生',
+                type: 'line',
+                showSymbol: false,
+                data: girl_fat,
+                lineStyle: {
+                    normal: {
+                        color: '#4f9D9D',
+                    }
+                }
+            },
+            {
+                name: '男生',
+                type: 'line',
+                showSymbol: false,
+                data: boy_thin,
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                lineStyle: {
+                    normal: {
+                        color: '#B22222',
+                    }
+                }
+            },
+            {
+                name: '女生',
+                type: 'line',
+                showSymbol: false,
+                data: girl_thin,
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                lineStyle: {
+                    normal: {
+                        color: '#4f9D9D',
+                    }
+                }
+            }]
+    };
+
+    myChart.setOption(option);
+
+    var primaryNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["1"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["1"]["1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["1"]["2"][0] + "%</td>" + "<td>" + data["dict"]["1"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["2"][2] + "%</td>" + "<td>" + data["dict"]["1"]["2"][3] + "%</td></tr>");
+
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["2"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["2"]["2"][0] + "%</td>" + "<td>" + data["dict"]["2"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["2"][2] + "%</td>" + "<td>" + data["dict"]["2"]["2"][3] + "%</td></tr>");
+
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["3"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["3"]["2"][0] + "%</td>" + "<td>" + data["dict"]["3"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["2"][2] + "%</td>" + "<td>" + data["dict"]["3"]["2"][3] + "%</td></tr>");
+    var es_table = $("tbody[class='999']");
+    es_table.append(primaryNode);
+    es_table.append(juniorNode);
+    es_table.append(highNode);
+}
+
+
+function draw_vision_level(data) {
+    var myChart = echarts.init(document.getElementById('chart-grade-7'));
+    option = {
+        title: {
+            text: '学生视力等级分布',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: data["level"]
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1548
+                        }
+                    }
+                },
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        series: [
+            {
+                name: '所有学生近视情况分布',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: data['all'][0], name: data['level'][0]},
+                    {value: data['all'][1], name: data['level'][1]},
+                    {value: data['all'][2], name: data['level'][2]},
+                    {value: data['all'][3], name: data['level'][3]},
+                ]
+            }
+        ]
+    };
+    myChart.setOption(option);
+
+    myChart = echarts.init(document.getElementById('chart-grade-8'));
+
+    option = {
+        title: {
+            text: '学生视力情况分布',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: '{c}%',
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: ['不近视', '轻度近视', '中度近视', '重度近视']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: ['小学', '普通初中', '普通高中']
+
+        },
+        yAxis: {
+            type: 'value',
+            formatter: '{value} %'
+        },
+        series: [
+            {
+                name: '不近视',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        formatter: "{c} %"
+                    }
+                },
+                data: [data['dict']["1"]["-1"][0], data['dict']["2"]["-1"][0], data['dict']["3"]["-1"][0]]
+            },
+            {
+                name: '轻度近视',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        formatter: "{c} %"
+                    }
+                },
+                data: [data['dict']["1"]["-1"][1], data['dict']["2"]["-1"][1], data['dict']["3"]["-1"][1]]
+            },
+            {
+                name: '中度近视',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        formatter: "{c} %"
+                    }
+                },
+                data: [data['dict']["1"]["-1"][2], data['dict']["2"]["-1"][2], data['dict']["3"]["-1"][2]]
+            },
+            {
+                name: '重度近视',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        formatter: "{c} %"
+                    }
+                },
+                data: [data['dict']["1"]["-1"][3], data['dict']["2"]["-1"][3], data['dict']["3"]["-1"][3]]
+            },
+
+        ]
+    };
+    myChart.setOption(option);
+
+    var primaryNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["1"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["1"]["1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["1"]["2"][0] + "%</td>" + "<td>" + data["dict"]["1"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["2"][2] + "%</td>" + "<td>" + data["dict"]["1"]["2"][3] + "%</td></tr>");
+
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["2"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["2"]["2"][0] + "%</td>" + "<td>" + data["dict"]["2"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["2"][2] + "%</td>" + "<td>" + data["dict"]["2"]["2"][3] + "%</td></tr>");
+
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["3"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["3"]["2"][0] + "%</td>" + "<td>" + data["dict"]["3"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["2"][2] + "%</td>" + "<td>" + data["dict"]["3"]["2"][3] + "%</td></tr>");
+    var es_table = $("tbody[class='777']");
+    es_table.append(primaryNode);
+    es_table.append(juniorNode);
+    es_table.append(highNode);
+
+}
+
+
+function draw_tooth_level(data) {
+    var myChart = echarts.init(document.getElementById('chart-grade-9'));
+    option = {
+        title: {
+            text: '学生牙齿情况分布',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: data["level"]
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1548
+                        }
+                    }
+                },
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        series: [
+            {
+                name: '所有学生牙齿情况分布',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: data['all'][0], name: data['level'][0]},
+                    {value: data['all'][1], name: data['level'][1]},
+                    {value: data['all'][2], name: data['level'][2]},
+                    {value: data['all'][3], name: data['level'][3]},
+                ]
+            }
+        ]
+    };
+    myChart.setOption(option);
+
+
+    var primaryNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["1"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["1"]["1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["1"]["2"][0] + "%</td>" + "<td>" + data["dict"]["1"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["2"][2] + "%</td>" + "<td>" + data["dict"]["1"]["2"][3] + "%</td></tr>");
+
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["2"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["2"]["2"][0] + "%</td>" + "<td>" + data["dict"]["2"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["2"][2] + "%</td>" + "<td>" + data["dict"]["2"]["2"][3] + "%</td></tr>");
+
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["3"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["3"]["2"][0] + "%</td>" + "<td>" + data["dict"]["3"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["2"][2] + "%</td>" + "<td>" + data["dict"]["3"]["2"][3] + "%</td></tr>");
+    var tt_table = $("tbody[class='888']");
+    tt_table.append(primaryNode);
+    tt_table.append(juniorNode);
+    tt_table.append(highNode);
+
 }
 
 

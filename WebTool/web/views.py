@@ -1270,7 +1270,6 @@ def visualization(request):
     :param request:
     :return:
     """
-
     return render(request, 'servermaterial/supervision_v2.html')
 
 
@@ -1282,8 +1281,12 @@ def get_vdata(request):
     """
     study_period = request.POST["sp"]                        # 获取对应学段
     hw_data = get_hw_data(study_period=int(study_period))    # 得到体重身高数据
-
-    return JsonResponse(data=hw_data, safe=False)
+    bmi_data = []
+    es_data = get_es_data()
+    tt_data = get_tt_data()
+    data = [hw_data, bmi_data, es_data, tt_data]
+    print(tt_data)
+    return JsonResponse(data=data, safe=False)
 
 
 def result(request):

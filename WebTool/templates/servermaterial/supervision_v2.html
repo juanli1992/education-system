@@ -64,8 +64,9 @@ MAIN CONTENT
                                    style="font-size: 17px; margin-top: 5px"><strong>学段</strong></label>
                             <div class="col-lg-8">
                                 <select class="form-control" id="sp">
-                                    <option value="-1">All</option>>
-{#                                    <option value="0">幼儿园</option>#}
+                                    <option value="-1">All</option>
+                                    >
+                                    {#                                    <option value="0">幼儿园</option>#}
                                     <option value="1">小学</option>
                                     <option value="2">初中</option>
                                     <option value="3">高中</option>
@@ -95,9 +96,9 @@ MAIN CONTENT
                 <h4>成长记录</h4>
                 <div class="panel-heading">
                     <ul class="nav nav-tabs nav-justified">
-{#                        <li class="active">#}
-{#                            <a data-toggle="tab" href="#geo_dis">身心健康</a>#}
-{#                        </li>#}
+                        {#                        <li class="active">#}
+                        {#                            <a data-toggle="tab" href="#geo_dis">身心健康</a>#}
+                        {#                        </li>#}
                         <li class="active">
                             <a data-toggle="tab" href="#grades">身心健康</a>
                         </li>
@@ -116,14 +117,14 @@ MAIN CONTENT
                 <div class="panel-body">
                     <div class="tab-content">
                         <!-- /地域分布 -->
-{#                        <div id="geo_dis" class="tab-pane active">#}
-{#                            <div class="row mt">#}
-{#                                <div class="col-lg-5 col-lg-offset-1 detailed">#}
-{#                                    <div id="chart-geo-1" style="width:200%;height:550px;"></div>#}
-{#                                    <div id="chart-geo-2" style="width:200%;height:550px;"></div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
+                        {#                        <div id="geo_dis" class="tab-pane active">#}
+                        {#                            <div class="row mt">#}
+                        {#                                <div class="col-lg-5 col-lg-offset-1 detailed">#}
+                        {#                                    <div id="chart-geo-1" style="width:200%;height:550px;"></div>#}
+                        {#                                    <div id="chart-geo-2" style="width:200%;height:550px;"></div>#}
+                        {#                                </div>#}
+                        {#                            </div>#}
+                        {#                        </div>#}
 
                         <!-- /成绩分析 -->
                         <div id="grades" class="tab-pane active">
@@ -149,6 +150,98 @@ MAIN CONTENT
                                 </div>
                                 <div class="col-lg-5">
                                     <div id="chart-grade-6" style="width: 450px;height:400px;"></div>
+                                </div>
+                            </div>
+                            <div class="row mt">
+                                <h4>各学段体重指数bmi检查结果对照表</h4>
+                                <div class="col-lg-offset-2 col-lg-8">
+                                    <table id="999" class="table table-bordered table-striped table-hover"
+                                           style="font-size: 13px; text-align: center;">
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">学段</th>
+                                            <th class="text-center">性别</th>
+                                            <th class="text-center">低体重</th>
+                                            <th class="text-center">正常</th>
+                                            <th class="text-center">超重</th>
+                                            <th class="text-center">肥胖</th>
+
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="999">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row mt">
+                                <div class="col-lg-5 col-lg-offset-1 detailed">
+                                    <div id="chart-grade-7" style="width: 450px;height:400px;"></div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div id="chart-grade-8" style="width: 450px;height:400px;"></div>
+                                </div>
+                            </div>
+                            <div class="row mt">
+                                <h4>各学段视力检查结果对照表</h4>
+                                <div class="col-lg-offset-2 col-lg-8">
+                                    <table id="777" class="table table-bordered table-striped table-hover"
+                                           style="font-size: 13px; text-align: center;">
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">学段</th>
+                                            <th class="text-center">性别</th>
+                                            <th class="text-center">不近视</th>
+                                            <th class="text-center">轻度近视</th>
+                                            <th class="text-center">中度近视</th>
+                                            <th class="text-center">重度近视</th>
+
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="777">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row mt">
+                                <div class="col-lg-5 col-lg-offset-1 detailed">
+                                    <div id="chart-grade-9" style="width: 450px;height:400px;"></div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div id="chart-grade-10" style="width: 450px;height:400px;"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt">
+                                <h4>各学段学生口腔检查结果等级对照表</h4>
+                                <div class="col-lg-offset-2 col-lg-8">
+                                    <table id="888" class="table table-bordered table-striped table-hover"
+                                           style="font-size: 13px; text-align: center;">
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">学段</th>
+                                            <th class="text-center">性别</th>
+                                            <th class="text-center">良好</th>
+                                            <th class="text-center">尚可</th>
+                                            <th class="text-center">较差</th>
+                                            <th class="text-center">严重</th>
+
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="888">
+
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
