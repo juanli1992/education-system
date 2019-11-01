@@ -12,7 +12,9 @@ urlpatterns = [
     path('inquiry/', inquiry),
     path('base/', base),
     path('visualization/', visualization),
+    path('visualization2/', visualization2), ###new p2
     path('query_hw/', get_vdata),
+    path('query_xy/', query_xy), ###new p2
     path('result/', result),
     path('query/', query),
     # path('query1/', query1),

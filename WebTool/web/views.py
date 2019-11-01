@@ -1289,6 +1289,30 @@ def get_vdata(request):
     return JsonResponse(data=data, safe=False)
 
 
+###学业进步
+def visualization2(request):
+    """
+    可视化模块页面的接口
+    :param request:
+    :return:
+    """
+    return render(request, 'servermaterial/supervision_n2.html')
+
+
+def query_xy(request):
+    """
+    获取需要可视化展示的所有数据
+    :param request:
+    :return: 可视化的数据(json数据格式)
+    """
+    study_period = request.POST["sp"]                        # 获取对应学段
+    yxljgl_data = get_yxljgl_data(study_period=int(study_period))    # 得到体重身高数据
+
+    data = [yxljgl_data]
+    # print(data)
+    return JsonResponse(data=data, safe=False)
+
+
 def result(request):
     print('here')
     # Basic.objects.all().delete()

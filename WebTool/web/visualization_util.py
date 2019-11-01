@@ -163,6 +163,63 @@ def get_tt_data(sp=-1):
     return data
 
 
+def get_yxljgl_data(study_period):
+    """
+    指定学习阶段, 返回对应阶段学生各年级的平均值和标准差
+    :param study_period:
+    :return: 身高体重的均值和标准差(json数据格式)
+    """
+    cursor = connection.cursor()
+
+    cursor.execute("select * from grade_code;")
+    grade_dict = dict(cursor.fetchall())            # key为年纪的ID, value为年纪的名称(比如: 一年级. 五年级, 高一, 高二啥的)
+
+    if study_period == -1:  # 查询所有学段的学生 及格人数大于60
+        cursor.execute( # count()
+            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=60 group by xj.NJDM order by xj.NJDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=60 and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
+    results1 = cursor.fetchall()
+
+    if study_period == -1:  # 查询所有学段的学生 总人数
+        cursor.execute( # count()
+            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 group by xj.NJDM order by xj.NJDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
+    results2 = cursor.fetchall()
+
+    if study_period == -1:  # 查询所有学段的学生 优秀人数大于90
+        cursor.execute( # count()
+            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=90 group by xj.NJDM order by xj.NJDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=90 and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
+    results3 = cursor.fetchall()
+
+    # 获得绘图数据
+    jige_list, nj_list = zip(*results1)
+    total_list, nj_list = zip(*results2)
+    youxiu_list, nj_list = zip(*results3)
+    jg_list = np.array(jige_list)
+    t_list = np.array(total_list)
+    yx_list = np.array(youxiu_list)
+
+    jgl_list = list(jg_list / t_list)
+    yxl_list = list(yx_list / t_list)
+    print('jg_list')
+    print(jg_list)
+    print('yxl_list')
+    print(yxl_list)
+    grade_name_list = [grade_dict[grade_id] for grade_id in nj_list]
+
+    data = {'dataP': [jgl_list, yxl_list], 'grade': grade_name_list}
+    cursor.close()
+    return data
+
+
+
 """测试代码"""
 if __name__ == '__main__':
     get_hw_data(-1)
