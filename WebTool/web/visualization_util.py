@@ -200,8 +200,11 @@ def get_yxljgl_data(study_period):
 
     # 获得绘图数据
     jige_list_yw, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '103'])
+    grade_name_list_yw = [grade_dict[grade_id] for grade_id in nj_list]
     jige_list_sx, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '121'])
+    grade_name_list_sx = [grade_dict[grade_id] for grade_id in nj_list]
     jige_list_yy, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '122'])
+    grade_name_list_yy = [grade_dict[grade_id] for grade_id in nj_list]
     jige_list_yw = np.array(jige_list_yw)
     jige_list_sx = np.array(jige_list_sx)
     jige_list_yy = np.array(jige_list_yy)
@@ -239,7 +242,7 @@ def get_yxljgl_data(study_period):
     # print(yxl_list)
     grade_name_list = [grade_dict[grade_id] for grade_id in nj_list]
 
-    data = {'dataP': [jgl_list_yw, yxl_list_yw, jgl_list_sx, yxl_list_sx, jgl_list_yy, yxl_list_yy], 'grade': grade_name_list}
+    data = {'dataP': [jgl_list_yw, yxl_list_yw, jgl_list_sx, yxl_list_sx, jgl_list_yy, yxl_list_yy], 'grade': [grade_name_list_yw, grade_name_list_sx, grade_name_list_yy]}
     cursor.close()
     return data
 

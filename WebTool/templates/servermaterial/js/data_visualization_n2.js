@@ -68,7 +68,7 @@ function draw_yuwen(data) {
         xAxis: [
             {
                 type: 'category',
-                data: data['grade'],
+                data: data['grade'][0],
                 axisPointer: {
                     type: 'shadow'
                 },
@@ -145,7 +145,7 @@ function draw_shuxue(data) {
         xAxis: [
             {
                 type: 'category',
-                data: data['grade'],
+                data: data['grade'][1],
                 axisPointer: {
                     type: 'shadow'
                 },
@@ -222,7 +222,7 @@ function draw_yingyu(data) {
         xAxis: [
             {
                 type: 'category',
-                data: data['grade'],
+                data: data['grade'][2],
                 axisPointer: {
                     type: 'shadow'
                 },
