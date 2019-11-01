@@ -165,9 +165,9 @@ def get_tt_data(sp=-1):
 
 def get_yxljgl_data(study_period):
     """
-    指定学习阶段, 返回对应阶段学生各年级的平均值和标准差
+    指定学习阶段, 返回对应阶段学生各年级的优秀率和及格率
     :param study_period:
-    :return: 身高体重的均值和标准差(json数据格式)
+    :return:
     """
     cursor = connection.cursor()
 
@@ -244,6 +244,33 @@ def get_yxljgl_data(study_period):
 
     data = {'dataP': [jgl_list_yw, yxl_list_yw, jgl_list_sx, yxl_list_sx, jgl_list_yy, yxl_list_yy], 'grade': [grade_name_list_yw, grade_name_list_sx, grade_name_list_yy]}
     cursor.close()
+    return data
+
+
+def get_cjfb_data(nianji):
+    """
+    指定年级, 返回对应年级成绩分布
+    :param study_period:
+    :return:
+    """
+    # print('年级')
+    # print(nianji)
+    cursor = connection.cursor()
+
+
+    cursor.execute(
+            "select study.FS,study.XKDM from study, student_xj as xj where study.STUDENTID = xj.STUDENTID and NJDM={} order by study.XKDM;".format(nianji))
+    results1 = cursor.fetchall()
+
+    # 获得绘图数据
+    cj_list_yw, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '103'])
+    cj_list_sx, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '121'])
+    cj_list_yy, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '122'])
+    cj_list_yw_n = [99 if x==100 else x for x in cj_list_yw]
+
+    data = {'dataPs': [cj_list_yw_n, cj_list_sx, cj_list_yy]}
+    cursor.close()
+    # print(data)
     return data
 
 

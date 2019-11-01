@@ -1305,12 +1305,24 @@ def query_xy(request):
     :param request:
     :return: 可视化的数据(json数据格式)
     """
-    study_period = request.POST["sp"]                        # 获取对应学段
+    study_period = request.POST["sp"]   # 获取对应学段
     yxljgl_data = get_yxljgl_data(study_period=int(study_period))    # 得到数据
+    nianji = request.POST["grade__"]  # 获取对应年级
+    cjfb_data = get_cjfb_data(nianji)
 
-    data = [yxljgl_data]
+    data = [yxljgl_data, cjfb_data]
     # print(data)
     return JsonResponse(data=data, safe=False)
+
+
+def query_nianji(request):
+    """
+    查询出年级
+    :param request:
+    :return: 年级list(json数据格式)
+    """
+    study_period = request.POST["spp"]                        # 获取对应学段
+    return
 
 
 def result(request):
