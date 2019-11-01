@@ -1306,7 +1306,7 @@ def query_xy(request):
     :return: 可视化的数据(json数据格式)
     """
     study_period = request.POST["sp"]                        # 获取对应学段
-    yxljgl_data = get_yxljgl_data(study_period=int(study_period))    # 得到体重身高数据
+    yxljgl_data = get_yxljgl_data(study_period=int(study_period))    # 得到数据
 
     data = [yxljgl_data]
     # print(data)

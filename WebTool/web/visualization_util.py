@@ -176,45 +176,70 @@ def get_yxljgl_data(study_period):
 
     if study_period == -1:  # 查询所有学段的学生 及格人数大于60
         cursor.execute( # count()
-            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=60 group by xj.NJDM order by xj.NJDM;")
+            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=60 group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         cursor.execute(
-            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=60 and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
+            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=60 and XDDM = {} group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;".format(study_period))
     results1 = cursor.fetchall()
 
     if study_period == -1:  # 查询所有学段的学生 总人数
         cursor.execute( # count()
-            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 group by xj.NJDM order by xj.NJDM;")
+            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         cursor.execute(
-            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
+            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and XDDM = {} group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;".format(study_period))
     results2 = cursor.fetchall()
 
     if study_period == -1:  # 查询所有学段的学生 优秀人数大于90
         cursor.execute( # count()
-            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=90 group by xj.NJDM order by xj.NJDM;")
+            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=90 group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         cursor.execute(
-            "select count(*),xj.NJDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.XKDM=103 and study.FS>=90 and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
+            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=90 and XDDM = {} group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;".format(study_period))
     results3 = cursor.fetchall()
 
     # 获得绘图数据
-    jige_list, nj_list = zip(*results1)
-    total_list, nj_list = zip(*results2)
-    youxiu_list, nj_list = zip(*results3)
-    jg_list = np.array(jige_list)
-    t_list = np.array(total_list)
-    yx_list = np.array(youxiu_list)
+    jige_list_yw, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '103'])
+    jige_list_sx, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '121'])
+    jige_list_yy, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '122'])
+    jige_list_yw = np.array(jige_list_yw)
+    jige_list_sx = np.array(jige_list_sx)
+    jige_list_yy = np.array(jige_list_yy)
 
-    jgl_list = list(jg_list / t_list)
-    yxl_list = list(yx_list / t_list)
-    print('jg_list')
-    print(jg_list)
-    print('yxl_list')
-    print(yxl_list)
+    total_list_yw, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results2 if row[2] == '103'])
+    total_list_sx, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results2 if row[2] == '121'])
+    total_list_yy, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results2 if row[2] == '122'])
+    total_list_yw = np.array(total_list_yw)
+    total_list_sx = np.array(total_list_sx)
+    total_list_yy = np.array(total_list_yy)
+
+    youxiu_list_yw, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results3 if row[2] == '103'])
+    youxiu_list_sx, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results3 if row[2] == '121'])
+    youxiu_list_yy, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results3 if row[2] == '122'])
+    youxiu_list_yw = np.array(youxiu_list_yw)
+    youxiu_list_sx = np.array(youxiu_list_sx)
+    youxiu_list_yy = np.array(youxiu_list_yy)
+
+    # jige_list, nj_list = zip(*results1) #单个
+    # total_list, nj_list = zip(*results2)
+    # youxiu_list, nj_list = zip(*results3)
+    # jg_list = np.array(jige_list)
+    # t_list = np.array(total_list)
+    # yx_list = np.array(youxiu_list)
+
+    jgl_list_yw = list(jige_list_yw / total_list_yw)
+    jgl_list_sx = list(jige_list_sx / total_list_sx)
+    jgl_list_yy = list(jige_list_yy / total_list_yy)
+    yxl_list_yw = list(youxiu_list_yw / total_list_yw)
+    yxl_list_sx = list(youxiu_list_sx / total_list_sx)
+    yxl_list_yy = list(youxiu_list_yy / total_list_sx)
+    # print('jg_list')
+    # print(jg_list)
+    # print('yxl_list')
+    # print(yxl_list)
     grade_name_list = [grade_dict[grade_id] for grade_id in nj_list]
 
-    data = {'dataP': [jgl_list, yxl_list], 'grade': grade_name_list}
+    data = {'dataP': [jgl_list_yw, yxl_list_yw, jgl_list_sx, yxl_list_sx, jgl_list_yy, yxl_list_yy], 'grade': grade_name_list}
     cursor.close()
     return data
 
