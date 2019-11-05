@@ -247,6 +247,22 @@ def get_yxljgl_data(study_period):
     return data
 
 
+def get_fb(dlist):
+    """
+    给定list，返回直方图fenbu
+    :param list:
+    :return:
+    """
+    x_axis = [0,60,65,70,75,80,85,90,95,100]
+    y_axis = np.zeros(9)
+    for item in dlist:
+        for i in range(9):
+            if item>=x_axis[i] and item<x_axis[i+1]:
+                y_axis[i] += 1
+                continue
+    return y_axis
+
+
 def get_cjfb_data(nianji):
     """
     指定年级, 返回对应年级成绩分布
@@ -266,9 +282,15 @@ def get_cjfb_data(nianji):
     cj_list_yw, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '103'])
     cj_list_sx, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '121'])
     cj_list_yy, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '122'])
-    cj_list_yw_n = [99 if x==100 else x for x in cj_list_yw]
+    cj_list_yw_n = [99 if x == 100 else x for x in cj_list_yw]
+    cj_fbl_yw = list(get_fb(cj_list_yw_n))
+    cj_list_sx_n = [99 if x == 100 else x for x in cj_list_sx]
+    cj_fbl_sx = list(get_fb(cj_list_sx_n))
+    cj_list_yy_n = [99 if x == 100 else x for x in cj_list_yy]
+    cj_fbl_yy = list(get_fb(cj_list_yy_n))
 
-    data = {'dataPs': [cj_list_yw_n, cj_list_sx, cj_list_yy]}
+
+    data = {'dataPs': [cj_fbl_yw, cj_fbl_sx, cj_fbl_yy]}
     cursor.close()
     # print(data)
     return data
