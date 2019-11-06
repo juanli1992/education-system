@@ -36,8 +36,6 @@ def calc_bmi_coeffi(cursor):
     grade_bmi_dict = {grade: {gender: list(np.around(np.array(grade_bmi_dict[grade][gender]) / sum(grade_bmi_dict[grade][gender]) * 100, 0)) \
                            for gender in grade_bmi_dict[grade]} for grade in grade_bmi_dict}
 
-
-
     for sp, gender, bmi in zip(sp_list, gender_list, bmi_list):
         if sp in sp_bmi_dict:
             sp_bmi_dict[sp]["-1"].append(bmi)
@@ -163,6 +161,150 @@ def get_tt_data(sp=-1):
     return data
 
 
+def get_lung_data(sp=-1):
+    """
+    获得肺活量测试数据
+    :param sp:
+    :return:
+    """
+    cursor = connection.cursor()
+    cursor.execute("select xj.XDDM, info.XBDM, hp.DJ, count(*) from health_physicalfitness as hp, student_info as info, student_xj as xj  where hp.STUDENTID\
+                    = info.ID and info.ID = xj.STUDENTID and hp.XMID='20' group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ")
+    result = cursor.fetchall()
+    all_dict = {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}  # 绘制饼图数据
+    sp_lung_dict = {}
+    for sp, gender, grade, num in result:
+        all_dict[grade] += num
+        if sp not in sp_lung_dict:
+            sp_lung_dict[sp] = {"-1": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}, "1": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0},
+                                "2": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}}
+        sp_lung_dict[sp]["-1"][grade] += num
+        sp_lung_dict[sp][gender][grade] += num
+
+    for sp in sp_lung_dict:
+        for gender in sp_lung_dict[sp]:
+            corr_stu_num = np.sum(list(sp_lung_dict[sp][gender].values()))
+            ratio_list = np.around(np.array(list(sp_lung_dict[sp][gender].values())) / corr_stu_num * 100, 0)
+            sp_lung_dict[sp][gender] = dict(zip(sp_lung_dict[sp][gender].keys(), ratio_list))
+    # print(sum(all_dict.values()))
+    data = {'all': all_dict, 'dict': sp_lung_dict}
+    return data
+
+
+def get_naili_data(sp=-1):
+    """
+    获得耐力项目的数据
+    :param sp:
+    :return:
+    """
+    cursor = connection.cursor()
+    cursor.execute("select xj.XDDM, info.XBDM, hp.DJ, count(*) from health_physicalfitness as hp, student_info as info, student_xj as xj  where hp.STUDENTID\
+                    = info.ID and info.ID = xj.STUDENTID and hp.XMLBID='5' group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ")
+    result = cursor.fetchall()
+    all_dict = {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}  # 绘制饼图数据
+    sp_naili_dict = {}
+    for sp, gender, grade, num in result:
+        all_dict[grade] += num
+        if sp not in sp_naili_dict:
+            sp_naili_dict[sp] = {"-1": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}, "1": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0},
+                                "2": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}}
+        sp_naili_dict[sp]["-1"][grade] += num
+        sp_naili_dict[sp][gender][grade] += num
+
+    all_dict = dict(zip(all_dict.keys(), np.around(np.array(list(all_dict.values())) / np.sum(list(all_dict.values())) * 100, 0)))
+    
+    for sp in sp_naili_dict:
+        for gender in sp_naili_dict[sp]:
+            corr_stu_num = np.sum(list(sp_naili_dict[sp][gender].values()))
+            ratio_list = np.around(np.array(list(sp_naili_dict[sp][gender].values())) / corr_stu_num * 100, 0)
+            sp_naili_dict[sp][gender] = dict(zip(sp_naili_dict[sp][gender].keys(), ratio_list))
+    # print(sum(all_dict.values()))
+    data = {'all': all_dict, 'dict': sp_naili_dict}
+    return data
+
+
+def get_speed_data(sp=-1):
+    """
+    获得速度灵巧项目的数据
+    :param sp:
+    :return:
+    """
+    cursor = connection.cursor()
+    cursor.execute("select xj.XDDM, info.XBDM, hp.DJ, count(*) from health_physicalfitness as hp, student_info as info, student_xj as xj  where hp.STUDENTID\
+                    = info.ID and info.ID = xj.STUDENTID and hp.XMLBID='8' group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ")
+    result = cursor.fetchall()
+    all_dict = {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}  # 绘制饼图数据
+    sp_speed_dict = {}
+    for sp, gender, grade, num in result:
+        all_dict[grade] += num
+        if sp not in sp_speed_dict:
+            sp_speed_dict[sp] = {"-1": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}, "1": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0},
+                                "2": {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}}
+        sp_speed_dict[sp]["-1"][grade] += num
+        sp_speed_dict[sp][gender][grade] += num
+
+    all_dict = dict(zip(all_dict.keys(), np.around(np.array(list(all_dict.values())) / np.sum(list(all_dict.values())) * 100, 0)))
+
+    for sp in sp_speed_dict:
+        for gender in sp_speed_dict[sp]:
+            corr_stu_num = np.sum(list(sp_speed_dict[sp][gender].values()))
+            ratio_list = np.around(np.array(list(sp_speed_dict[sp][gender].values())) / corr_stu_num * 100, 0)
+            sp_speed_dict[sp][gender] = dict(zip(sp_speed_dict[sp][gender].keys(), ratio_list))
+    # print(sum(all_dict.values()))
+    data = {'all': all_dict, 'dict': sp_speed_dict}
+    return data
+
+
+def get_atest_data(sp=-1):
+    """
+    获得所有体质测试的数据
+    :param sp:
+    :return:
+    """
+    naili_data = get_naili_data()
+    speed_data=  get_speed_data()
+    data = {'naili': naili_data, 'speed': speed_data}
+    return data
+
+
+def get_overall_data(sp=-1):
+    """
+    获得综合体侧成绩
+    :param sp: 
+    :return: 
+    """
+    grade_level = ['不及格', '及格', '良好', '优秀']
+    cursor = connection.cursor()
+    cursor.execute("select xj.XDDM, info.XBDM, avg(FS) from health_physicalfitness as hp, student_info as info, student_xj as xj \
+                    where hp.STUDENTID = info.ID and info.ID = xj.STUDENTID group by xj.STUDENTID;")
+    result = cursor.fetchall()
+
+    sp_list, gender_list, grade_list = zip(*result)
+    grade_list = list(map(lambda x: ((4 if x >= 85 else 3) if x >= 70 else 2) if x >= 60 else 1, grade_list))
+    all_distrbt = {1: 0, 2: 0, 3: 0, 4: 0}
+    for grade in grade_list:
+        all_distrbt[grade] += 1
+    sp_grade_dict = {}   # key为sp, value也为字典(key为性别, value为对应学生的等级)
+    for sp, gender, grade in zip(sp_list, gender_list, grade_list):
+        if sp in sp_grade_dict:
+            sp_grade_dict[sp]["-1"][grade - 1] += 1
+            if gender in sp_grade_dict[sp]:
+                sp_grade_dict[sp][gender][grade - 1] += 1
+            else:
+                sp_grade_dict[sp][gender] = [0, 0, 0, 0]
+                sp_grade_dict[sp][gender][grade - 1] += 1
+        else:
+            sp_grade_dict[sp] = {"-1": [0, 0, 0, 0], gender: [0, 0, 0, 0]}
+            sp_grade_dict[sp][gender][grade - 1] += 1
+            sp_grade_dict[sp][gender][grade - 1] += 1
+
+    sp_grade_dict = {sp: {gender: list(np.around(np.array(sp_grade_dict[sp][gender]) / sum(sp_grade_dict[sp][gender]) * 100, 0)) \
+                           for gender in sp_grade_dict[sp]} for sp in sp_grade_dict}
+    data = {'all': all_distrbt, 'dict': sp_grade_dict, 'level': grade_level}
+    return data
+
+
+
 def get_yxljgl_data(study_period):
     """
     指定学习阶段, 返回对应阶段学生各年级的优秀率和及格率
@@ -277,7 +419,9 @@ def get_cjfb_data(nianji):
 
 """测试代码"""
 if __name__ == '__main__':
-    get_hw_data(-1)
+    # get_hw_data(-1)
     # calc_bmi_coeffi()
     # get_es_data()
     # get_tt_data()
+    # get_lung_data()
+    get_speed_data()

@@ -1284,8 +1284,10 @@ def get_vdata(request):
     bmi_data = []
     es_data = get_es_data()
     tt_data = get_tt_data()
-    data = [hw_data, bmi_data, es_data, tt_data]
-    print(tt_data)
+    lung_data = get_lung_data()
+    atest_data = get_atest_data()
+    overall_data = get_overall_data()
+    data = [hw_data, bmi_data, es_data, tt_data, lung_data, atest_data, overall_data]
     return JsonResponse(data=data, safe=False)
 
 

@@ -15,6 +15,11 @@ $(document).ready(function () {
             draw_bmi(result[0]);
             draw_vision_level(result[2]);
             draw_tooth_level(result[3]);
+            draw_lung_level(result[4]);
+            draw_atest_histo(result[5]);
+            draw_naili_level(result[5]["naili"]);
+            draw_speed_level(result[5]["speed"]);
+            draw_overall_level(result[6]);
         }
 
     });
@@ -31,7 +36,14 @@ $(document).ready(function () {
                 draw_std_height(result[0]);
                 draw_avg_weight(result[0]);
                 draw_std_weight(result[0]);
-                draw_bmi(result[0])
+                draw_bmi(result[0]);
+                draw_vision_level(result[2]);
+                draw_tooth_level(result[3]);
+                draw_lung_level(result[4]);
+                draw_atest_histo(result[5]);
+                draw_naili_level(result[5]["naili"]);
+                draw_speed_level(result[5]["speed"]);
+                draw_overall_level(result[6]);
             }
 
         });
@@ -528,7 +540,7 @@ function draw_bmi(data) {
         "<tr><td>女生</td><td>" + data["dict"]["1"]["2"][0] + "%</td>" + "<td>" + data["dict"]["1"]["2"][1] + "%</td>" +
         "<td>" + data["dict"]["1"]["2"][2] + "%</td>" + "<td>" + data["dict"]["1"]["2"][3] + "%</td></tr>");
 
-    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">初中</th>" +
         "<td>总体</td><td>" + data["dict"]["2"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][1] + "%</td>" +
         "<td>" + data["dict"]["2"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][3] + "%</td></tr>" +
         "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["1"][1] + "%</td>" +
@@ -536,7 +548,7 @@ function draw_bmi(data) {
         "<tr><td>女生</td><td>" + data["dict"]["2"]["2"][0] + "%</td>" + "<td>" + data["dict"]["2"]["2"][1] + "%</td>" +
         "<td>" + data["dict"]["2"]["2"][2] + "%</td>" + "<td>" + data["dict"]["2"]["2"][3] + "%</td></tr>");
 
-    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">高中</th>" +
         "<td>总体</td><td>" + data["dict"]["3"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][1] + "%</td>" +
         "<td>" + data["dict"]["3"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][3] + "%</td></tr>" +
         "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["1"][1] + "%</td>" +
@@ -548,7 +560,6 @@ function draw_bmi(data) {
     es_table.append(juniorNode);
     es_table.append(highNode);
 }
-
 
 function draw_vision_level(data) {
     var myChart = echarts.init(document.getElementById('chart-grade-7'));
@@ -727,7 +738,6 @@ function draw_vision_level(data) {
 
 }
 
-
 function draw_tooth_level(data) {
     var myChart = echarts.init(document.getElementById('chart-grade-9'));
     option = {
@@ -773,10 +783,10 @@ function draw_tooth_level(data) {
                 radius: '55%',
                 center: ['50%', '60%'],
                 data: [
-                    {value: data['all'][0], name: data['level'][0]},
-                    {value: data['all'][1], name: data['level'][1]},
-                    {value: data['all'][2], name: data['level'][2]},
-                    {value: data['all'][3], name: data['level'][3]},
+                    {value: data['all'][1], name: data['level'][0]},
+                    {value: data['all'][2], name: data['level'][1]},
+                    {value: data['all'][3], name: data['level'][2]},
+                    {value: data['all'][4], name: data['level'][3]},
                 ]
             }
         ]
@@ -792,7 +802,7 @@ function draw_tooth_level(data) {
         "<tr><td>女生</td><td>" + data["dict"]["1"]["2"][0] + "%</td>" + "<td>" + data["dict"]["1"]["2"][1] + "%</td>" +
         "<td>" + data["dict"]["1"]["2"][2] + "%</td>" + "<td>" + data["dict"]["1"]["2"][3] + "%</td></tr>");
 
-    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">初中</th>" +
         "<td>总体</td><td>" + data["dict"]["2"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][1] + "%</td>" +
         "<td>" + data["dict"]["2"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][3] + "%</td></tr>" +
         "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["1"][1] + "%</td>" +
@@ -800,7 +810,7 @@ function draw_tooth_level(data) {
         "<tr><td>女生</td><td>" + data["dict"]["2"]["2"][0] + "%</td>" + "<td>" + data["dict"]["2"]["2"][1] + "%</td>" +
         "<td>" + data["dict"]["2"]["2"][2] + "%</td>" + "<td>" + data["dict"]["2"]["2"][3] + "%</td></tr>");
 
-    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">高中</th>" +
         "<td>总体</td><td>" + data["dict"]["3"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][1] + "%</td>" +
         "<td>" + data["dict"]["3"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][3] + "%</td></tr>" +
         "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["1"][1] + "%</td>" +
@@ -808,6 +818,333 @@ function draw_tooth_level(data) {
         "<tr><td>女生</td><td>" + data["dict"]["3"]["2"][0] + "%</td>" + "<td>" + data["dict"]["3"]["2"][1] + "%</td>" +
         "<td>" + data["dict"]["3"]["2"][2] + "%</td>" + "<td>" + data["dict"]["3"]["2"][3] + "%</td></tr>");
     var tt_table = $("tbody[class='888']");
+    tt_table.append(primaryNode);
+    tt_table.append(juniorNode);
+    tt_table.append(highNode);
+
+}
+
+function draw_lung_level(data) {
+    var myChart = echarts.init(document.getElementById('chart-grade-11'));
+    option = {
+        title: {
+            text: '所有学生肺活量情况分布',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: ['不及格', '及格', '良好', '优秀']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1548
+                        }
+                    }
+                },
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        series: [
+            {
+                name: '所有学生肺活量情况分布',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: data['all']['不及格'], name: '不及格'},
+                    {value: data['all']['及格'], name: '及格'},
+                    {value: data['all']['良好'], name: '良好'},
+                    {value: data['all']['优秀'], name: '优秀'},
+                ]
+            }
+        ]
+    };
+    myChart.setOption(option);
+
+
+    var primaryNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["1"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["1"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["1"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["2"]["优秀"] + "%</td></tr>");
+
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">初中</th>" +
+        "<td>总体</td><td>" + data["dict"]["2"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["2"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["2"]["优秀"] + "%</td></tr>");
+
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">高中</th>" +
+        "<td>总体</td><td>" + data["dict"]["3"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["3"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["2"]["优秀"] + "%</td></tr>");
+    var tt_table = $("tbody[class='333']");
+    tt_table.append(primaryNode);
+    tt_table.append(juniorNode);
+    tt_table.append(highNode);
+
+}
+
+function draw_overall_level(data) {
+    var myChart = echarts.init(document.getElementById('chart-grade-20'));
+    option = {
+        title: {
+            text: '学生体质综合状况分布',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: data["level"]
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1548
+                        }
+                    }
+                },
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        series: [
+            {
+                name: '所有学生体质综合状况情况分布',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: data['all'][1], name: data['level'][0]},
+                    {value: data['all'][2], name: data['level'][1]},
+                    {value: data['all'][3], name: data['level'][2]},
+                    {value: data['all'][4], name: data['level'][3]},
+                ]
+            }
+        ]
+    };
+    myChart.setOption(option);
+
+
+    var primaryNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["1"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["1"]["1"][0] + "%</td>" + "<td>" + data["dict"]["1"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["1"][2] + "%</td>" + "<td>" + data["dict"]["1"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["1"]["2"][0] + "%</td>" + "<td>" + data["dict"]["1"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["1"]["2"][2] + "%</td>" + "<td>" + data["dict"]["1"]["2"][3] + "%</td></tr>");
+
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">初中</th>" +
+        "<td>总体</td><td>" + data["dict"]["2"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"][0] + "%</td>" + "<td>" + data["dict"]["2"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["1"][2] + "%</td>" + "<td>" + data["dict"]["2"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["2"]["2"][0] + "%</td>" + "<td>" + data["dict"]["2"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["2"]["2"][2] + "%</td>" + "<td>" + data["dict"]["2"]["2"][3] + "%</td></tr>");
+
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">高中</th>" +
+        "<td>总体</td><td>" + data["dict"]["3"]["-1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["-1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["-1"][3] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"][0] + "%</td>" + "<td>" + data["dict"]["3"]["1"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["1"][2] + "%</td>" + "<td>" + data["dict"]["3"]["1"][3] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["3"]["2"][0] + "%</td>" + "<td>" + data["dict"]["3"]["2"][1] + "%</td>" +
+        "<td>" + data["dict"]["3"]["2"][2] + "%</td>" + "<td>" + data["dict"]["3"]["2"][3] + "%</td></tr>");
+    var tt_table = $("tbody[class='1111']");
+    tt_table.append(primaryNode);
+    tt_table.append(juniorNode);
+    tt_table.append(highNode);
+
+}
+
+function draw_atest_histo(data) {
+    var myChart = echarts.init(document.getElementById('chart-grade-13'));
+    option = {
+        title: {
+            text: '学生各类测试等级分布图',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        legend: {
+            data: ['不及格', '及格', '良好', '优秀'],
+            y: 'bottom'
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: ['耐力项目', '速度灵巧项目'],
+                axisPointer: {
+                    type: 'shadow'
+                },
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '百分比',
+                interval: 10,
+            }
+        ],
+        series: [
+            {
+                name: '不及格',
+                type: 'bar',
+                data: [data["naili"]["all"]["不及格"], data["speed"]["all"]["不及格"]],
+                itemStyle: {
+                    normal: {
+                        color: '#d14a61',
+                    }
+                }
+            },
+            {
+                name: '及格',
+                type: 'bar',
+                data: [data["naili"]["all"]["及格"], data["speed"]["all"]["及格"]],
+                itemStyle: {
+                    normal: {
+                        color: '#5793f3'
+                    }
+                }
+            },
+            {
+                name: '良好',
+                type: 'bar',
+                data: [data["naili"]["all"]["良好"], data["speed"]["all"]["良好"]],
+                itemStyle: {
+                    normal: {
+                        color: '#EA7500',
+                    }
+                }
+            },
+            {
+                name: '优秀',
+                type: 'bar',
+                data: [data["naili"]["all"]["优秀"], data["speed"]["all"]["优秀"]],
+                itemStyle: {
+                    normal: {
+                        color: '#4f9D9D'
+                    }
+                }
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+function draw_naili_level(data) {
+
+    var primaryNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["1"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["1"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["1"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["2"]["优秀"] + "%</td></tr>");
+
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">初中</th>" +
+        "<td>总体</td><td>" + data["dict"]["2"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["2"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["2"]["优秀"] + "%</td></tr>");
+
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">高中</th>" +
+        "<td>总体</td><td>" + data["dict"]["3"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["3"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["2"]["优秀"] + "%</td></tr>");
+    var tt_table = $("tbody[class='111']");
+    tt_table.append(primaryNode);
+    tt_table.append(juniorNode);
+    tt_table.append(highNode);
+
+}
+
+function draw_speed_level(data) {
+
+    var primaryNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">小学</th>" +
+        "<td>总体</td><td>" + data["dict"]["1"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["1"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["1"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["1"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["1"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["1"]["2"]["优秀"] + "%</td></tr>");
+
+    var juniorNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">初中</th>" +
+        "<td>总体</td><td>" + data["dict"]["2"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["2"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["2"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["2"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["2"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["2"]["2"]["优秀"] + "%</td></tr>");
+
+    var highNode = $("<tr><th class=\"text-center\" rowspan=\"3\" style=\"vertical-align: middle;\">高中</th>" +
+        "<td>总体</td><td>" + data["dict"]["3"]["-1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["-1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["-1"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["-1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>男生</trtd><td>" + data["dict"]["3"]["1"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["1"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["1"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["1"]["优秀"] + "%</td></tr>" +
+        "<tr><td>女生</td><td>" + data["dict"]["3"]["2"]["不及格"] + "%</td>" + "<td>" + data["dict"]["3"]["2"]["及格"] + "%</td>" +
+        "<td>" + data["dict"]["3"]["2"]["良好"] + "%</td>" + "<td>" + data["dict"]["3"]["2"]["优秀"] + "%</td></tr>");
+    var tt_table = $("tbody[class='222']");
     tt_table.append(primaryNode);
     tt_table.append(juniorNode);
     tt_table.append(highNode);

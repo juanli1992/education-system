@@ -73,18 +73,18 @@ MAIN CONTENT
                                 </select>
                             </div>
                         </div>
-                        <div class="cls form-group col-lg-4">
-                            <label class="col-lg-3 control-label text-info"
-                                   style="font-size: 17px; margin-top: 5px"><strong>年级</strong></label>
-                            <div class="col-lg-8">
-                                <select class="form-control" id="grade_">
-                                    {% for grade in grade_list %}
-                                        <option> {{ grade }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-6">
+                        {#                        <div class="cls form-group col-lg-4">#}
+                        {#                            <label class="col-lg-3 control-label text-info"#}
+                        {#                                   style="font-size: 17px; margin-top: 5px"><strong>年级</strong></label>#}
+                        {#                            <div class="col-lg-8">#}
+                        {#                                <select class="form-control" id="grade_">#}
+                        {#                                    {% for grade in grade_list %}#}
+                        {#                                        <option> {{ grade }}</option>#}
+                        {#                                    {% endfor %}#}
+                        {#                                </select>#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                        <div class="form-group col-lg-4">
                             <button class="btn btn-theme" id="inquirybtn" type="button" onclick="charts()">查询</button>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ MAIN CONTENT
         </div>
         <div class="col-lg-12 detailed">
             <div class="row content-panel">
-                <h4>成长记录</h4>
+                {#                <h4>成长记录</h4>#}
                 <div class="panel-heading">
                     <ul class="nav nav-tabs nav-justified">
                         {#                        <li class="active">#}
@@ -126,8 +126,49 @@ MAIN CONTENT
                         {#                            </div>#}
                         {#                        </div>#}
 
-                        <!-- /成绩分析 -->
+                        <!-- /身心健康 -->
                         <div id="grades" class="tab-pane active">
+                            <h4>体质综合状况</h4>
+                            <div class="row mt">
+                                <div class="col-lg-6 col-lg-offset-3 detailed">
+                                    <div class="center-block" id="chart-grade-20" style="width: 450px;height:400px;"></div>
+                                </div>
+{#                                <div class="col-lg-5">#}
+{#                                    <div id="chart-grade-21" style="width: 450px;height:400px;"></div>#}
+{#                                </div>#}
+                            </div>
+                            <!-- 综合状况 -->
+                            <div class="row mt">
+                                <center><h5>各学段男女生体能测试等级对照表</h5></center>
+
+                                <div class="col-lg-offset-2 col-lg-8">
+                                    <table id="1111" class="table table-bordered table-striped table-hover"
+                                           style="font-size: 13px; text-align: center;">
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">学段</th>
+                                            <th class="text-center">性别</th>
+                                            <th class="text-center">不及格</th>
+                                            <th class="text-center">及格</th>
+                                            <th class="text-center">良好</th>
+                                            <th class="text-center">优秀</th>
+
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="1111">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+<!-- ====================================================================== -->
+                            <h4>身体形态</h4>
+                            <!-- 身高图  -->
                             <div class="row mt">
                                 <div class="col-lg-5 col-lg-offset-1 detailed">
                                     <div id="chart-grade-1" style="width: 450px;height:400px;"></div>
@@ -136,6 +177,7 @@ MAIN CONTENT
                                     <div id="chart-grade-2" style="width: 450px;height:400px;"></div>
                                 </div>
                             </div>
+                            <!-- 体重图 -->
                             <div class="row mt">
                                 <div class="col-lg-5 col-lg-offset-1 detailed">
                                     <div id="chart-grade-3" style="width: 450px;height:400px;"></div>
@@ -144,6 +186,7 @@ MAIN CONTENT
                                     <div id="chart-grade-4" style="width: 450px;height:400px;"></div>
                                 </div>
                             </div>
+                            <!-- BMI与肥胖率图 -->
                             <div class="row mt">
                                 <div class="col-lg-5 col-lg-offset-1 detailed">
                                     <div id="chart-grade-5" style="width: 450px;height:400px;"></div>
@@ -152,8 +195,9 @@ MAIN CONTENT
                                     <div id="chart-grade-6" style="width: 450px;height:400px;"></div>
                                 </div>
                             </div>
+                            <!-- BMI表 -->
                             <div class="row mt">
-                                <h4>各学段体重指数bmi检查结果对照表</h4>
+                                <center><h5>各学段体重指数bmi检查结果对照表</h5></center>
                                 <div class="col-lg-offset-2 col-lg-8">
                                     <table id="999" class="table table-bordered table-striped table-hover"
                                            style="font-size: 13px; text-align: center;">
@@ -177,6 +221,11 @@ MAIN CONTENT
                                     </table>
                                 </div>
                             </div>
+                            <br>
+                            <br>
+<!-- ====================================================================== -->
+                            <h4>健康保健</h4>
+                            <!-- 视力图 -->
                             <div class="row mt">
                                 <div class="col-lg-5 col-lg-offset-1 detailed">
                                     <div id="chart-grade-7" style="width: 450px;height:400px;"></div>
@@ -185,8 +234,9 @@ MAIN CONTENT
                                     <div id="chart-grade-8" style="width: 450px;height:400px;"></div>
                                 </div>
                             </div>
+                            <!-- 视力表 -->
                             <div class="row mt">
-                                <h4>各学段视力检查结果对照表</h4>
+                                <center><h5>各学段视力检查结果对照表</h5></center>
                                 <div class="col-lg-offset-2 col-lg-8">
                                     <table id="777" class="table table-bordered table-striped table-hover"
                                            style="font-size: 13px; text-align: center;">
@@ -210,17 +260,18 @@ MAIN CONTENT
                                     </table>
                                 </div>
                             </div>
+                            <!-- 牙齿图 -->
                             <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-grade-9" style="width: 450px;height:400px;"></div>
+                                <div class="col-lg-6 col-lg-offset-3 detailed">
+                                    <div class="center-block" id="chart-grade-9" style="width: 450px;height:400px;"></div>
                                 </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-grade-10" style="width: 450px;height:400px;"></div>
-                                </div>
+{#                                <div class="col-lg-5">#}
+{#                                    <div id="chart-grade-10" style="width: 450px;height:400px;"></div>#}
+{#                                </div>#}
                             </div>
-
+                            <!-- 牙齿表 -->
                             <div class="row mt">
-                                <h4>各学段学生口腔检查结果等级对照表</h4>
+                                <center><h5>各学段学生口腔检查结果等级对照表</h5></center>
                                 <div class="col-lg-offset-2 col-lg-8">
                                     <table id="888" class="table table-bordered table-striped table-hover"
                                            style="font-size: 13px; text-align: center;">
@@ -244,90 +295,221 @@ MAIN CONTENT
                                     </table>
                                 </div>
                             </div>
+                            <br>
+                            <br>
+<!-- ====================================================================== -->
+                            <h4>体能测试</h4>
+                            <!-- 肺活量图 -->
+                            <div class="row mt">
+                                <div class="col-lg-6 col-lg-offset-3 detailed">
+                                    <div class="center-block" id="chart-grade-11" style="width: 450px;height:400px;"></div>
+                                </div>
+{#                                <div class="col-lg-5">#}
+{#                                    <div id="chart-grade-12" style="width: 450px;height:400px;"></div>#}
+{#                                </div>#}
+                            </div>
+                            <!-- 肺活量表 -->
+                            <div class="row mt">
+                                <center><h5>各学段男女生肺活量等级对照表</h5></center>
+
+                                <div class="col-lg-offset-2 col-lg-8">
+                                    <table id="333" class="table table-bordered table-striped table-hover"
+                                           style="font-size: 13px; text-align: center;">
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">学段</th>
+                                            <th class="text-center">性别</th>
+                                            <th class="text-center">不及格</th>
+                                            <th class="text-center">及格</th>
+                                            <th class="text-center">良好</th>
+                                            <th class="text-center">优秀</th>
+
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="333">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 体能测试评价结果(直方图) -->
+                            <div class="row mt">
+                                <div class="col-lg-6 col-lg-offset-3 detailed">
+                                    <div class="center-block" id="chart-grade-13" style="width: 450px;height:400px;"></div>
+                                </div>
+{#                                <div class="col-lg-5">#}
+{#                                    <div id="chart-grade-14" style="width: 450px;height:400px;"></div>#}
+{#                                </div>#}
+                            </div>
+                            <!-- 耐力项目表 -->
+                            <div class="row mt">
+                                <center><h5>各学段学生耐力测试等级对照表</h5></center>
+
+                                <div class="col-lg-offset-2 col-lg-8">
+                                    <table id="111" class="table table-bordered table-striped table-hover"
+                                           style="font-size: 13px; text-align: center;">
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">学段</th>
+                                            <th class="text-center">性别</th>
+                                            <th class="text-center">不及格</th>
+                                            <th class="text-center">及格</th>
+                                            <th class="text-center">良好</th>
+                                            <th class="text-center">优秀</th>
+
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="111">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- 速度灵巧表 -->
+                            <div class="row mt">
+                                <center><h5>各学段学生速度灵巧测试等级对照表</h5></center>
+
+                                <div class="col-lg-offset-2 col-lg-8">
+                                    <table id="222" class="table table-bordered table-striped table-hover"
+                                           style="font-size: 13px; text-align: center;">
+                                        <thead>
+                                        <tr class="info">
+                                            {#                                                <th>学号</th>#}
+                                            <th class="text-center">学段</th>
+                                            <th class="text-center">性别</th>
+                                            <th class="text-center">不及格</th>
+                                            <th class="text-center">及格</th>
+                                            <th class="text-center">良好</th>
+                                            <th class="text-center">优秀</th>
+
+                                        </tr>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="222">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+{#                            <div class="row mt">#}
+                                {#                                <h4>各学段学生口腔检查结果等级对照表</h4>#}
+{#                                <h4>操你妈来个臭B</h4>#}
+{##}
+{#                                <div class="col-lg-offset-2 col-lg-8">#}
+{#                                    <table id="000" class="table table-bordered table-striped table-hover"#}
+{#                                           style="font-size: 13px; text-align: center;">#}
+{#                                        <thead>#}
+{#                                        <tr class="info">#}
+                                            {#                                                <th>学号</th>#}
+{#                                            <th class="text-center">学段</th>#}
+{#                                            <th class="text-center">性别</th>#}
+{#                                            <th class="text-center">不及格</th>#}
+{#                                            <th class="text-center">及格</th>#}
+{#                                            <th class="text-center">良好</th>#}
+{#                                            <th class="text-center">优秀</th>#}
+{##}
+{#                                        </tr>#}
+{#                                        <tr>#}
+{#                                        </tr>#}
+{#                                        </thead>#}
+{#                                        <tbody class="000">#}
+{##}
+{#                                        </tbody>#}
+{#                                    </table>#}
+{#                                </div>#}
+{#                            </div>#}
+
+
+                            <!-- /校园生活 -->
+                            <div id="life" class="tab-pane">
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-life-1" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-life-2" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-life-3" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-life-4" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- /身体健康 -->
+                            <div id="health" class="tab-pane">
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-health-1" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-health-2" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-health-3" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-health-4" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-health-5" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-health-6" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-health-7" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- /图书馆访问 -->
+                            <div id="library" class="tab-pane">
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-library-1" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-library-2" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row mt">
+                                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                                        <div id="chart-library-3" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div id="chart-library-4" style="width: 450px;height:400px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-
-                        <!-- /校园生活 -->
-                        <div id="life" class="tab-pane">
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-life-1" style="width: 450px;height:400px;"></div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-life-2" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-life-3" style="width: 450px;height:400px;"></div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-life-4" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- /身体健康 -->
-                        <div id="health" class="tab-pane">
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-health-1" style="width: 450px;height:400px;"></div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-health-2" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-health-3" style="width: 450px;height:400px;"></div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-health-4" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-health-5" style="width: 450px;height:400px;"></div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-health-6" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-health-7" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- /图书馆访问 -->
-                        <div id="library" class="tab-pane">
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-library-1" style="width: 450px;height:400px;"></div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-library-2" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                            <div class="row mt">
-                                <div class="col-lg-5 col-lg-offset-1 detailed">
-                                    <div id="chart-library-3" style="width: 450px;height:400px;"></div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div id="chart-library-4" style="width: 450px;height:400px;"></div>
-                                </div>
-                            </div>
-                        </div>
-
+                        <!-- /tab-content -->
                     </div>
-                    <!-- /tab-content -->
+                    <!-- /panel-body -->
                 </div>
-                <!-- /panel-body -->
+                <!-- /row content-panel -->
             </div>
-            <!-- /row content-panel -->
-        </div>
-        <!-- /col-lg-12 -->
+            <!-- /col-lg-12 -->
     </section>
     <!-- /wrapper -->
 </section>
