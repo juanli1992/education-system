@@ -304,6 +304,45 @@ def get_overall_data(sp=-1):
     return data
 
 
+def get_b_g_t_Num(num_list, nj_list, xb_list, nj_num, nj_list_qc):
+    """
+    返回各年级 男生 女生 总的 人数np.array
+    :param num_list:
+    :param nj_list:
+    :param xb_list:
+    :return:
+    """
+
+    boy_num_lis = np.zeros(nj_num)
+    girl_num_lis = np.zeros(nj_num)
+    tot_num_list = np.zeros(nj_num)
+    for num, grade, gender in zip(num_list, nj_list, xb_list):
+        if gender == '1':
+            boy_num_lis[nj_list_qc.index(grade)] += num
+        else: #2
+            girl_num_lis[nj_list_qc.index(grade)] += num
+        tot_num_list[nj_list_qc.index(grade)] += num
+
+    return boy_num_lis, girl_num_lis, tot_num_list
+
+
+def get_b_g_t_Avg(count_list, avg_list, nj_list, xb_list, nj_num, nj_list_qc):
+    """
+    返回各年级 男生 女生 总的 平均分np.array
+    """
+
+    boy_num_lis = np.zeros(nj_num)
+    girl_num_lis = np.zeros(nj_num)
+    tot_num_list = np.zeros(nj_num)
+    for count, num, grade, gender in zip(count_list, avg_list, nj_list, xb_list):
+        if gender == '1':
+            boy_num_lis[nj_list_qc.index(grade)] += float(num)
+        else: #2
+            girl_num_lis[nj_list_qc.index(grade)] += float(num)
+        tot_num_list[nj_list_qc.index(grade)] += (count*float(num))
+
+    return boy_num_lis, girl_num_lis, tot_num_list
+
 
 def get_yxljgl_data(study_period):
     """
@@ -318,75 +357,192 @@ def get_yxljgl_data(study_period):
 
     if study_period == -1:  # 查询所有学段的学生 及格人数大于60
         cursor.execute( # count()
-            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=60 group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;")
+            "select count(*),xj.NJDM,info.XBDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=60 group by study.XKDM,xj.NJDM,info.XBDM order by study.XKDM,xj.NJDM,info.XBDM;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         cursor.execute(
-            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=60 and XDDM = {} group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;".format(study_period))
+            "select count(*),xj.NJDM,info.XBDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=60 and XDDM = {} group by study.XKDM,xj.NJDM,info.XBDM order by study.XKDM,xj.NJDM,info.XBDM;".format(study_period))
     results1 = cursor.fetchall()
 
     if study_period == -1:  # 查询所有学段的学生 总人数
         cursor.execute( # count()
-            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;")
+            "select count(*),avg(study.FS),xj.NJDM,info.XBDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID group by study.XKDM,xj.NJDM,info.XBDM order by study.XKDM,xj.NJDM,info.XBDM;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         cursor.execute(
-            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and XDDM = {} group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;".format(study_period))
+            "select count(*),avg(study.FS),xj.NJDM,info.XBDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and XDDM = {} group by study.XKDM,xj.NJDM,info.XBDM order by study.XKDM,xj.NJDM,info.XBDM;".format(study_period))
     results2 = cursor.fetchall()
 
     if study_period == -1:  # 查询所有学段的学生 优秀人数大于90
         cursor.execute( # count()
-            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=90 group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;")
+            "select count(*),xj.NJDM,info.XBDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=90 group by study.XKDM,xj.NJDM,info.XBDM order by study.XKDM,xj.NJDM,info.XBDM;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         cursor.execute(
-            "select count(*),xj.NJDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=90 and XDDM = {} group by study.XKDM,xj.NJDM order by study.XKDM,xj.NJDM;".format(study_period))
+            "select count(*),xj.NJDM,info.XBDM,study.XKDM from study, student_xj as xj, student_info as info where study.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and study.FS>=90 and XDDM = {} group by study.XKDM,xj.NJDM,info.XBDM order by study.XKDM,xj.NJDM,info.XBDM;".format(study_period))
     results3 = cursor.fetchall()
 
     # 获得绘图数据
-    jige_list_yw, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '103'])
-    grade_name_list_yw = [grade_dict[grade_id] for grade_id in nj_list]
-    jige_list_sx, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '121'])
-    grade_name_list_sx = [grade_dict[grade_id] for grade_id in nj_list]
-    jige_list_yy, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results1 if row[2] == '122'])
-    grade_name_list_yy = [grade_dict[grade_id] for grade_id in nj_list]
-    jige_list_yw = np.array(jige_list_yw)
-    jige_list_sx = np.array(jige_list_sx)
-    jige_list_yy = np.array(jige_list_yy)
+    #  语文
+    total_list_yw, avg_list_yw, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3], row[4]) for row in results2 if row[4] == '103'])
+    nj_list_qc = list(set(nj_list)) #年级list 去重
+    nj_list_qc.sort()
+    grade_name_list_yw = [grade_dict[grade_id] for grade_id in nj_list_qc] #年级名称
+    nj_num = len(nj_list_qc)
 
-    total_list_yw, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results2 if row[2] == '103'])
-    total_list_sx, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results2 if row[2] == '121'])
-    total_list_yy, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results2 if row[2] == '122'])
-    total_list_yw = np.array(total_list_yw)
-    total_list_sx = np.array(total_list_sx)
-    total_list_yy = np.array(total_list_yy)
+    boy_num_lis_tt_yw, girl_num_lis_tt_yw, tot_num_list_tt_yw = get_b_g_t_Num(total_list_yw, nj_list, xb_list,
+                                                                              nj_num, nj_list_qc)
+    boy_avg_lis_yw, girl_avg_lis_yw, tot_numcount_list_yw = get_b_g_t_Avg(total_list_yw, avg_list_yw, nj_list, xb_list, nj_num, nj_list_qc)
+    tot_avg_lis_yw = tot_numcount_list_yw/tot_num_list_tt_yw
+    boy_avg_lis_yw = list(boy_avg_lis_yw)
+    girl_avg_lis_yw = list(girl_avg_lis_yw)
+    tot_avg_lis_yw = list(tot_avg_lis_yw)
 
-    youxiu_list_yw, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results3 if row[2] == '103'])
-    youxiu_list_sx, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results3 if row[2] == '121'])
-    youxiu_list_yy, nj_list, xk_list = zip(*[(row[0], row[1], row[2]) for row in results3 if row[2] == '122'])
-    youxiu_list_yw = np.array(youxiu_list_yw)
-    youxiu_list_sx = np.array(youxiu_list_sx)
-    youxiu_list_yy = np.array(youxiu_list_yy)
 
-    # jige_list, nj_list = zip(*results1) #单个
-    # total_list, nj_list = zip(*results2)
-    # youxiu_list, nj_list = zip(*results3)
-    # jg_list = np.array(jige_list)
-    # t_list = np.array(total_list)
-    # yx_list = np.array(youxiu_list)
+    jige_list_yw, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3]) for row in results1 if row[3] == '103'])
+    boy_num_lis_jg_yw, girl_num_lis_jg_yw, tot_num_list_jg_yw = get_b_g_t_Num(jige_list_yw, nj_list, xb_list, nj_num, nj_list_qc)
 
-    jgl_list_yw = list(jige_list_yw / total_list_yw)
-    jgl_list_sx = list(jige_list_sx / total_list_sx)
-    jgl_list_yy = list(jige_list_yy / total_list_yy)
-    yxl_list_yw = list(youxiu_list_yw / total_list_yw)
-    yxl_list_sx = list(youxiu_list_sx / total_list_sx)
-    yxl_list_yy = list(youxiu_list_yy / total_list_sx)
-    # print('jg_list')
-    # print(jg_list)
-    # print('yxl_list')
-    # print(yxl_list)
-    grade_name_list = [grade_dict[grade_id] for grade_id in nj_list]
 
-    data = {'dataP': [jgl_list_yw, yxl_list_yw, jgl_list_sx, yxl_list_sx, jgl_list_yy, yxl_list_yy], 'grade': [grade_name_list_yw, grade_name_list_sx, grade_name_list_yy]}
+    youxiu_list_yw, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3]) for row in results3 if row[3] == '103'])
+    boy_num_lis_yx_yw, girl_num_lis_yx_yw, tot_num_list_yx_yw = get_b_g_t_Num(youxiu_list_yw, nj_list, xb_list, nj_num, nj_list_qc)
+
+    #及格
+    jgl_list_yw_boy = list(boy_num_lis_jg_yw / boy_num_lis_tt_yw)
+    jgl_list_yw_girl = list(girl_num_lis_jg_yw / girl_num_lis_tt_yw)
+    jgl_list_yw_tot = list(tot_num_list_jg_yw / tot_num_list_tt_yw)
+    #优秀
+    yxl_list_yw_boy = list(boy_num_lis_yx_yw / boy_num_lis_tt_yw)
+    yxl_list_yw_girl = list(girl_num_lis_yx_yw / girl_num_lis_tt_yw)
+    yxl_list_yw_tot = list(tot_num_list_yx_yw / tot_num_list_tt_yw)
+    #table
+    table_rows = []
+    for it1,it2,it3,it4 in zip(grade_name_list_yw, jgl_list_yw_boy, yxl_list_yw_boy, boy_avg_lis_yw):
+        row = [it1, '男生', it3, it2, it4]
+        table_rows.append(row)
+
+    for it1,it2,it3,it4 in zip(grade_name_list_yw, jgl_list_yw_girl, yxl_list_yw_girl, girl_avg_lis_yw):
+        row = [it1, '女生', it3, it2, it4]
+        table_rows.append(row)
+
+    for it1,it2,it3,it4 in zip(grade_name_list_yw, jgl_list_yw_tot, yxl_list_yw_tot, tot_avg_lis_yw):
+        row = [it1, '总体', it3, it2, it4]
+        table_rows.append(row)
+
+
+
+    #  数学
+    total_list_sx, avg_list_sx, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3], row[4]) for row in results2 if row[4] == '121'])
+    nj_list_qc = list(set(nj_list)) #年级list 去重
+    nj_list_qc.sort()
+    grade_name_list_sx = [grade_dict[grade_id] for grade_id in nj_list_qc] #年级名称
+    nj_num = len(nj_list_qc)
+
+    boy_num_lis_tt_sx, girl_num_lis_tt_sx, tot_num_list_tt_sx = get_b_g_t_Num(total_list_sx, nj_list, xb_list,
+                                                                              nj_num, nj_list_qc)
+    boy_avg_lis_sx, girl_avg_lis_sx, tot_numcount_list_sx = get_b_g_t_Avg(total_list_sx, avg_list_sx, nj_list, xb_list, nj_num, nj_list_qc)
+    tot_avg_lis_sx = tot_numcount_list_sx/tot_num_list_tt_sx
+    boy_avg_lis_sx = list(boy_avg_lis_sx)
+    girl_avg_lis_sx = list(girl_avg_lis_sx)
+    tot_avg_lis_sx = list(tot_avg_lis_sx)
+
+
+    jige_list_sx, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3]) for row in results1 if row[3] == '121'])
+    boy_num_lis_jg_sx, girl_num_lis_jg_sx, tot_num_list_jg_sx = get_b_g_t_Num(jige_list_sx, nj_list, xb_list, nj_num, nj_list_qc)
+
+
+    youxiu_list_sx, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3]) for row in results3 if row[3] == '121'])
+    boy_num_lis_yx_sx, girl_num_lis_yx_sx, tot_num_list_yx_sx = get_b_g_t_Num(youxiu_list_sx, nj_list, xb_list, nj_num, nj_list_qc)
+
+    #及格
+    jgl_list_sx_boy = list(boy_num_lis_jg_sx / boy_num_lis_tt_sx)
+    jgl_list_sx_girl = list(girl_num_lis_jg_sx / girl_num_lis_tt_sx)
+    jgl_list_sx_tot = list(tot_num_list_jg_sx / tot_num_list_tt_sx)
+    #优秀
+    yxl_list_sx_boy = list(boy_num_lis_yx_sx / boy_num_lis_tt_sx)
+    yxl_list_sx_girl = list(girl_num_lis_yx_sx / girl_num_lis_tt_sx)
+    yxl_list_sx_tot = list(tot_num_list_yx_sx / tot_num_list_tt_sx)
+    #table
+    table_rows_sx = []
+    for it1,it2,it3,it4 in zip(grade_name_list_sx, jgl_list_sx_boy, yxl_list_sx_boy, boy_avg_lis_sx):
+        row = [it1, '男生', it3, it2, it4]
+        table_rows_sx.append(row)
+
+    for it1,it2,it3,it4 in zip(grade_name_list_sx, jgl_list_sx_girl, yxl_list_sx_girl, girl_avg_lis_sx):
+        row = [it1, '女生', it3, it2, it4]
+        table_rows_sx.append(row)
+
+    for it1,it2,it3,it4 in zip(grade_name_list_sx, jgl_list_sx_tot, yxl_list_sx_tot, tot_avg_lis_sx):
+        row = [it1, '总体', it3, it2, it4]
+        table_rows_sx.append(row)
+
+
+
+    #  英语
+    total_list_yy, avg_list_yy, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3], row[4]) for row in results2 if row[4] == '122'])
+    nj_list_qc = list(set(nj_list)) #年级list 去重
+    nj_list_qc.sort()
+    grade_name_list_yy = [grade_dict[grade_id] for grade_id in nj_list_qc] #年级名称
+    nj_num = len(nj_list_qc)
+
+    boy_num_lis_tt_yy, girl_num_lis_tt_yy, tot_num_list_tt_yy = get_b_g_t_Num(total_list_yy, nj_list, xb_list,
+                                                                              nj_num, nj_list_qc)
+    boy_avg_lis_yy, girl_avg_lis_yy, tot_numcount_list_yy = get_b_g_t_Avg(total_list_yy, avg_list_yy, nj_list, xb_list, nj_num, nj_list_qc)
+    tot_avg_lis_yy = tot_numcount_list_yy/tot_num_list_tt_yy
+    boy_avg_lis_yy = list(boy_avg_lis_yy)
+    girl_avg_lis_yy = list(girl_avg_lis_yy)
+    tot_avg_lis_yy = list(tot_avg_lis_yy)
+
+
+    jige_list_yy, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3]) for row in results1 if row[3] == '122'])
+    boy_num_lis_jg_yy, girl_num_lis_jg_yy, tot_num_list_jg_yy = get_b_g_t_Num(jige_list_yy, nj_list, xb_list, nj_num, nj_list_qc)
+
+
+    youxiu_list_yy, nj_list, xb_list, xk_list = zip(*[(row[0], row[1], row[2], row[3]) for row in results3 if row[3] == '122'])
+    boy_num_lis_yx_yy, girl_num_lis_yx_yy, tot_num_list_yx_yy = get_b_g_t_Num(youxiu_list_yy, nj_list, xb_list, nj_num, nj_list_qc)
+
+    #及格
+    jgl_list_yy_boy = list(boy_num_lis_jg_yy / boy_num_lis_tt_yy)
+    jgl_list_yy_girl = list(girl_num_lis_jg_yy / girl_num_lis_tt_yy)
+    jgl_list_yy_tot = list(tot_num_list_jg_yy / tot_num_list_tt_yy)
+    #优秀
+    yxl_list_yy_boy = list(boy_num_lis_yx_yy / boy_num_lis_tt_yy)
+    yxl_list_yy_girl = list(girl_num_lis_yx_yy / girl_num_lis_tt_yy)
+    yxl_list_yy_tot = list(tot_num_list_yx_yy / tot_num_list_tt_yy)
+    #table
+    table_rows_yy = []
+    for it1,it2,it3,it4 in zip(grade_name_list_yy, jgl_list_yy_boy, yxl_list_yy_boy, boy_avg_lis_yy):
+        row = [it1, '男生', it3, it2, it4]
+        table_rows_yy.append(row)
+
+    for it1,it2,it3,it4 in zip(grade_name_list_yy, jgl_list_yy_girl, yxl_list_yy_girl, girl_avg_lis_yy):
+        row = [it1, '女生', it3, it2, it4]
+        table_rows_yy.append(row)
+
+    for it1,it2,it3,it4 in zip(grade_name_list_yy, jgl_list_yy_tot, yxl_list_yy_tot, tot_avg_lis_yy):
+        row = [it1, '总体', it3, it2, it4]
+        table_rows_yy.append(row)
+
+
+
+
+
+
+    data = {'dataP': [jgl_list_yw_tot, yxl_list_yw_tot, jgl_list_sx_tot, yxl_list_sx_tot, jgl_list_yy_tot, yxl_list_yy_tot, ], 'grade': [grade_name_list_yw, grade_name_list_sx, grade_name_list_yy], 'table_yw':table_rows, 'table_sx':table_rows_sx, 'table_yy':table_rows_yy}
     cursor.close()
     return data
+
+
+def get_fb(dlist):
+    """
+    给定list，返回直方图fenbu
+    :param list:
+    :return:
+    """
+    x_axis = [0,60,65,70,75,80,85,90,95,100]
+    y_axis = np.zeros(9)
+    for item in dlist:
+        for i in range(9):
+            if item>=x_axis[i] and item<x_axis[i+1]:
+                y_axis[i] += 1
+                continue
+    return y_axis
 
 
 def get_cjfb_data(nianji):
@@ -408,9 +564,15 @@ def get_cjfb_data(nianji):
     cj_list_yw, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '103'])
     cj_list_sx, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '121'])
     cj_list_yy, xk_list = zip(*[(row[0], row[1]) for row in results1 if row[1] == '122'])
-    cj_list_yw_n = [99 if x==100 else x for x in cj_list_yw]
+    cj_list_yw_n = [99 if x == 100 else x for x in cj_list_yw]
+    cj_fbl_yw = list(get_fb(cj_list_yw_n))
+    cj_list_sx_n = [99 if x == 100 else x for x in cj_list_sx]
+    cj_fbl_sx = list(get_fb(cj_list_sx_n))
+    cj_list_yy_n = [99 if x == 100 else x for x in cj_list_yy]
+    cj_fbl_yy = list(get_fb(cj_list_yy_n))
 
-    data = {'dataPs': [cj_list_yw_n, cj_list_sx, cj_list_yy]}
+
+    data = {'dataPs': [cj_fbl_yw, cj_fbl_sx, cj_fbl_yy]}
     cursor.close()
     # print(data)
     return data

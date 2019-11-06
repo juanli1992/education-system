@@ -9,9 +9,14 @@ $(document).ready(function () {
         // contentType: 'application/json;charset=utf-8',
         success: function (result) {
             draw_yuwen(result[0]);
+            table_yuwen(result[0]);
+            table_shuxue(result[0]);
+            table_yingyu(result[0]);
             draw_shuxue(result[0]);
             draw_yingyu(result[0]);
             draw_ywfb(result[1]);
+            draw_sxfb(result[1]);
+            draw_yyfb(result[1]);
 
         }
 
@@ -26,9 +31,14 @@ $(document).ready(function () {
             // contentType: 'application/json;charset=utf-8',
             success: function (result) {
                 draw_yuwen(result[0]);
+                table_yuwen(result[0]);
+                table_shuxue(result[0]);
+                table_yingyu(result[0]);
                 draw_shuxue(result[0]);
                 draw_yingyu(result[0]);
                 draw_ywfb(result[1]);
+                draw_sxfb(result[1]);
+                draw_yyfb(result[1]);
 
             }
 
@@ -44,9 +54,14 @@ $(document).ready(function () {
             // contentType: 'application/json;charset=utf-8',
             success: function (result) {
                 draw_yuwen(result[0]);
+                table_yuwen(result[0]);
+                table_shuxue(result[0]);
+                table_yingyu(result[0]);
                 draw_shuxue(result[0]);
                 draw_yingyu(result[0]);
                 draw_ywfb(result[1]);
+                draw_sxfb(result[1]);
+                draw_yyfb(result[1]);
 
             }
 
@@ -135,6 +150,24 @@ function draw_yuwen(data) {
     myChart.setOption(option);
 }
 
+function table_yuwen(data) {
+    var table1 = $('#logtable1').DataTable();
+    table1.clear().draw();
+
+    ret = data["table_yw"];
+    for(j = 0,len = ret.length; j < len; j++) {
+        Grade = ret[j][0];
+        //alert(StuID);
+
+        Gender = ret[j][1];
+        YouX = ret[j][2];
+        JiG = ret[j][3];
+        Avg = ret[j][4];
+
+        table1.row.add([Grade,Gender,YouX,JiG,Avg]).draw();
+    }
+}
+
 //数学
 function draw_shuxue(data) {
     var myChart = echarts.init(document.getElementById('chart-grade-shuxue'));
@@ -210,6 +243,24 @@ function draw_shuxue(data) {
     };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
+}
+
+function table_shuxue(data) {
+    var table1 = $('#logtable2').DataTable();
+    table1.clear().draw();
+
+    ret = data["table_sx"];
+    for(j = 0,len = ret.length; j < len; j++) {
+        Grade = ret[j][0];
+        //alert(StuID);
+
+        Gender = ret[j][1];
+        YouX = ret[j][2];
+        JiG = ret[j][3];
+        Avg = ret[j][4];
+
+        table1.row.add([Grade,Gender,YouX,JiG,Avg]).draw();
+    }
 }
 
 //英语
@@ -289,86 +340,154 @@ function draw_yingyu(data) {
     myChart.setOption(option);
 }
 
+function table_yingyu(data) {
+    var table1 = $('#logtable3').DataTable();
+    table1.clear().draw();
+
+    ret = data["table_yy"];
+    for(j = 0,len = ret.length; j < len; j++) {
+        Grade = ret[j][0];
+        //alert(StuID);
+
+        Gender = ret[j][1];
+        YouX = ret[j][2];
+        JiG = ret[j][3];
+        Avg = ret[j][4];
+
+        table1.row.add([Grade,Gender,YouX,JiG,Avg]).draw();
+    }
+}
 
 //语文成绩分布
 function draw_ywfb(dat) {
     var myChart = echarts.init(document.getElementById('chart-grade-ywfb'));
-    var girth = dat['dataPs'][0];
-
-    // See https://github.com/ecomfe/echarts-stat
-    var bins = ecStat.histogram(girth);
-
-    var interval;
-    var min = Infinity;
-    var max = -Infinity;
-
-    data = echarts.util.map(bins.data, function (item, index) {
-        var x0 = bins.bins[index].x0;
-        var x1 = bins.bins[index].x1;
-        interval = x1 - x0;
-        min = Math.min(min, x0);
-        max = Math.max(max, x1);
-        return [x0, x1, item[1]];
-    });
-
-    function renderItem(params, api) {
-        var yValue = api.value(2);
-        var start = api.coord([api.value(0), yValue]);
-        var size = api.size([api.value(1) - api.value(0), yValue]);
-        var style = api.style();
-
-        return {
-            type: 'rect',
-            shape: {
-                x: start[0] + 1,
-                y: start[1],
-                width: size[0] - 2,
-                height: size[1]
-            },
-            style: style
-        };
-    }
 
     option = {
         title: {
-            text: 'Girths of Black Cherry Trees',
-            sublink: 'https://github.com/ecomfe/echarts-stat',
-            left: 'center',
-            top: 10
+            text: '语文期末考试成绩分布图',
+            x: 'center'
         },
-        color: ['rgb(25, 183, 207)'],
-        grid: {
-            top: 80,
-            containLabel: true
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['bar','line']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
         },
-        xAxis: [{
-            type: 'value',
-            min: min,
-            max: max,
-            interval: interval
-        }],
-        yAxis: [{
-            type: 'value',
-        }],
-        series: [{
-            name: 'height',
-            type: 'custom',
-            renderItem: renderItem,
-            label: {
-                normal: {
-                    show: true,
-                    position: 'insideTop'
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
                 }
-            },
-            encode: {
-                x: [0, 1],
-                y: 2,
-                tooltip: 2,
-                label: 2
-            },
-            data: data
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: ['<60', '60-65', '65-70', '70-75', '75-80', '80-85', '85-90', '90-95','95-100']
+        },
+        yAxis: {
+            type: 'value',
+            name: '人数'
+        },
+        series: [{
+            data: dat['dataPs'][0],
+            type: 'bar'
         }]
     };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+
+//数学成绩分布
+function draw_sxfb(dat) {
+    var myChart = echarts.init(document.getElementById('chart-grade-sxfb'));
+
+    option = {
+        title: {
+            text: '数学期末考试成绩分布图',
+            x: 'center'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['bar','line']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: ['<60', '60-65', '65-70', '70-75', '75-80', '80-85', '85-90', '90-95','95-100']
+        },
+        yAxis: {
+            type: 'value',
+            name: '人数'
+        },
+        series: [{
+            data: dat['dataPs'][1],
+            type: 'bar'
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+
+//英语成绩分布
+function draw_yyfb(dat) {
+    var myChart = echarts.init(document.getElementById('chart-grade-yyfb'));
+
+    option = {
+        title: {
+            text: '英语期末考试成绩分布图',
+            x: 'center'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['bar','line']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: ['<60', '60-65', '65-70', '70-75', '75-80', '80-85', '85-90', '90-95','95-100']
+        },
+        yAxis: {
+            type: 'value',
+            name: '人数'
+        },
+        series: [{
+            data: dat['dataPs'][2],
+            type: 'bar'
+        }]
+    };
+
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
 }
