@@ -1301,14 +1301,39 @@ def visualization2(request):
     return render(request, 'servermaterial/supervision_n2.html')
 
 
+###成长体验
+def visualization4(request):
+    """
+    可视化模块页面的接口
+    :param request:
+    :return:
+    """
+    return render(request, 'servermaterial/supervision_n4.html')
+
+
 def query_xy(request):
     """
-    获取需要可视化展示的所有数据
+    获取需要可视化展示的所有数据 学业
     :param request:
     :return: 可视化的数据(json数据格式)
     """
     study_period = request.POST["sp"]   # 获取对应学段
     yxljgl_data = get_yxljgl_data(study_period=int(study_period))    # 得到数据
+    nianji = request.POST["grade__"]  # 获取对应年级
+    cjfb_data = get_cjfb_data(nianji)
+
+    data = [yxljgl_data, cjfb_data]
+    # print(data)
+    return JsonResponse(data=data, safe=False)
+
+
+def query_zz(request):
+    """
+    获取需要可视化展示的所有数据 体验
+    :param request:
+    :return: 可视化的数据(json数据格式)
+    """
+
     nianji = request.POST["grade__"]  # 获取对应年级
     cjfb_data = get_cjfb_data(nianji)
 
