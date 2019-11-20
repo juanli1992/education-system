@@ -1334,10 +1334,11 @@ def query_zz(request):
     :return: 可视化的数据(json数据格式)
     """
 
-    nianji = request.POST["grade__"]  # 获取对应年级
-    cjfb_data = get_cjfb_data(nianji)
+    study_period = request.POST["sp"]   # 获取对应学段
+    print(study_period)
+    tiyan_data = get_tiyan_data(study_period)
 
-    data = [yxljgl_data, cjfb_data]
+    data = [tiyan_data]
     # print(data)
     return JsonResponse(data=data, safe=False)
 

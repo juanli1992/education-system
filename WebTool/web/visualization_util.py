@@ -577,6 +577,79 @@ def get_cjfb_data(nianji):
     # print(data)
     return data
 
+def get_huodongrenshulis(njdm_tot, count_huodong, njdm_huodong):
+    """
+    得到参加活动np list count-grade
+    :param njdm_tot:
+    :param count_dushujie:
+    :param njdm_dushujie:
+    :return:
+    """
+    nj_num = len(njdm_tot)
+    relis = np.zeros(nj_num)
+    for i in range(nj_num):
+        if njdm_tot[i] in njdm_huodong:
+            ind = njdm_huodong.index(njdm_tot[i])
+            relis[i] = count_huodong[ind]
+    return relis
+
+def get_tiyan_data(study_period):############################################################################################
+    """
+
+    :param study_period:
+    :return:
+    """
+    cursor = connection.cursor()
+
+    cursor.execute("select * from grade_code;")
+    grade_dict = dict(cursor.fetchall())            # key为年纪的ID, value为年纪的名称(比如: 一年级. 五年级, 高一, 高二啥的)
+
+    print(study_period)
+    if study_period == '-1':  # 查询所有学段的学生 总人数
+        cursor.execute( # count()
+            "select count(*),xj.NJDM from student_xj as xj, student_info as info where info.ID = xj.STUDENTID group by xj.NJDM order by xj.NJDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "select count(*),xj.NJDM from student_xj as xj, student_info as info where info.ID = xj.STUDENTID and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
+    results1 = cursor.fetchall()
+    print(results1)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数
+        cursor.execute( # count()
+            "select count(*), xj.NJDM,experience_themecampaign.ThemType from experience_themecampaign, student_xj as xj, student_info as info where experience_themecampaign.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID group by  xj.NJDM,experience_themecampaign.ThemType order by experience_themecampaign.ThemType,xj.NJDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "select count(*), xj.NJDM,experience_themecampaign.ThemType from experience_themecampaign, student_xj as xj, student_info as info where experience_themecampaign.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and XDDM={} group by  xj.NJDM,experience_themecampaign.ThemType order by experience_themecampaign.ThemType,xj.NJDM;".format(study_period))
+    results2 = cursor.fetchall()
+    print(results2)
+
+    # 获得绘图数据
+    ##  读书节
+    #参与率
+    count_tot, njdm_tot = zip(*results1)
+    grade_name_list = [grade_dict[grade_id] for grade_id in njdm_tot]  # 年级名称
+
+    count_tot_lis = np.array(count_tot)
+
+    count_dushujie, njdm_dushujie, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results2 if row[2] == 1])
+    count_dushujie_lis = get_huodongrenshulis(njdm_tot, count_dushujie, njdm_dushujie)
+    canyulv_dushujie = list(count_dushujie_lis/count_tot_lis)
+
+
+
+    data = {'dataP':[grade_name_list, canyulv_dushujie]}
+    return data
+
+
+
+
+
+
+
+
+
+
 
 
 """测试代码"""
