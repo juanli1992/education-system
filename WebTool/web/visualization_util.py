@@ -604,7 +604,7 @@ def get_tiyan_data(study_period):###############################################
     cursor.execute("select * from grade_code;")
     grade_dict = dict(cursor.fetchall())            # key为年纪的ID, value为年纪的名称(比如: 一年级. 五年级, 高一, 高二啥的)
 
-    print(study_period)
+    #print(study_period)
     if study_period == '-1':  # 查询所有学段的学生 总人数
         cursor.execute( # count()
             "select count(*),xj.NJDM from student_xj as xj, student_info as info where info.ID = xj.STUDENTID group by xj.NJDM order by xj.NJDM;")
@@ -612,7 +612,7 @@ def get_tiyan_data(study_period):###############################################
         cursor.execute(
             "select count(*),xj.NJDM from student_xj as xj, student_info as info where info.ID = xj.STUDENTID and XDDM = {} group by xj.NJDM order by xj.NJDM;".format(study_period))
     results1 = cursor.fetchall()
-    print(results1)
+    #print(results1)
 
     if study_period == '-1':  # 查询所有学段的学生 总人数
         cursor.execute( # count()
@@ -621,24 +621,130 @@ def get_tiyan_data(study_period):###############################################
         cursor.execute(
             "select count(*), xj.NJDM,experience_themecampaign.ThemType from experience_themecampaign, student_xj as xj, student_info as info where experience_themecampaign.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and XDDM={} group by  xj.NJDM,experience_themecampaign.ThemType order by experience_themecampaign.ThemType,xj.NJDM;".format(study_period))
     results2 = cursor.fetchall()
-    print(results2)
+    #print(results2)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数
+        cursor.execute( # count() #7 是总共7个学校
+            "SELECT count(distinct SchoolID)/7,GradeCode,ThemeCode FROM student_db.experience_schoolthemesetting group by ThemeCode,GradeCode order by ThemeCode,GradeCode;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        if study_period == '1':
+            nianjiset = '(11,12,13,14,15,16)'
+        elif study_period == '2':
+            nianjiset = '(17,18,19)'
+        elif study_period == '3':
+            nianjiset = '(31,32,33)'
+        cursor.execute(
+            "SELECT count(distinct SchoolID)/7,GradeCode,ThemeCode FROM student_db.experience_schoolthemesetting where GradeCode in {} group by ThemeCode,GradeCode order by ThemeCode,GradeCode;".format(nianjiset))
+    results3 = cursor.fetchall()
+    #print(results3)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数
+        cursor.execute("SELECT count(GradeCode)/(7*12),EventCode FROM student_db.experience_sportsevent_copy1 group by EventCode order by EventCode;") #7*12 是学校的数量*12个年级数
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        if study_period == '1':
+            nianjiset = '(11,12,13,14,15,16)'
+        elif study_period == '2':
+            nianjiset = '(17,18,19)'
+        elif study_period == '3':
+            nianjiset = '(31,32,33)'
+        cursor.execute(
+            "SELECT count(GradeCode),EventCode FROM student_db.experience_sportsevent_copy1 where GradeCode in {} group by EventCode order by EventCode;;".format(nianjiset))
+    results4 = cursor.fetchall()
+    # print(results4)
+    # print('len(results4)')
+    # print(len(results4))
+
+
 
     # 获得绘图数据
     ##  读书节
     #参与率
-    count_tot, njdm_tot = zip(*results1)
-    grade_name_list = [grade_dict[grade_id] for grade_id in njdm_tot]  # 年级名称
+    count_tot, njdm_tot = zip(*results1) #
+    grade_name_list = [grade_dict[grade_id] for grade_id in njdm_tot]  # 年级名称 #
 
-    count_tot_lis = np.array(count_tot)
+    count_tot_lis = np.array(count_tot) #
 
     count_dushujie, njdm_dushujie, tmtp = zip(
         *[(row[0], row[1], row[2]) for row in results2 if row[2] == 1])
     count_dushujie_lis = get_huodongrenshulis(njdm_tot, count_dushujie, njdm_dushujie)
     canyulv_dushujie = list(count_dushujie_lis/count_tot_lis)
 
+    # 覆盖率
+    fugailv, njdm4fugai, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results3 if row[2] == 1])
+    fugailv_dushujie_lis = get_huodongrenshulis(njdm_tot, fugailv, njdm4fugai)
+    fugailv_dushujie = list(fugailv_dushujie_lis)
 
+    ##  科技节
+    #参与率
+    count_kejijie, njdm_kejijie, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results2 if row[2] == 2])
+    count_kejijie_lis = get_huodongrenshulis(njdm_tot, count_kejijie, njdm_kejijie)
+    canyulv_kejijie = list(count_kejijie_lis/count_tot_lis)
 
-    data = {'dataP':[grade_name_list, canyulv_dushujie]}
+    # 覆盖率
+    fugailv_, njdm4fugai_, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results3 if row[2] == 2])
+    fugailv_kejijie_lis = get_huodongrenshulis(njdm_tot, fugailv_, njdm4fugai_)
+    fugailv_kejijie = list(fugailv_kejijie_lis)
+
+    ##  体育节
+    #参与率
+    count_tiyujie, njdm_tiyujie, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results2 if row[2] == 3])
+    count_tiyujie_lis = get_huodongrenshulis(njdm_tot, count_tiyujie, njdm_tiyujie)
+    canyulv_tiyujie = list(count_tiyujie_lis/count_tot_lis)
+
+    # 覆盖率
+    fugailv__, njdm4fugai__, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results3 if row[2] == 3])
+    fugailv_tiyujie_lis = get_huodongrenshulis(njdm_tot, fugailv__, njdm4fugai__)
+    fugailv_tiyujie = list(fugailv_tiyujie_lis)
+
+    ##  艺术节
+    #参与率
+    count_yishujie, njdm_yishujie, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results2 if row[2] == 4])
+    count_yishujie_lis = get_huodongrenshulis(njdm_tot, count_yishujie, njdm_yishujie)
+    canyulv_yishujie = list(count_yishujie_lis/count_tot_lis)
+
+    # 覆盖率
+    fugailv___, njdm4fugai___, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results3 if row[2] == 4])
+    fugailv_yishujie_lis = get_huodongrenshulis(njdm_tot, fugailv___, njdm4fugai___)
+    fugailv_yishujie = list(fugailv_yishujie_lis)
+
+    ##  校运会
+    if len(results4) != 0: ###对结果有判空处理
+        rate, event = zip(*results4)
+        if study_period == '1':
+            rate = list(np.array(rate)/(7.*6))
+        elif study_period == '2' or study_period == '3':
+            rate = list(np.array(rate)/(7.*3))
+        maxrate_duanpao = 0
+        maxrate_zhongchangpao = 0
+        maxrate_kualan = 0
+        maxrat_touzhi = 0
+        maxrat_tiaoyue = 0
+        maxrat_jieli = 0
+        for rat,even in zip(rate,event):
+            if even in [1, 2, 3, 4, 5] and rat>maxrate_duanpao:
+                maxrate_duanpao = rat
+            elif even in [6, 7, 8, 9] and rat>maxrate_zhongchangpao:
+                maxrate_zhongchangpao = rat
+            elif even in [10, 11, 12] and rat>maxrate_kualan:
+                maxrate_kualan = rat
+            elif even in [13, 14, 15, 16] and rat>maxrat_touzhi:
+                maxrat_touzhi = rat
+            elif even in [17, 18, 19, 20] and rat>maxrat_tiaoyue:
+                maxrat_tiaoyue = rat
+            elif even in [21, 22] and rat>maxrat_jieli:
+                maxrat_jieli = rat
+        res4xiaoyunhui = [maxrate_duanpao, maxrate_zhongchangpao, maxrate_kualan, maxrat_touzhi, maxrat_tiaoyue, maxrat_jieli]
+    else:
+        res4xiaoyunhui = [0,0,0,0,0,0]
+
+    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui}
     return data
 
 
