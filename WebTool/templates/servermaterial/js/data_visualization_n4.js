@@ -12,7 +12,8 @@ $(document).ready(function () {
             draw_kejijie(result[0]);
             draw_tiyujie(result[0]);
             draw_yishujie(result[0]);
-            draw_xiaoyunhui(result[0]);//其实无关
+            draw_xiaoyunhui(result[0]);
+            draw_qita(result[0]);
 
 
         }
@@ -32,7 +33,8 @@ $(document).ready(function () {
                 draw_kejijie(result[0]);
                 draw_tiyujie(result[0]);
                 draw_yishujie(result[0]);
-                draw_xiaoyunhui(result[0]);//其实无关
+                draw_xiaoyunhui(result[0]);
+                draw_qita(result[0]);
 
 
             }
@@ -393,6 +395,63 @@ function draw_xiaoyunhui(dat) {
             data: dat['dataH'],
             type: 'bar'
         }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+//其他主题活动开展情况图
+function draw_qita(dat) {
+    var myChart = echarts.init(document.getElementById('chart-exp-qita'));
+
+    option = {
+        title: {
+            text: '其他主题活动开展情况图'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['bar','line']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {
+            data: ['参与率', '覆盖率']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['特色活动','节庆及仪式活动','其他活动']
+        },
+        series: [
+            {
+                name: '参与率',
+                type: 'bar',
+                data: dat['dataoOther'][0]
+            },
+            {
+                name: '覆盖率',
+                type: 'bar',
+                data: dat['dataoOther'][1]
+            }
+        ]
     };
 
     // 使用刚指定的配置项和数据显示图表。

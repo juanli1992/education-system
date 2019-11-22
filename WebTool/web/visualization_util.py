@@ -614,7 +614,7 @@ def get_tiyan_data(study_period):###############################################
     results1 = cursor.fetchall()
     #print(results1)
 
-    if study_period == '-1':  # 查询所有学段的学生 总人数
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 参与率
         cursor.execute( # count()
             "select count(*), xj.NJDM,experience_themecampaign.ThemType from experience_themecampaign, student_xj as xj, student_info as info where experience_themecampaign.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID group by  xj.NJDM,experience_themecampaign.ThemType order by experience_themecampaign.ThemType,xj.NJDM;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
@@ -623,9 +623,9 @@ def get_tiyan_data(study_period):###############################################
     results2 = cursor.fetchall()
     #print(results2)
 
-    if study_period == '-1':  # 查询所有学段的学生 总人数
-        cursor.execute( # count() #7 是总共7个学校
-            "SELECT count(distinct SchoolID)/7,GradeCode,ThemeCode FROM student_db.experience_schoolthemesetting group by ThemeCode,GradeCode order by ThemeCode,GradeCode;")
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+        cursor.execute( # count() #7 是总共10个学校
+            "SELECT count(distinct SchoolID)/10,GradeCode,ThemeCode FROM student_db.experience_schoolthemesetting group by ThemeCode,GradeCode order by ThemeCode,GradeCode;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         if study_period == '1':
             nianjiset = '(11,12,13,14,15,16)'
@@ -634,12 +634,26 @@ def get_tiyan_data(study_period):###############################################
         elif study_period == '3':
             nianjiset = '(31,32,33)'
         cursor.execute(
-            "SELECT count(distinct SchoolID)/7,GradeCode,ThemeCode FROM student_db.experience_schoolthemesetting where GradeCode in {} group by ThemeCode,GradeCode order by ThemeCode,GradeCode;".format(nianjiset))
+            "SELECT count(distinct SchoolID)/10,GradeCode,ThemeCode FROM student_db.experience_schoolthemesetting where GradeCode in {} group by ThemeCode,GradeCode order by ThemeCode,GradeCode;".format(nianjiset))
     results3 = cursor.fetchall()
     #print(results3)
 
-    if study_period == '-1':  # 查询所有学段的学生 总人数
-        cursor.execute("SELECT count(GradeCode)/(7*12),EventCode FROM student_db.experience_sportsevent_copy1 group by EventCode order by EventCode;") #7*12 是学校的数量*12个年级数
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+        cursor.execute( # count() #7 是总共10个学校
+            "SELECT count(distinct SchoolID)/10,ThemeCode FROM student_db.experience_schoolthemesetting group by ThemeCode order by ThemeCode;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        if study_period == '1':
+            nianjiset = '(11,12,13,14,15,16)'
+        elif study_period == '2':
+            nianjiset = '(17,18,19)'
+        elif study_period == '3':
+            nianjiset = '(31,32,33)'
+        cursor.execute(
+            "SELECT count(distinct SchoolID)/10,ThemeCode FROM student_db.experience_schoolthemesetting where GradeCode in {} group by ThemeCode order by ThemeCode;".format(nianjiset))
+    results33 = cursor.fetchall()
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 校运会
+        cursor.execute("SELECT count(GradeCode)/(10*12),EventCode FROM student_db.experience_sportsevent_copy1 group by EventCode order by EventCode;") #10*12 是学校的数量*12个年级数
     else:  # 查询指定学段的学生(比如: 只查高中生)
         if study_period == '1':
             nianjiset = '(11,12,13,14,15,16)'
@@ -718,9 +732,9 @@ def get_tiyan_data(study_period):###############################################
     if len(results4) != 0: ###对结果有判空处理
         rate, event = zip(*results4)
         if study_period == '1':
-            rate = list(np.array(rate)/(7.*6))
+            rate = list(np.array(rate)/(10.*6))#10个学校
         elif study_period == '2' or study_period == '3':
-            rate = list(np.array(rate)/(7.*3))
+            rate = list(np.array(rate)/(10.*3))
         maxrate_duanpao = 0
         maxrate_zhongchangpao = 0
         maxrate_kualan = 0
@@ -744,7 +758,34 @@ def get_tiyan_data(study_period):###############################################
     else:
         res4xiaoyunhui = [0,0,0,0,0,0]
 
-    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui}
+    ## 其他主题活动
+    #参与率
+    count_tese, njdm_tese, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results2 if row[2] == 6])#特色活动
+    count_tese_total = np.array(count_tese).sum()
+    count_tot_total = count_tot_lis.sum()
+    canyulv_tese = float(count_tese_total)/count_tot_total
+
+    count_jieqing, njdm_jieqing, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results2 if row[2] == 7])#节庆及仪式活动
+    count_jieqing_total = np.array(count_jieqing).sum()
+    canyulv_jieqing = float(count_jieqing_total)/count_tot_total
+
+    count_qita, njdm_qita, tmtp = zip(
+        *[(row[0], row[1], row[2]) for row in results2 if row[2] == 8])#其他
+    count_qita_total = np.array(count_qita).sum()
+    canyulv_qita = float(count_qita_total)/count_tot_total
+
+    canyulv_others = [canyulv_tese,canyulv_jieqing,canyulv_qita]
+
+    # 覆盖率
+    fugailv_others, tmtp = zip(
+        *[(row[0], row[1]) for row in results33 if row[1] in [6,7,8]])#特色活动
+
+
+
+
+    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui, 'dataoOther':[canyulv_others,fugailv_others]}
     return data
 
 
