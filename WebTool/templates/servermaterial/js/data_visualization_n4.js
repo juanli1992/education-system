@@ -14,6 +14,10 @@ $(document).ready(function () {
             draw_yishujie(result[0]);
             draw_xiaoyunhui(result[0]);
             draw_qita(result[0]);
+            draw_job(result[0]);
+            table_job(result[0]);
+            draw_sjob(result[0]);
+            table_sjob(result[0]);
 
 
         }
@@ -35,6 +39,10 @@ $(document).ready(function () {
                 draw_yishujie(result[0]);
                 draw_xiaoyunhui(result[0]);
                 draw_qita(result[0]);
+                draw_job(result[0]);
+                table_job(result[0]);
+                draw_sjob(result[0]);
+                table_sjob(result[0]);
 
 
             }
@@ -363,7 +371,7 @@ function draw_xiaoyunhui(dat) {
 
     option = {
         title: {
-            text: '校运会项目开设情况',
+            text: '学校校运会项目开设情况',
             x: 'center'
         },
         toolbox: {
@@ -458,3 +466,141 @@ function draw_qita(dat) {
     myChart.setOption(option);
 }
 
+//班级职务开展情况图
+function draw_job(dat) {
+    var myChart = echarts.init(document.getElementById('chart-exp-job'));
+
+    option = {
+        title: {
+            text: '班级职务开展情况图',
+            x:'center'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['无职务','团委','小队长','中队长（班长、副班长、委员）']
+        },
+        series : [
+            {
+                name: '人数',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:dat['data4Job'],
+
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+function table_job(data) {
+    var table1 = $('#table-job').DataTable();
+    table1.clear().draw();
+
+    ret = data["tableJob"];
+    for(j = 0,len = ret.length; j < len; j++) {
+        xd = ret[j][0];
+        //alert(StuID);
+
+        wd = ret[j][1];
+        xb = ret[j][2];
+        tw = ret[j][3];
+        xdz = ret[j][4];
+        zdz = ret[j][5];
+
+
+        table1.row.add([xd,wd,xb,tw,xdz,zdz]).draw();
+    }
+}
+
+//学校职务开展情况图
+function draw_sjob(dat) {
+    var myChart = echarts.init(document.getElementById('chart-exp-sjob'));
+
+    option = {
+        title: {
+            text: '校内岗位开展情况图',
+            x:'center'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['无职务','检查类','管理类','礼仪类','升护旗类','宣传广播类','其他类']
+        },
+        series : [
+            {
+                name: '人数',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:dat['data4Sjob'],
+
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+function table_sjob(data) {
+    var table1 = $('#table-sjob').DataTable();
+    table1.clear().draw();
+
+    ret = data["tableSjob"];
+    for(j = 0,len = ret.length; j < len; j++) {
+        xd = ret[j][0];
+        //alert(StuID);
+
+        wd = ret[j][1];
+        xb = ret[j][2];
+        jc = ret[j][3];
+        gl = ret[j][4];
+        ly = ret[j][5];
+        qz = ret[j][6];
+        gb = ret[j][7];
+        qt = ret[j][8];
+
+
+        table1.row.add([xd,wd,xb,jc,gl,ly, qz, gb, qt]).draw();
+    }
+}

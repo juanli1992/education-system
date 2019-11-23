@@ -571,8 +571,44 @@ def get_cjfb_data(nianji):
     cj_list_yy_n = [99 if x == 100 else x for x in cj_list_yy]
     cj_fbl_yy = list(get_fb(cj_list_yy_n))
 
+    # table
+    cj_list_yw = np.array(cj_list_yw,dtype='float')
+    min_yw = cj_list_yw.min() #最小值
+    per10_yw = np.percentile(cj_list_yw, 10) #10%分位数
+    per25_yw = np.percentile(cj_list_yw, 25)
+    media_yw = np.median(cj_list_yw)
+    per75_yw = np.percentile(cj_list_yw, 75)
+    per90_yw = np.percentile(cj_list_yw, 90)
+    max_yw = cj_list_yw.max()  # 最大值
 
-    data = {'dataPs': [cj_fbl_yw, cj_fbl_sx, cj_fbl_yy]}
+    cj_list_sx = np.array(cj_list_sx,dtype='float')
+    min_sx = cj_list_sx.min() #最小值
+    per10_sx = np.percentile(cj_list_sx, 10) #10%分位数
+    per25_sx = np.percentile(cj_list_sx, 25)
+    media_sx = np.median(cj_list_sx)
+    per75_sx = np.percentile(cj_list_sx, 75)
+    per90_sx = np.percentile(cj_list_sx, 90)
+    max_sx = cj_list_sx.max()  # 最大值
+
+    cj_list_yy = np.array(cj_list_yy,dtype='float')
+    min_yy = cj_list_yy.min() #最小值
+    per10_yy = np.percentile(cj_list_yy, 10) #10%分位数
+    per25_yy = np.percentile(cj_list_yy, 25)
+    media_yy = np.median(cj_list_yy)
+    per75_yy = np.percentile(cj_list_yy, 75)
+    per90_yy = np.percentile(cj_list_yy, 90)
+    max_yy = cj_list_yy.max()  # 最大值
+
+    minrow = ['最小值', min_yw, min_sx, min_yy]
+    per10row = ['10%分位数', per10_yw, per10_sx, per10_yy]
+    per25row = ['25%分位数', per25_yw, per25_sx, per25_yy]
+    mediarow = ['中位数', media_yw, media_sx, media_yy]
+    per75row = ['75%分位数', per75_yw, per75_sx, per75_yy]
+    per90row = ['90%分位数', per90_yw, per90_sx, per90_yy]
+    maxrow = ['最大值', max_yw, max_sx, max_yy]
+    tabelrows = [minrow, per10row, per25row, mediarow, per75row, per90row, maxrow]
+
+    data = {'dataPs': [cj_fbl_yw, cj_fbl_sx, cj_fbl_yy], 'dataTable':tabelrows}
     cursor.close()
     # print(data)
     return data
@@ -587,13 +623,16 @@ def get_huodongrenshulis(njdm_tot, count_huodong, njdm_huodong):
     """
     nj_num = len(njdm_tot)
     relis = np.zeros(nj_num)
-    for i in range(nj_num):
-        if njdm_tot[i] in njdm_huodong:
-            ind = njdm_huodong.index(njdm_tot[i])
-            relis[i] = count_huodong[ind]
+
+    count_huodong = np.array(count_huodong,dtype='float')
+
+    le = len(njdm_huodong)
+    for i in range(le):
+        ind = njdm_tot.index(njdm_huodong[i])
+        relis[ind] += count_huodong[i]
     return relis
 
-def get_tiyan_data(study_period):############################################################################################
+def get_tiyan_data(study_period):
     """
 
     :param study_period:
@@ -639,7 +678,7 @@ def get_tiyan_data(study_period):###############################################
     #print(results3)
 
     if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
-        cursor.execute( # count() #7 是总共10个学校
+        cursor.execute( # count() #10 是总共10个学校
             "SELECT count(distinct SchoolID)/10,ThemeCode FROM student_db.experience_schoolthemesetting group by ThemeCode order by ThemeCode;")
     else:  # 查询指定学段的学生(比如: 只查高中生)
         if study_period == '1':
@@ -662,12 +701,35 @@ def get_tiyan_data(study_period):###############################################
         elif study_period == '3':
             nianjiset = '(31,32,33)'
         cursor.execute(
-            "SELECT count(GradeCode),EventCode FROM student_db.experience_sportsevent_copy1 where GradeCode in {} group by EventCode order by EventCode;;".format(nianjiset))
+            "SELECT count(GradeCode),EventCode FROM student_db.experience_sportsevent_copy1 where GradeCode in {} group by EventCode order by EventCode;".format(nianjiset))
     results4 = cursor.fetchall()
     # print(results4)
     # print('len(results4)')
     # print(len(results4))
 
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 岗位分布
+        cursor.execute("SELECT count(*),info.XBDM,NAME,PositionTypeCode,XDDM FROM student_db.experience_classmanagement, student_xj as xj, student_info as info, experience_classposition_code where experience_classmanagement.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and PositionTypeCode=experience_classposition_code.ID group by XDDM,PositionTypeCode,info.XBDM order by XDDM,PositionTypeCode,info.XBDM,XDDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(*),info.XBDM,NAME,PositionTypeCode,XDDM FROM student_db.experience_classmanagement, student_xj as xj, student_info as info, experience_classposition_code where experience_classmanagement.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and PositionTypeCode=experience_classposition_code.ID and XDDM={} group by PositionTypeCode,info.XBDM order by PositionTypeCode,info.XBDM;".format(study_period))
+    results5 = cursor.fetchall()
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+        cursor.execute( # count() #10 是总共10个学校
+            "SELECT count(distinct(SchoolID))/10,XD,PositionCode FROM student_db.experience_classpositionsetting,nj_xd where GradeCode=nj_xd.NJ group by PositionCode,XD order by PositionCode,XD;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(distinct(SchoolID))/10,XD,PositionCode FROM student_db.experience_classpositionsetting,nj_xd where GradeCode=nj_xd.NJ and XD={} group by PositionCode,XD order by PositionCode,XD;".format(study_period))
+    results6 = cursor.fetchall()
+    #print(results6)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 校内岗位分布
+        cursor.execute("SELECT count(*),info.XBDM,NAME,PositionTypeCode,XDDM FROM student_db.experience_schoolmanagement, student_xj as xj, student_info as info, experience_schoolposition_code where experience_schoolmanagement.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and PositionTypeCode=experience_schoolposition_code.ID group by XDDM,PositionTypeCode,info.XBDM order by XDDM,PositionTypeCode,info.XBDM,XDDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(*),info.XBDM,NAME,PositionTypeCode,XDDM FROM student_db.experience_schoolmanagement, student_xj as xj, student_info as info, experience_schoolposition_code where experience_schoolmanagement.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and PositionTypeCode=experience_schoolposition_code.ID and XDDM={} group by XDDM,PositionTypeCode,info.XBDM order by XDDM,PositionTypeCode,info.XBDM,XDDM;".format(study_period))
+    results7 = cursor.fetchall()
+    print(results7)
 
 
     # 获得绘图数据
@@ -782,10 +844,212 @@ def get_tiyan_data(study_period):###############################################
     fugailv_others, tmtp = zip(
         *[(row[0], row[1]) for row in results33 if row[1] in [6,7,8]])#特色活动
 
+    ## 班级职务分布情况
+    cnt, xb, nm, pt, xd = zip(*results5)
+    xd_qc = list(set(xd)) #年级list 去重
+    xd_qc.sort()
+    cnt_b, boy, nm_b, pt_b, xd_b = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1] == '1'])#男生
+    boy_t =  get_huodongrenshulis(xd_qc, cnt_b, xd_b)
+    cnt_g, girt, nm_g, pt_g, xd_g = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1] == '2'])  # 女生
+    girl_t = get_huodongrenshulis(xd_qc, cnt_g, xd_g)
+    tot_t = boy_t + girl_t
+
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='1' and row[3]==0]) #男，无职务
+    b_w_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='2' and row[3]==0]) #女，无职务
+    g_w_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    w_c = b_w_c + g_w_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='1' and row[3]==1]) #男，团委
+    b_t_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='2' and row[3]==1]) #女，团委
+    g_t_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    t_c = b_t_c + g_t_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='1' and row[3]==2]) #男，小队长
+    b_x_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='2' and row[3]==2]) #女，小队长
+    g_x_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    x_c = b_x_c + g_x_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='1' and row[3]==2]) #男，中队长
+    b_z_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results5 if row[1]=='2' and row[3]==2]) #女，中队长
+    g_z_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    z_c = b_z_c + g_z_c
+    datRows = [{'value':w_c.sum(), 'name':'无职务'},
+               {'value':t_c.sum(), 'name':'团委'},
+               {'value':x_c.sum(), 'name':'小队长'},
+               {'value': z_c.sum(), 'name': '中队长（班长、副班长、委员）'}
+               ]
+
+    b_t_r = b_t_c / boy_t
+    b_x_r = b_x_c / boy_t
+    b_z_r = b_z_c / boy_t
+    g_t_r = g_t_c / girl_t
+    g_x_r = g_x_c / girl_t
+    g_z_r = g_z_c / girl_t
+    t_r = t_c / tot_t
+    x_r = x_c / tot_t
+    z_r = z_c / tot_t
+    tab_rows = []
+    xd_nm = []
+    if '1' in xd_qc:
+        xd_nm.append('小学')
+    if '2' in xd_qc:
+        xd_nm.append('初中')
+    if '3' in xd_qc:
+        xd_nm.append('高中')
+    for it1, it2, it3, it4 in zip(xd_nm, b_t_r, b_x_r, b_z_r):
+        row = [it1, '参与率', '男生', it2, it3, it4]
+        tab_rows.append(row)
+    for it1, it2, it3, it4 in zip(xd_nm, g_t_r, g_x_r, g_z_r):
+        row = [it1, '参与率', '女生', it2, it3, it4]
+        tab_rows.append(row)
+    for it1, it2, it3, it4 in zip(xd_nm, t_r, x_r, z_r):
+        row = [it1, '参与率', '总体', it2, it3, it4]
+        tab_rows.append(row)
+
+    fugailv_t, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2]==1])
+    fugailv_x, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2] == 2])
+    fugailv_z, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2] == 3])
+    for it1, it2, it3, it4 in zip(xd_nm, fugailv_t, fugailv_x, fugailv_z):
+        row = [it1, '覆盖率', '总体', it2, it3, it4]
+        tab_rows.append(row)
+
+    ## 校内职务分布情况
+    cnt, xb, nm, pt, xd = zip(*results7)
+    xd_qc = list(set(xd)) #年级list 去重
+    xd_qc.sort()
+    cnt_b, boy, nm_b, pt_b, xd_b = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1] == '1'])#男生
+    boy_t =  get_huodongrenshulis(xd_qc, cnt_b, xd_b)
+    cnt_g, girt, nm_g, pt_g, xd_g = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1] == '2'])  # 女生
+    girl_t = get_huodongrenshulis(xd_qc, cnt_g, xd_g)
+    tot_t = boy_t + girl_t
+
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='1' and row[3]==0]) #男，无职务
+    b_sw_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='2' and row[3]==0]) #女，无职务
+    g_sw_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    sw_c = b_sw_c + g_sw_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='1' and row[3]==1]) #男，检查
+    b_sj_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='2' and row[3]==1]) #女，
+    g_sj_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    sj_c = b_sj_c + g_sj_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='1' and row[3]==2]) #男，管理
+    b_sg_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='2' and row[3]==2]) #女，
+    g_sg_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    sg_c = b_sg_c + g_sg_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='1' and row[3]==3]) #男，礼仪
+    b_sl_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='2' and row[3]==3]) #女，
+    g_sl_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    sl_c = b_sl_c + g_sl_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='1' and row[3]==4]) #男，旗子
+    b_sq_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='2' and row[3]==4]) #女，
+    g_sq_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    sq_c = b_sq_c + g_sq_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='1' and row[3]==5]) #男，广播
+    b_sgb_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='2' and row[3]==5]) #女，
+    g_sgb_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    sgb_c = b_sgb_c + g_sgb_c
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='1' and row[3]==2]) #男，其他
+    b_sqt_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    cnt_, xb_, nm_, pt_, xd_ = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results7 if row[1]=='2' and row[3]==2]) #女，
+    g_sqt_c = get_huodongrenshulis(xd_qc, cnt_, xd_)
+    sqt_c = b_sqt_c + g_sqt_c
+    datRows4s = [{'value':sw_c.sum(), 'name':'无职务'},
+               {'value':sj_c.sum(), 'name':'检查类'},
+               {'value':sg_c.sum(), 'name':'管理类'},
+               {'value':sl_c.sum(), 'name': '礼仪类'},
+               {'value':sq_c.sum(), 'name': '升护旗类'},
+               {'value':sgb_c.sum(), 'name': '宣传广播类'},
+               {'value':sqt_c.sum(), 'name': '其他类'}
+               ]
+
+    b_sw_r = b_sw_c / boy_t
+    b_sj_r = b_sj_c / boy_t
+    b_sg_r = b_sg_c / boy_t
+    b_sl_r = b_sl_c / boy_t
+    b_sq_r = b_sq_c / boy_t
+    b_sgb_r = b_sgb_c / boy_t
+    b_sqt_r = b_sqt_c / boy_t
+    g_sw_r = g_sw_c / girl_t
+    g_sj_r = g_sj_c / girl_t
+    g_sg_r = g_sg_c / girl_t
+    g_sl_r = g_sl_c / girl_t
+    g_sq_r = g_sq_c / girl_t
+    g_sgb_r = g_sgb_c / girl_t
+    g_sqt_r = g_sqt_c / girl_t
+    sj_r = sj_c / tot_t
+    sg_r = sg_c / tot_t
+    sl_r = sl_c / tot_t
+    sq_r = sq_c / tot_t
+    sgb_r = sgb_c / tot_t
+    sqt_r = sqt_c / tot_t
+    tab_rows4s = []
+    xd_nm = []
+    if '1' in xd_qc:
+        xd_nm.append('小学')
+    if '2' in xd_qc:
+        xd_nm.append('初中')
+    if '3' in xd_qc:
+        xd_nm.append('高中')
+    for it1, it2, it3, it4,it5, it6, it7 in zip(xd_nm, b_sj_r, b_sg_r, b_sl_r, b_sq_r, b_sgb_r, b_sqt_r):
+        row = [it1, '参与率', '男生', it2, it3, it4,it5, it6, it7]
+        tab_rows4s.append(row)
+    for it1, it2, it3, it4,it5, it6, it7 in zip(xd_nm, g_sj_r, g_sg_r, g_sl_r, g_sq_r, g_sgb_r, g_sqt_r):
+        row = [it1, '参与率', '女生', it2, it3, it4,it5, it6, it7]
+        tab_rows4s.append(row)
+    for it1, it2, it3, it4,it5, it6, it7 in zip(xd_nm, sj_r, sg_r, sl_r, sq_r, sgb_r, sqt_r):
+        row = [it1, '参与率', '总体', it2, it3, it4,it5, it6, it7]
+        tab_rows4s.append(row)
+
+    # fugailv_t, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2]==1])
+    # fugailv_x, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2] == 2])
+    # fugailv_z, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2] == 3])
+    # for it1, it2, it3, it4 in zip(xd_nm, fugailv_t, fugailv_x, fugailv_z):
+    #     row = [it1, '覆盖率', '总体', it2, it3, it4]
+    #     tab_rows.append(row)
 
 
 
-    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui, 'dataoOther':[canyulv_others,fugailv_others]}
+
+    # for row in results5:
+    #     dataRow = {'value':row[0], 'name':row[1]}
+    #     datRows.append(dataRow)
+
+
+
+
+    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui, 'dataoOther':[canyulv_others,fugailv_others], 'data4Job':datRows, 'tableJob':tab_rows, 'data4Sjob':datRows4s, 'tableSjob':tab_rows4s}
     return data
 
 
