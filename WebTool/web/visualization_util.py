@@ -87,7 +87,6 @@ def get_hw_data(study_period):
             'wavg': [boy_wavg, girl_wavg], 'wstd': [boy_wstd, girl_wstd],
             'grade': grade_name_list, 'ratio': bmi_count, 'level': bmi_level,
             'dict': sp_bmi_dict, 'grade_id': grade_id_list, 'dict_2': grade_bmi_dict}
-    print(grade_bmi_dict["11"]["1"][3])
     cursor.close()
     return data
 
