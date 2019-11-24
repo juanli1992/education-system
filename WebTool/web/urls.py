@@ -19,7 +19,7 @@ urlpatterns = [
     path('query_xy/', query_xy),  ###new p2
     path('visualization2/', visualization2), ###new p2
     path('visualization4/', visualization4), ###new p4
-    path('query_hw/', get_vdata),
+    #path('query_hw/', get_vdata),
     path('query_zz/', query_zz), ###new p4
     path('query_nianji/', query_nianji),
     path('result/', result),
