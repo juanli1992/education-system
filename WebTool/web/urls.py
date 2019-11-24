@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from .views import *
 
-app_name='common'
+app_name = 'common'
 urlpatterns = [
     path('home/', home),
     path('admin/', admin),
@@ -12,9 +12,10 @@ urlpatterns = [
     path('inquiry/', inquiry),
     path('base/', base),
     path('visualization/', visualization),
-    path('visualization2/', visualization2), ###new p2
-    path('query_hw/', get_vdata),
-    path('query_xy/', query_xy), ###new p2
+    path('visualization2/', visualization2),  ###new p2
+    path('query_hw/', get_vdata_p1),
+    path('query_course/', get_vdata_p3),
+    path('query_xy/', query_xy),  ###new p2
     path('query_nianji/', query_nianji),
     path('result/', result),
     path('query/', query),
@@ -37,7 +38,7 @@ urlpatterns = [
     path('tt', tt),
     path('monitor/', monitor),
     path('monitor_engine/', monitor_engine),
-    #path('result1/', result1),
+    # path('result1/', result1),
     path('list1/', list1),
     path('list2/', list2),
     path('list3/', list3),

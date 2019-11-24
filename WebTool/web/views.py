@@ -19,6 +19,7 @@ import datetime
 from django.db.models import Count, Avg, Max, Min, Sum
 import numpy as np
 from web.visualization_util import *
+from web.visualization_util_2 import *
 import pandas as pd
 # import csv
 # import matplotlib.pyplot as plt
@@ -1273,9 +1274,9 @@ def visualization(request):
     return render(request, 'servermaterial/supervision_v2.html')
 
 
-def get_vdata(request):
+def get_vdata_p1(request):
     """
-    获取需要可视化展示的所有数据
+    获取可视化第一部分展示的所有数据
     :param request:
     :return: 可视化的数据(json数据格式)
     """
@@ -1289,6 +1290,24 @@ def get_vdata(request):
     overall_data = get_overall_data()
     data = [hw_data, bmi_data, es_data, tt_data, lung_data, atest_data, overall_data]
     return JsonResponse(data=data, safe=False)
+
+
+def get_vdata_p3(request):
+    """
+    获取可视化第三部分展示的所有数据
+    :param request:
+    :return: 可视化的数据(json数据格式)
+    """
+    study_period = request.POST["sp"]                        # 获取对应学段
+    course_data_p1 = get_cd_p1()
+    comp_data_p1 = get_comp_p1()
+    comp_data_p2 = get_comp_p2()
+    comp_data_p3 = get_comp_p3()
+    comp_data_p4 = get_comp_p4()
+
+    data = [course_data_p1, comp_data_p1, comp_data_p2, comp_data_p3, comp_data_p4]
+    return JsonResponse(data=data, safe=False)
+
 
 
 ###学业进步
