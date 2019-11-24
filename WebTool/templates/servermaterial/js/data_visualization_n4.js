@@ -18,6 +18,8 @@ $(document).ready(function () {
             table_job(result[0]);
             draw_sjob(result[0]);
             table_sjob(result[0]);
+            draw_gwlg(result[0]);
+            draw_shsj(result[0]);
 
 
         }
@@ -43,6 +45,8 @@ $(document).ready(function () {
                 table_job(result[0]);
                 draw_sjob(result[0]);
                 table_sjob(result[0]);
+                draw_gwlg(result[0]);
+                draw_shsj(result[0]);
 
 
             }
@@ -603,4 +607,153 @@ function table_sjob(data) {
 
         table1.row.add([xd,wd,xb,jc,gl,ly, qz, gb, qt]).draw();
     }
+}
+
+//岗位轮岗情况图
+function draw_gwlg(data) {
+    var myChart = echarts.init(document.getElementById('chart-gwlg'));
+    // alert('here');
+    option = {
+        title: {
+            text: '校内岗位轮岗情况图',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['bar', 'lin']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        legend: {
+            data: ['小学', '初中', '高中'],
+            y: 'bottom'
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: ['四周及以下', '半学期', '一学期', '一学期以上'],
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel: {
+                    interval: 0,
+                    rotate: 40
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '比率'
+                // interval: ,
+            }
+        ],
+        series: [
+            {
+                name: '小学',
+                type: 'bar',
+                data: data['data4gwlg'][0]
+            },
+            {
+                name: '初中',
+                type: 'bar',
+                data: data['data4gwlg'][1]
+            },
+            {
+                name: '高中',
+                type: 'bar',
+                data: data['data4gwlg'][2]
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+//社会实践活动开展情况
+function draw_shsj(data) {
+    var myChart = echarts.init(document.getElementById('chart-shsj'));
+    // alert('here');
+    option = {
+        title: {
+            text: '社会实践活动开展情况图',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        legend: {
+            data: ['参与率', '覆盖率'],
+            y: 'bottom'
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: data['data4shsj'][0],
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel: {
+                    interval: 0,
+                    rotate: 40
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '比率'
+                // interval: ,
+            }
+        ],
+        series: [
+            {
+                name: '参与率',
+                type: 'line',
+                data: data['data4shsj'][1],
+                itemStyle: {
+                    normal: {
+                        color: '#4f9D9D'
+                    }
+                }
+            },
+            {
+                name: '覆盖率',
+                type: 'line',
+                data: data['data4shsj'][2],
+                itemStyle: {
+                    normal: {
+                        color: '#EA7500'
+                    }
+                }
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
 }
