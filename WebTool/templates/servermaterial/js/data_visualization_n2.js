@@ -17,6 +17,7 @@ $(document).ready(function () {
             draw_ywfb(result[1]);
             draw_sxfb(result[1]);
             draw_yyfb(result[1]);
+            table_gkqmks(result[1]);
 
         }
 
@@ -39,6 +40,7 @@ $(document).ready(function () {
                 draw_ywfb(result[1]);
                 draw_sxfb(result[1]);
                 draw_yyfb(result[1]);
+                table_gkqmks(result[1]);
 
             }
 
@@ -62,6 +64,8 @@ $(document).ready(function () {
                 draw_ywfb(result[1]);
                 draw_sxfb(result[1]);
                 draw_yyfb(result[1]);
+                table_gkqmks(result[1]);
+
 
             }
 
@@ -490,4 +494,22 @@ function draw_yyfb(dat) {
 
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
+}
+
+function table_gkqmks(data) {
+    var table1 = $('#logtable-gkqmks').DataTable();
+    table1.clear().draw();
+
+    ret = data["dataTable"];
+    for(j = 0,len = ret.length; j < len; j++) {
+        tjl = ret[j][0];
+        //alert(StuID);
+
+        yw = ret[j][1];
+        sx = ret[j][2];
+        yy = ret[j][3];
+
+
+        table1.row.add([tjl,yw,sx,yy]).draw();
+    }
 }
