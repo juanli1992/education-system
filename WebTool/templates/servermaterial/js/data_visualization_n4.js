@@ -20,6 +20,7 @@ $(document).ready(function () {
             table_sjob(result[0]);
             draw_gwlg(result[0]);
             draw_shsj(result[0]);
+            draw_shsj2(result[0]);
 
 
         }
@@ -47,6 +48,7 @@ $(document).ready(function () {
                 table_sjob(result[0]);
                 draw_gwlg(result[0]);
                 draw_shsj(result[0]);
+                draw_shsj2(result[0]);
 
 
             }
@@ -687,7 +689,7 @@ function draw_shsj(data) {
     // alert('here');
     option = {
         title: {
-            text: '社会实践活动开展情况图',
+            text: '各年级社会实践活动开展情况图',
             x: 'center'
         },
         tooltip: {
@@ -754,6 +756,63 @@ function draw_shsj(data) {
             }
         ]
     };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+//v2
+function draw_shsj2(dat) {
+    var myChart = echarts.init(document.getElementById('chart-shsj2'));
+
+    option = {
+        title: {
+            text: '各类社会实践活动开展情况图'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['bar','line']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {
+            data: ['参与率', '覆盖率']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['科技文化类','基地实践类','军政训练类','参观考察类','志愿服务类','其他类']
+        },
+        series: [
+            {
+                name: '参与率',
+                type: 'bar',
+                data: dat['data4shsj2'][0]
+            },
+            {
+                name: '覆盖率',
+                type: 'bar',
+                data: dat['data4shsj2'][1]
+            }
+        ]
+    };
+
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
 }

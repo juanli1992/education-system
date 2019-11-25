@@ -775,7 +775,7 @@ def get_tiyan_data(study_period):
         cursor.execute(
             "SELECT count(*),xj.NJDM,XDDM,SocialPracticeCode,NAME FROM student_db.experience_socialpractices, student_xj as xj, student_info as info, experience_practicetype_code where experience_socialpractices.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and SocialPracticeCode=experience_practicetype_code.ID and XDDM={} group by xj.NJDM,SocialPracticeCode order by SocialPracticeCode,XDDM,xj.NJDM;".format(study_period))
     results10 = cursor.fetchall()
-    print(results10)
+    #print(results10)
 
     if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
         cursor.execute( # count() #7 是总共10个学校
@@ -784,7 +784,16 @@ def get_tiyan_data(study_period):
         cursor.execute(
             "SELECT count(distinct SchoolID)/10,GradeCode,XD,PracticeCode FROM student_db.experience_schoolpracticesetting,nj_xd where GradeCode=NJ and XD={} group by PracticeCode,GradeCode order by PracticeCode,XD,GradeCode;".format(study_period))
     results11 = cursor.fetchall()
-    print(results11)
+    #print(results11)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+        cursor.execute( # count() #7 是总共10个学校
+            "SELECT count(distinct SchoolID)/10,PracticeCode FROM student_db.experience_schoolpracticesetting,nj_xd where GradeCode=NJ group by PracticeCode order by PracticeCode;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(distinct SchoolID)/10,PracticeCode FROM student_db.experience_schoolpracticesetting,nj_xd where GradeCode=NJ and XD={} group by PracticeCode order by PracticeCode;".format(study_period))
+    results111 = cursor.fetchall()
+    #print(results111)
 
 
 
@@ -1159,6 +1168,30 @@ def get_tiyan_data(study_period):
     fugailv_shsj_lis = get_huodongrenshulisMax(njdm_tot, fgl, nj)
     fugailv_shsj_lis = list(fugailv_shsj_lis)
 
+    #参与率
+    cnt, nj, xd, spc, nm = zip(*[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 1])  # 参加了科技文化
+    count_kjwhN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 2])  # 参加了
+    count_jdsjN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 3])  # 参加了
+    count_jzslN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 4])  # 参加了
+    count_cgkcN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 5])  # 参加了
+    count_zyfwN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 6])  # 参加了
+    count_qtN = np.array(cnt).sum()
+    ttN = tt.sum()
+    cyllist = [count_kjwhN/ttN, count_jdsjN/ttN, count_jzslN/ttN, count_cgkcN/ttN, count_zyfwN/ttN, count_qtN/ttN]
+    # 覆盖率
+    fgllist, _ = zip(
+        *[(row[0], row[1]) for row in results111 if row[1] != 0])
+
 
 
 
@@ -1170,7 +1203,7 @@ def get_tiyan_data(study_period):
 
 
 
-    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui, 'dataoOther':[canyulv_others,fugailv_others], 'data4Job':datRows, 'tableJob':tab_rows, 'data4Sjob':datRows4s, 'tableSjob':tab_rows4s, 'data4gwlg':[xxgwlg, czgwlg, gzgwlg], 'data4shsj':[grade_name_list, canyulv_shsj, fugailv_shsj_lis]}
+    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui, 'dataoOther':[canyulv_others,fugailv_others], 'data4Job':datRows, 'tableJob':tab_rows, 'data4Sjob':datRows4s, 'tableSjob':tab_rows4s, 'data4gwlg':[xxgwlg, czgwlg, gzgwlg], 'data4shsj':[grade_name_list, canyulv_shsj, fugailv_shsj_lis], 'data4shsj2':[cyllist, fgllist]}
     return data
 
 
