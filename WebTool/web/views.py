@@ -1701,28 +1701,10 @@ no1 = yes1 = 0
 
 
 def monitor(request):
-    # 读取学院信息，显示在下拉框上
-    school_query_list = Basic.objects.values('School')
-    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
-
-    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
-    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
-
-    grade_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0]).values('Grade')
-    grade_list = list(set([tmp['Grade'] for tmp in grade_query_list if tmp['Grade'] != '']))
-
-    class_query_list = Basic.objects.filter(School=school_list[0], Major=major_list[0], Grade=grade_list[0]).values(
-        'classNo')
-    class_list = list(set([tmp['classNo'] for tmp in class_query_list if tmp['classNo'] != '']))
-
-
-
-
-
-    return render(request, 'servermaterial/monitor.html', context={'school_list': school_list,
-                                                                   'major_list': major_list,
-                                                                   'grade_list': grade_list,
-                                                                   'class_list': class_list})
+    """
+    监测页面
+    """
+    return render(request, 'servermaterial/monitor.html')
 
 
 
@@ -1942,7 +1924,85 @@ def monitor_engine(request):
         return HttpResponse(json.dumps(retu), content_type="application/json")
 
 
+def monitor_enginev2(request):
+    if request.method == 'POST':
+        print('here')
+        grade = request.POST.get('grade__')
 
+
+
+        ###查出所有学生 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # print(stus)
+        cursor = connection.cursor()
+
+        """
+        不及格监测
+        """
+        cursor.execute("SELECT FS,study.STUDENTID,XKDM FROM student_db.study, student_xj as xj where study.STUDENTID = xj.STUDENTID and NJDM={} group by study.STUDENTID, XKDM order by study.STUDENTID, XKDM;".format(grade))
+        results1 = cursor.fetchall()
+
+        fs_ywbjg, stu_ywbjg, xk_ywbjg = zip(
+            *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2]== '103'])
+        bjgywN = np.array(fs_ywbjg).__len__()
+        fs_sxbjg, stu_sxbjg, xk_sxbjg = zip(
+            *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2] == '121'])
+        bjgsxN = np.array(fs_sxbjg).__len__()
+        fs_yybjg, stu_yybjg, xk_yybjg = zip(
+            *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2] == '122'])
+        bjgyyN = np.array(fs_yybjg).__len__()
+        fs, stu, xk = zip(*results1)
+        stu_qc = list(set(stu))
+        stu_qc.sort()
+        totN = stu_qc.__len__()
+
+        cha1 = ['类别', bjgywN, bjgsxN, bjgyyN, totN]
+
+        """
+        不及格预警
+        """
+        # tst()
+        cursor.execute("SELECT avg(FS),study.STUDENTID,XKDM FROM student_db.study, student_xj as xj where study.STUDENTID = xj.STUDENTID and NJDM={} group by study.STUDENTID, XKDM order by study.STUDENTID, XKDM;".format(grade))
+        results1 = cursor.fetchall()
+
+        fs_ywbjg, stu_ywbjg, xk_ywbjg = zip(
+            *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2]== '103'])
+        bjgywN = np.array(fs_ywbjg).__len__()
+        fs_sxbjg, stu_sxbjg, xk_sxbjg = zip(
+            *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2] == '121'])
+        bjgsxN = np.array(fs_sxbjg).__len__()
+        fs_yybjg, stu_yybjg, xk_yybjg = zip(
+            *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2] == '122'])
+        bjgyyN = np.array(fs_yybjg).__len__()
+        fs, stu, xk = zip(*results1)
+        stu_qc = list(set(stu))
+        stu_qc.sort()
+        totN = stu_qc.__len__()
+
+        cha2 = ['类别', bjgywN, bjgsxN, bjgyyN, totN]
+
+        """
+        身体健康监测
+        """
+        cursor.execute("select avg(FS),xj.STUDENTID from health_physicalfitness as hp, student_xj as xj where hp.STUDENTID = xj.STUDENTID and NJDM={} group by xj.STUDENTID;".format(grade))
+        results1 = cursor.fetchall()
+
+        fs_bjg, stu_bjg = zip(
+            *[(row[0], row[1]) for row in results1 if row[0] < 60])
+        bjgN = np.array(fs_bjg).__len__()
+        fs, stu = zip(*results1)
+        totN = np.array(fs).__len__()
+
+        nod = {'value': bjgN, 'name': '身体综合素质不合格'}
+        yesd = {'value': totN-bjgN, 'name': '身体健康'}
+        cha3 = [nod, yesd]
+
+
+
+        retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3}
+
+        print(retu)
+
+        return JsonResponse(data=retu, safe=False)
 
 
 def list1(request):

@@ -27,122 +27,170 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+
+$(document).ready(function () {
+
+    $.ajax({
+        url: '/web/monitor_engine/',
+        type: 'POST',
+        data: {'grade__': $("#grade__").val()},
+        // dataType: 'JSON',
+        // contentType: 'application/json;charset=utf-8',
+        success: function (result) {
+            draw_jcbjg(result);
+            draw_ycbjg(result);
+            draw_jcst(result);
+
+
+        }
+
+    });
+
+
+    $("#grade__").change(function () {
+        $.ajax({
+            url: '/web/monitor_engine/',
+            type: 'POST',
+            data: {'grade__': $("#grade__").val()},
+            // dataType: 'JSON',
+            // contentType: 'application/json;charset=utf-8',
+            success: function (result) {
+                draw_jcbjg(result);
+				draw_ycbjg(result);
+				draw_jcst(result);
+
+
+            }
+
+        });
+    });
+
+
+
+});
+
+
+//监测不及格
+function draw_jcbjg(data) {
+    var myChart = echarts.init(document.getElementById('chart-1'));
+    // alert('here');
+	option = {
+		title: {
+				text: '监测不及格情况'
+			},
+		legend: {},
+		tooltip: {},
+		dataset: {
+			source: [
+				['cat', '语文不及格人数', '数学不及格人数', '英语不及格人数','总人数'],
+				data['cha1']
+			]
+		},
+		xAxis: {type: 'category'},
+		yAxis: {},
+		// Declare several bar series, each will be mapped
+		// to a column of dataset.source by default.
+		series: [
+			{type: 'bar'},
+			{type: 'bar'},
+			{type: 'bar'},
+			{type: 'bar'}
+		]
+	};
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+//预测不及格
+function draw_ycbjg(data) {
+    var myChart = echarts.init(document.getElementById('chart-2'));
+    // alert('here');
+	option = {
+		title: {
+				text: '预测不及格情况'
+			},
+		legend: {},
+		tooltip: {},
+		dataset: {
+			source: [
+				['cat', '语文不及格人数', '数学不及格人数', '英语不及格人数','总人数'],
+				data['cha2']
+			]
+		},
+		xAxis: {type: 'category'},
+		yAxis: {},
+		// Declare several bar series, each will be mapped
+		// to a column of dataset.source by default.
+		series: [
+			{type: 'bar'},
+			{type: 'bar'},
+			{type: 'bar'},
+			{type: 'bar'}
+		]
+	};
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+//身体健康监测
+function draw_jcst(dat) {
+    var myChart = echarts.init(document.getElementById('chart-3'));
+
+    option = {
+        title: {
+            text: '监测身体综合素质',
+            x:'center'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['身体综合素质不合格','身体健康']
+        },
+        series : [
+            {
+                name: '人数',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:dat['cha3'],
+
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+
+
+
+    </script>
     <!-- =======================================================
         Template Name: Dashio
         Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
         Author: TemplateMag.com
         License: https://templatemag.com/license/
     ======================================================= -->
-    <script>
-        $(document).ready(function () {
-
-            /*
-             学院下拉框改变
-             */
-            $("#school").change(function () {
-                $.ajax({
-                    url: '/web/query_majors',
-                    type: 'POST',
-                    data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
-                    dataType: 'JSON',
-                    contentType: 'application/json;charset=utf-8',
-                    success: function (result) {
-                        $("#major").empty();
-                        for (var i = 0; i < result.length; i++) {
-                            var newNode = $("<option>" + result[i] + "</option>");
-                            $("#major").append(newNode);
-                        }
-                        changeMajor();
-                    }
-
-                });
-            });
-
-
-            /*
-             专业下拉框改变
-             */
-            $("#major").change(changeMajor);
-
-            function changeMajor() {
-                var major = $("#major").find('option:selected').text();
-                var school = $("#school").find('option:selected').text();
-                $.ajax({
-                    url: '/web/query_grades',
-                    type: 'POST',
-                    data: JSON.stringify({"school": school, "major": major}),
-                    dataType: 'JSON',
-                    contentType: 'application/json;charset=utf-8',
-                    success: function (result) {
-                        $("#grade_").empty();
-                        for (var i = 0; i < result.length; i++) {
-                            var newNode = $("<option>" + result[i] + "</option>");
-                            $("#grade_").append(newNode);
-                        }
-                        changeGrade();
-                    }
-                })
-            }
-
-
-            /*
-             年级下拉框改变
-             */
-            $("#grade_").change(changeGrade);
-
-            function changeGrade() {
-                var grade = $("#grade_").find('option:selected').text();
-                var major = $("#major").find('option:selected').text();
-                var school = $("#school").find('option:selected').text();
-                $.ajax({
-                    url: '/web/query_class',
-                    type: 'POST',
-                    data: JSON.stringify({"school": school, "major": major, "grade": grade}),
-                    dataType: 'JSON',
-                    contentType: 'application/json;charset=utf-8',
-                    success: function (result) {
-                        $("#class").empty();
-                        for (var i = 0; i < result.length; i++) {
-                            var newNode = $("<option>" + result[i] + "</option>");
-                            $("#class").append(newNode);
-                        }
-<!--                        changeClass();-->
-                    }
-                })
-            }
-
-
-<!--            /*-->
-<!--             班级下拉框改变-->
-<!--             */-->
-<!--            $("#class").change(changeClass);-->
-
-<!--            function changeClass() {-->
-<!--                var clas = $("#class").find('option:selected').text();-->
-<!--                var grade = $("#grade_").find('option:selected').text();-->
-<!--                var major = $("#major").find('option:selected').text();-->
-<!--                var school = $("#school").find('option:selected').text();-->
-<!--                $.ajax({-->
-<!--                    url: '/web/query_ID',-->
-<!--                    type: 'POST',-->
-<!--                    data: JSON.stringify({"school": school, "major": major, "grade": grade, "class":clas}),-->
-<!--                    dataType: 'JSON',-->
-<!--                    contentType: 'application/json;charset=utf-8',-->
-<!--                    success: function (result) {-->
-<!--                        $("#stuid").empty();-->
-<!--                        for (var i = 0; i < result.length; i++) {-->
-<!--                            var newNode = $("<option>" + result[i] + "</option>");-->
-<!--                            $("#stuid").append(newNode);-->
-<!--                        }-->
-<!--                    }-->
-<!--                })-->
-<!--            }-->
-
-
-
-        });
-    </script>
-
   </head>
   <body>
     <!-- **********************************************************************************************************************************************************
@@ -164,56 +212,31 @@
       <section class="wrapper site-min-height">
         <div class="col-lg-12 mt">
           <div class="row content-panel">
-            <div class="col-lg-12 detailed mt">
-              <h4>选择监测预警对象</h4>
-              <div>
-                <div class="cls form-group col-lg-4">
-                    <label class="col-lg-3 control-label">学院</label>
-                    <div class="col-lg-8">
-                        <select class="form-control" id="school">
-                            {% for school in school_list %}
-                                <option>{{ school }}</option>
-                            {% endfor %}
-                        </select>
+                <div class="col-lg-12 detailed mt">
+                    <h4>可视化选项</h4>
+                    <div>
+                        <div class="cls form-group col-lg-4">
+                            <label class="col-lg-3 control-label text-info"
+                                   style="font-size: 17px; margin-top: 5px"><strong>年级</strong></label>
+                            <div class="col-lg-8">
+                                <select class="form-control" id="grade__">
+                                    <option value="11">一年级</option>
+                                    <option value="12">二年级</option>
+                                    <option value="13">三年级</option>
+                                    <option value="14">四年级</option>
+                                    <option value="15">五年级</option>
+                                    <option value="16">六年级</option>
+                                    <option value="17">七年级</option>
+                                    <option value="18">八年级</option>
+                                    <option value="19">九年级</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <button class="btn btn-theme" id="inquirybtnn" type="button" onclick="charts()">查询</button>
+                        </div>
                     </div>
                 </div>
-                <div class="cls form-group col-lg-4">
-                    <label class="col-lg-3 control-label">专业</label>
-                    <div class="col-lg-8">
-                        <select class="form-control" id="major">
-                            {% for major in major_list %}
-                                <option> {{ major }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="cls form-group col-lg-4">
-                    <label class="col-lg-3 control-label">年级</label>
-                    <div class="col-lg-8">
-                        <select class="form-control" id="grade_">
-                            {% for grade in grade_list %}
-                                <option> {{ grade }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="cls form-group col-lg-4">
-                    <label class="col-lg-3 control-label">班级</label>
-                    <div class="col-lg-8">
-                        <select class="form-control" id="class">
-                            {% for class in class_list %}
-                                <option> {{ class }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group col-lg-1">
-                  <button class="btn btn-theme" id="searchlog" type="button">开始</button>
-                </div>
-
-              </div>
-            </div>
           </div>
         </div>
 
@@ -224,8 +247,8 @@
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-4 detailed">
-                      <div id="chart-3" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list1" target="_blank">查看不及格学生信息</a>
+                      <div id="chart-1" style="width: 450px;height:400px;"></div>
+<!--                      <a href="/web/list1" target="_blank">查看不及格学生信息</a>-->
                     </div>
 
                   </div>
@@ -242,8 +265,8 @@
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-4 detailed">
-                      <div id="chart-5" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list2"  target="_blank">查看预计不及格学生信息</a>
+                      <div id="chart-2" style="width: 450px;height:400px;"></div>
+<!--                      <a href="/web/list2"  target="_blank">查看预计不及格学生信息</a>-->
                     </div>
 
                   </div>
@@ -253,55 +276,6 @@
           </div>
 
         </div>
-
-
-       <div class="col-lg-12 detailed">
-          <div class="row content-panel">
-            <h4>退学预警</h4>
-
-                  <div class="row mt">
-
-                    <div class="col-lg-5 col-lg-offset-4 detailed">
-                      <div id="chart-4" style="width: 450px;height:400px;"></div>
-                      <a href="/web/list3" target="_blank">查看有退学风险学生信息</a>
-                    </div>
-                  </div>
-
-
-
-          </div>
-
-        </div>
-
-
-
-
-       <div class="col-lg-12 detailed">
-          <div class="row content-panel">
-               <h4>生活规律监测</h4>
-              <div>
-
-                  <div class="row mt">
-                    <div class="col-lg-5 col-lg-offset-4 detailed">
-                      <div id="chart-1" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list4" target="_blank">查看生活不规律学生信息</a>
-                    </div>
-                    <!--<div class="col-lg-5 col-lg-offset-1 detailed">-->
-                      <!--<div id="chart-2" style="width: 450px;height:400px;"></div>-->
-                        <!--<a href="/web/list2">查看需要关注学生名单</a>-->
-                    <!--</div>-->
-                  </div>
-
-
-              </div>
-
-
-
-          </div>
-
-        </div>
-
-
 
        <div class="col-lg-12 detailed">
           <div class="row content-panel">
@@ -309,8 +283,8 @@
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-4 detailed">
-                      <div id="chart-2" style="width: 450px;height:400px;"></div>
-                        <a href="/web/list5" target="_blank">查看身体不健康学生信息</a>
+                      <div id="chart-3" style="width: 450px;height:400px;"></div>
+<!--                        <a href="/web/list5" target="_blank">查看身体不健康学生信息</a>-->
                     </div>
                   </div>
 
@@ -390,602 +364,8 @@
     <script src="/templates/servermaterial/js/echarts-wordcloud.min.js"></script>
 
 
-    <!--监测-->
-    <script>
 
-$("#searchlog").click(function(){
-	var clas = $("#class").val();
-    var grade = $("#grade_").val();
-    var major = $("#major").val();
-    var school = $("#school").val();
 
-    $.post("/web/monitor_engine/",{"school": school, "major": major, "grade": grade, "class":clas}, function(retu){
-			//echarts1
-			var myChart1 = echarts.init(document.getElementById('chart-1'));
-			option = {
-				<!--backgroundColor: '#2c343c',-->
-
-				title: {
-					text: '生活规律与否人数比例图',
-					left: 'center',
-					top: 20,
-					textStyle: {
-						color: 'black'
-					}
-				},
-
-				tooltip : {
-					trigger: 'item',
-					formatter: "{a} <br/>{b} : {c} ({d}%)"
-				},
-
-
-				series : [
-					{
-						name:'人数',
-						type:'pie',
-						radius : '55%',
-						center: ['50%', '50%'],
-						data:[].sort(function (a, b) { return a.value - b.value; }),
-
-						label: {
-							normal: {
-								textStyle: {
-									color: 'black'
-								}
-							}
-						},
-						labelLine: {
-							normal: {
-								lineStyle: {
-									color: 'black'
-								},
-								smooth: 0.2,
-								length: 10,
-								length2: 20
-							}
-						},
-						itemStyle: {
-							normal: {
-
-								shadowBlur: 200,
-								shadowColor: 'rgba(0, 0, 0, 0.5)'
-							}
-						},
-
-						animationType: 'scale',
-						animationEasing: 'elasticOut',
-						animationDelay: function (idx) {
-							return Math.random() * 200;
-						}
-					}
-				]
-			};
-            myChart1.setOption(option);
-			myChart1.setOption({
-			series:[{data:retu['cha1']}]
-			});
-
-
-
-			//echarts3
-			var myChart3 = echarts.init(document.getElementById('chart-3'));
-			option = {
-				<!--backgroundColor: '#2c343c',-->
-
-				title: {
-					text: '及格与否人数比例图',
-					left: 'center',
-					top: 20,
-					textStyle: {
-						color: 'black'
-					}
-				},
-
-				tooltip : {
-					trigger: 'item',
-					formatter: "{a} <br/>{b} : {c} ({d}%)"
-				},
-
-
-				series : [
-					{
-						name:'人数',
-						type:'pie',
-						radius : '55%',
-						center: ['50%', '50%'],
-						data:[].sort(function (a, b) { return a.value - b.value; }),
-
-						label: {
-							normal: {
-								textStyle: {
-									color: 'black'
-								}
-							}
-						},
-						labelLine: {
-							normal: {
-								lineStyle: {
-									color: 'black'
-								},
-								smooth: 0.2,
-								length: 10,
-								length2: 20
-							}
-						},
-						itemStyle: {
-							normal: {
-
-								shadowBlur: 200,
-								shadowColor: 'rgba(0, 0, 0, 0.5)'
-							}
-						},
-
-						animationType: 'scale',
-						animationEasing: 'elasticOut',
-						animationDelay: function (idx) {
-							return Math.random() * 200;
-						}
-					}
-				]
-			};
-            myChart3.setOption(option);
-			myChart3.setOption({
-			series:[{data:retu['cha2']}]
-			});
-
-
-			//echarts5
-			var myChart5 = echarts.init(document.getElementById('chart-5'));
-			option = {
-				<!--backgroundColor: '#2c343c',-->
-
-				title: {
-					text: '及格与否人数比例图',
-					left: 'center',
-					top: 20,
-					textStyle: {
-						color: 'black'
-					}
-				},
-
-				tooltip : {
-					trigger: 'item',
-					formatter: "{a} <br/>{b} : {c} ({d}%)"
-				},
-
-
-				series : [
-					{
-						name:'人数',
-						type:'pie',
-						radius : '55%',
-						center: ['50%', '50%'],
-						data:[].sort(function (a, b) { return a.value - b.value; }),
-
-						label: {
-							normal: {
-								textStyle: {
-									color: 'black'
-								}
-							}
-						},
-						labelLine: {
-							normal: {
-								lineStyle: {
-									color: 'black'
-								},
-								smooth: 0.2,
-								length: 10,
-								length2: 20
-							}
-						},
-						itemStyle: {
-							normal: {
-
-								shadowBlur: 200,
-								shadowColor: 'rgba(0, 0, 0, 0.5)'
-							}
-						},
-
-						animationType: 'scale',
-						animationEasing: 'elasticOut',
-						animationDelay: function (idx) {
-							return Math.random() * 200;
-						}
-					}
-				]
-			};
-            myChart5.setOption(option);
-			myChart5.setOption({
-			series:[{data:retu['cha3']}]
-			});
-
-
-
-			//echarts2
-			var myChart2 = echarts.init(document.getElementById('chart-2'));
-			option = {
-				<!--backgroundColor: '#2c343c',-->
-
-				title: {
-					text: '身体健康与否人数比例图',
-					left: 'center',
-					top: 20,
-					textStyle: {
-						color: 'black'
-					}
-				},
-
-				tooltip : {
-					trigger: 'item',
-					formatter: "{a} <br/>{b} : {c} ({d}%)"
-				},
-
-
-				series : [
-					{
-						name:'人数',
-						type:'pie',
-						radius : '55%',
-						center: ['50%', '50%'],
-						data:[].sort(function (a, b) { return a.value - b.value; }),
-
-						label: {
-							normal: {
-								textStyle: {
-									color: 'black'
-								}
-							}
-						},
-						labelLine: {
-							normal: {
-								lineStyle: {
-									color: 'black'
-								},
-								smooth: 0.2,
-								length: 10,
-								length2: 20
-							}
-						},
-						itemStyle: {
-							normal: {
-
-								shadowBlur: 200,
-								shadowColor: 'rgba(0, 0, 0, 0.5)'
-							}
-						},
-
-						animationType: 'scale',
-						animationEasing: 'elasticOut',
-						animationDelay: function (idx) {
-							return Math.random() * 200;
-						}
-					}
-				]
-			};
-            myChart2.setOption(option);
-			myChart2.setOption({
-			series:[{data:retu['cha4']}]
-			});
-
-
-			//echarts4
-			var myChart4 = echarts.init(document.getElementById('chart-4'));
-			option = {
-				<!--backgroundColor: '#2c343c',-->
-
-				title: {
-					text: '退学风险有无人数比例图',
-					left: 'center',
-					top: 20,
-					textStyle: {
-						color: 'black'
-					}
-				},
-
-				tooltip : {
-					trigger: 'item',
-					formatter: "{a} <br/>{b} : {c} ({d}%)"
-				},
-
-
-				series : [
-					{
-						name:'人数',
-						type:'pie',
-						radius : '55%',
-						center: ['50%', '50%'],
-						data:[].sort(function (a, b) { return a.value - b.value; }),
-
-						label: {
-							normal: {
-								textStyle: {
-									color: 'black'
-								}
-							}
-						},
-						labelLine: {
-							normal: {
-								lineStyle: {
-									color: 'black'
-								},
-								smooth: 0.2,
-								length: 10,
-								length2: 20
-							}
-						},
-						itemStyle: {
-							normal: {
-
-								shadowBlur: 200,
-								shadowColor: 'rgba(0, 0, 0, 0.5)'
-							}
-						},
-
-						animationType: 'scale',
-						animationEasing: 'elasticOut',
-						animationDelay: function (idx) {
-							return Math.random() * 200;
-						}
-					}
-				]
-			};
-            myChart4.setOption(option);
-			myChart4.setOption({
-			series:[{data:retu['cha5']}]
-			});
-
-
-
-
-
-
-
-
-     });
-
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--var myChart1 = echarts.init(document.getElementById('chart-1'));-->
-<!--option = {-->
-    <!--&lt;!&ndash;backgroundColor: '#2c343c',&ndash;&gt;-->
-
-    <!--title: {-->
-        <!--text: '生活规律与否比例',-->
-        <!--left: 'center',-->
-        <!--top: 20,-->
-        <!--textStyle: {-->
-            <!--color: 'black'-->
-        <!--}-->
-    <!--},-->
-
-    <!--tooltip : {-->
-        <!--trigger: 'item',-->
-        <!--formatter: "{a} <br/>{b} : {c} ({d}%)"-->
-    <!--},-->
-
-    <!--visualMap: {-->
-        <!--show: false,-->
-        <!--min: 80,-->
-        <!--max: 600,-->
-        <!--inRange: {-->
-            <!--colorLightness: [0, 1]-->
-        <!--}-->
-    <!--},-->
-    <!--series : [-->
-        <!--{-->
-            <!--name:'人数',-->
-            <!--type:'pie',-->
-            <!--radius : '55%',-->
-            <!--center: ['50%', '50%'],-->
-            <!--data:[].sort(function (a, b) { return a.value - b.value; }),-->
-            <!-- -->
-            <!--label: {-->
-                <!--normal: {-->
-                    <!--textStyle: {-->
-                        <!--color: 'black'-->
-                    <!--}-->
-                <!--}-->
-            <!--},-->
-            <!--labelLine: {-->
-                <!--normal: {-->
-                    <!--lineStyle: {-->
-                        <!--color: 'black'-->
-                    <!--},-->
-                    <!--smooth: 0.2,-->
-                    <!--length: 10,-->
-                    <!--length2: 20-->
-                <!--}-->
-            <!--},-->
-            <!--itemStyle: {-->
-                <!--normal: {-->
-                    <!-- -->
-                    <!--shadowBlur: 200,-->
-                    <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
-                <!--}-->
-            <!--},-->
-
-            <!--animationType: 'scale',-->
-            <!--animationEasing: 'elasticOut',-->
-            <!--animationDelay: function (idx) {-->
-                <!--return Math.random() * 200;-->
-            <!--}-->
-        <!--}-->
-    <!--]-->
-<!--};;-->
-<!--var data = {{retu|safe}}-->
-<!--myChart1.setOption(option)-->
-<!--myChart1.setOption({-->
-<!--series:[{data:data.cha1}]-->
-<!--}-->
-
-<!--);-->
-
-
-
-<!--var myChart2 = echarts.init(document.getElementById('chart-2'));-->
-<!--option = {-->
-
-    <!--title: {-->
-        <!--text: '健康状况比例',-->
-        <!--left: 'center',-->
-        <!--top: 20,-->
-        <!--textStyle: {-->
-            <!--color: 'black'-->
-        <!--}-->
-    <!--},-->
-
-    <!--tooltip : {-->
-        <!--trigger: 'item',-->
-        <!--formatter: "{a} <br/>{b} : {c} ({d}%)"-->
-    <!--},-->
-
-    <!--visualMap: {-->
-        <!--show: false,-->
-        <!--min: 80,-->
-        <!--max: 600,-->
-        <!--inRange: {-->
-            <!--colorLightness: [0, 1]-->
-        <!--}-->
-    <!--},-->
-    <!--series : [-->
-        <!--{-->
-            <!--name:'人数',-->
-            <!--type:'pie',-->
-            <!--radius : '55%',-->
-            <!--center: ['50%', '50%'],-->
-            <!--data:[-->
-                <!--{value:335, name:'不健康'},-->
-                <!--{value:900, name:'健康'}-->
-            <!--].sort(function (a, b) { return a.value - b.value; }),-->
-            <!-- -->
-            <!--label: {-->
-                <!--normal: {-->
-                    <!--textStyle: {-->
-                        <!--color: 'black'-->
-                    <!--}-->
-                <!--}-->
-            <!--},-->
-            <!--labelLine: {-->
-                <!--normal: {-->
-                    <!--lineStyle: {-->
-                        <!--color: 'black'-->
-                    <!--},-->
-                    <!--smooth: 0.2,-->
-                    <!--length: 10,-->
-                    <!--length2: 20-->
-                <!--}-->
-            <!--},-->
-            <!--itemStyle: {-->
-                <!--normal: {-->
-                    <!-- -->
-                    <!--shadowBlur: 200,-->
-                    <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
-                <!--}-->
-            <!--},-->
-
-            <!--animationType: 'scale',-->
-            <!--animationEasing: 'elasticOut',-->
-            <!--animationDelay: function (idx) {-->
-                <!--return Math.random() * 200;-->
-            <!--}-->
-        <!--}-->
-    <!--]-->
-<!--};;-->
-<!--myChart2.setOption(option);-->
-
-
-
-
-
-
-
-<!--var myChart4 = echarts.init(document.getElementById('chart-4'));-->
-<!--option = {-->
-
-    <!--title: {-->
-        <!--text: '有劝退风险与否比例',-->
-        <!--left: 'center',-->
-        <!--top: 20,-->
-        <!--textStyle: {-->
-            <!--color: 'black'-->
-        <!--}-->
-    <!--},-->
-
-    <!--tooltip : {-->
-        <!--trigger: 'item',-->
-        <!--formatter: "{a} <br/>{b} : {c} ({d}%)"-->
-    <!--},-->
-
-    <!--visualMap: {-->
-        <!--show: false,-->
-        <!--min: 80,-->
-        <!--max: 600,-->
-        <!--inRange: {-->
-            <!--colorLightness: [0, 1]-->
-        <!--}-->
-    <!--},-->
-    <!--series : [-->
-        <!--{-->
-            <!--name:'人数',-->
-            <!--type:'pie',-->
-            <!--radius : '55%',-->
-            <!--center: ['50%', '50%'],-->
-            <!--data:[-->
-                <!--{value:335, name:'有劝退风险'},-->
-                <!--{value:900, name:'无劝退风险'}-->
-            <!--].sort(function (a, b) { return a.value - b.value; }),-->
-            <!-- -->
-            <!--label: {-->
-                <!--normal: {-->
-                    <!--textStyle: {-->
-                        <!--color: 'black'-->
-                    <!--}-->
-                <!--}-->
-            <!--},-->
-            <!--labelLine: {-->
-                <!--normal: {-->
-                    <!--lineStyle: {-->
-                        <!--color: 'black'-->
-                    <!--},-->
-                    <!--smooth: 0.2,-->
-                    <!--length: 10,-->
-                    <!--length2: 20-->
-                <!--}-->
-            <!--},-->
-            <!--itemStyle: {-->
-                <!--normal: {-->
-                    <!-- -->
-                    <!--shadowBlur: 200,-->
-                    <!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
-                <!--}-->
-            <!--},-->
-
-            <!--animationType: 'scale',-->
-            <!--animationEasing: 'elasticOut',-->
-            <!--animationDelay: function (idx) {-->
-                <!--return Math.random() * 200;-->
-            <!--}-->
-        <!--}-->
-    <!--]-->
-<!--};;-->
-<!--myChart4.setOption(option);-->
-
-
-    </script>
 
 
 
