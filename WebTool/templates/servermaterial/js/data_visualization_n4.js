@@ -85,8 +85,8 @@ function draw_dushujie(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -162,8 +162,8 @@ function draw_kejijie(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -239,8 +239,8 @@ function draw_tiyujie(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -316,8 +316,8 @@ function draw_yishujie(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -384,8 +384,8 @@ function draw_xiaoyunhui(dat) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['bar','line']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip: {
@@ -427,8 +427,8 @@ function draw_qita(dat) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['bar','line']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip: {
@@ -484,8 +484,8 @@ function draw_job(dat) {
         toolbox: {
             feature: {
                 dataView: {show: true, readOnly: false},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip : {
@@ -552,8 +552,8 @@ function draw_sjob(dat) {
         toolbox: {
             feature: {
                 dataView: {show: true, readOnly: false},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip : {
@@ -633,8 +633,8 @@ function draw_gwlg(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['bar', 'lin']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -705,8 +705,8 @@ function draw_shsj(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -772,8 +772,8 @@ function draw_shsj2(dat) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['bar','line']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip: {

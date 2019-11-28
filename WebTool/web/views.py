@@ -1926,7 +1926,6 @@ def monitor_engine(request):
 
 def monitor_enginev2(request):
     if request.method == 'POST':
-        print('here')
         grade = request.POST.get('grade__')
 
 
@@ -2010,7 +2009,7 @@ def monitor_enginev2(request):
 
         retu = {'cha1': cha1, 'cha2': cha2, 'cha3': cha3}
 
-        print(retu)
+        #print(retu)
 
         return JsonResponse(data=retu, safe=False)
 

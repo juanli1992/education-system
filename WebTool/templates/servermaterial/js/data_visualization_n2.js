@@ -99,8 +99,8 @@ function draw_yuwen(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -194,8 +194,8 @@ function draw_shuxue(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -289,8 +289,8 @@ function draw_yingyu(data) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         legend: {
@@ -375,8 +375,8 @@ function draw_ywfb(dat) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['bar','line']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip: {
@@ -420,8 +420,8 @@ function draw_sxfb(dat) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['bar','line']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip: {
@@ -465,8 +465,8 @@ function draw_yyfb(dat) {
             feature: {
                 dataView: {show: true, readOnly: false},
                 magicType: {show: true, type: ['bar','line']},
-                restore: {show: true},
-                saveAsImage: {show: true}
+                // restore: {show: true},
+                // saveAsImage: {show: true}
             }
         },
         tooltip: {
