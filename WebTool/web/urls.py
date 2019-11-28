@@ -48,6 +48,6 @@ urlpatterns = [
     path('list1/', list1),
     path('list2/', list2),
     path('list3/', list3),
-    path('list4/', list4),
-    path('list5/', list5),
+    # path('list4/', list4),
+    # path('list5/', list5),
 ]

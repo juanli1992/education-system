@@ -1941,6 +1941,9 @@ def monitor_enginev2(request):
         cursor.execute("SELECT FS,study.STUDENTID,XKDM FROM student_db.study, student_xj as xj where study.STUDENTID = xj.STUDENTID and NJDM={} group by study.STUDENTID, XKDM order by study.STUDENTID, XKDM;".format(grade))
         results1 = cursor.fetchall()
 
+        global stu_ywbjg
+        global stu_sxbjg
+        global stu_yybjg
         fs_ywbjg, stu_ywbjg, xk_ywbjg = zip(
             *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2]== '103'])
         bjgywN = np.array(fs_ywbjg).__len__()
@@ -1955,6 +1958,7 @@ def monitor_enginev2(request):
         stu_qc.sort()
         totN = stu_qc.__len__()
 
+        global cha1
         cha1 = ['类别', bjgywN, bjgsxN, bjgyyN, totN]
 
         """
@@ -1964,20 +1968,24 @@ def monitor_enginev2(request):
         cursor.execute("SELECT avg(FS),study.STUDENTID,XKDM FROM student_db.study, student_xj as xj where study.STUDENTID = xj.STUDENTID and NJDM={} group by study.STUDENTID, XKDM order by study.STUDENTID, XKDM;".format(grade))
         results1 = cursor.fetchall()
 
-        fs_ywbjg, stu_ywbjg, xk_ywbjg = zip(
+        global stu_ywbjg_
+        global stu_sxbjg_
+        global stu_yybjg_
+        fs_ywbjg_, stu_ywbjg_, xk_ywbjg_ = zip(
             *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2]== '103'])
-        bjgywN = np.array(fs_ywbjg).__len__()
-        fs_sxbjg, stu_sxbjg, xk_sxbjg = zip(
+        bjgywN = np.array(fs_ywbjg_).__len__()
+        fs_sxbjg_, stu_sxbjg_, xk_sxbjg_ = zip(
             *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2] == '121'])
-        bjgsxN = np.array(fs_sxbjg).__len__()
-        fs_yybjg, stu_yybjg, xk_yybjg = zip(
+        bjgsxN = np.array(fs_sxbjg_).__len__()
+        fs_yybjg_, stu_yybjg_, xk_yybjg_ = zip(
             *[(row[0], row[1], row[2]) for row in results1 if row[0] < 60 and row[2] == '122'])
-        bjgyyN = np.array(fs_yybjg).__len__()
+        bjgyyN = np.array(fs_yybjg_).__len__()
         fs, stu, xk = zip(*results1)
         stu_qc = list(set(stu))
         stu_qc.sort()
         totN = stu_qc.__len__()
 
+        global cha2
         cha2 = ['类别', bjgywN, bjgsxN, bjgyyN, totN]
 
         """
@@ -1986,6 +1994,7 @@ def monitor_enginev2(request):
         cursor.execute("select avg(FS),xj.STUDENTID from health_physicalfitness as hp, student_xj as xj where hp.STUDENTID = xj.STUDENTID and NJDM={} group by xj.STUDENTID;".format(grade))
         results1 = cursor.fetchall()
 
+        global stu_bjg
         fs_bjg, stu_bjg = zip(
             *[(row[0], row[1]) for row in results1 if row[0] < 60])
         bjgN = np.array(fs_bjg).__len__()
@@ -1994,6 +2003,7 @@ def monitor_enginev2(request):
 
         nod = {'value': bjgN, 'name': '身体综合素质不合格'}
         yesd = {'value': totN-bjgN, 'name': '身体健康'}
+        global cha3
         cha3 = [nod, yesd]
 
 
@@ -2004,131 +2014,189 @@ def monitor_enginev2(request):
 
         return JsonResponse(data=retu, safe=False)
 
+def search4stulist(stuListTup):
+    cursor = connection.cursor()
+    cursor.execute(
+        "SELECT xj.STUDENTID,xj.XM,school_code.NAME,grade_code.NAME,gender_code.NAME FROM student_db.student_xj as xj, student_info as info,school_code,grade_code,gender_code where info.ID = xj.STUDENTID and xj.XXDM= school_code.ID and xj.NJDM= grade_code.ID and info.XBDM= gender_code.ID and xj.STUDENTID in {};".format(
+            stuListTup))
+    results1 = cursor.fetchall()
+
+    stu, xm, xx, nj, xb = zip(*results1)
+
+    tabrows = []
+    for i1,i2,i3,i4,i5 in zip(stu, xm, xx, nj, xb):
+        tabrow = [i1,i2,i3,i4,i5]
+        tabrows.append(tabrow)
+    return tabrows
 
 def list1(request):
-    global bujigejiancelist
-    global kemushu
-    global no2
-    global yes2
-    no2d = {'value': no2, 'name': '不及格'}
-    yes2d = {'value': yes2, 'name': '及格'}
-    cha1 = [no2d, yes2d]
-    retu = {'cha1': cha1}
+    stu_ywbjg_tup = tuple(stu_ywbjg)
+    stu_sxbjg_tup = tuple(stu_sxbjg)
+    stu_yybjg_tup = tuple(stu_yybjg)
 
-    ###表格
-    res4 = []
-    for stuid in bujigejiancelist:
-        objs4 = Basic.objects.filter(StuID=stuid)[0]
-        data = {
-            'StuID': objs4.StuID,
-            'School': objs4.School,
-            'Major': objs4.Major,
-            'classNo': objs4.classNo
-        }
-        res4.append(data)
+    # cursor = connection.cursor()
+    # cursor.execute(
+    #     "SELECT xj.STUDENTID,xj.XM,school_code.NAME,grade_code.NAME,gender_code.NAME FROM student_db.student_xj as xj, student_info as info,school_code,grade_code,gender_code where info.ID = xj.STUDENTID and xj.XXDM= school_code.ID and xj.NJDM= grade_code.ID and info.XBDM= gender_code.ID and xj.STUDENTID in {};".format(
+    #         stu_ywbjg_tup))
+    # results1 = cursor.fetchall()
+    #
+    # stu, xm, xx, nj, xb = zip(*results1)
+    #
+    # tabrows = []
+    # for i1,i2,i3,i4,i5 in zip(stu, xm, xx, nj, xb):
+    #     tabrow = [i1,i2,i3,i4,i5]
+    #     tabrows.append(tabrow)
 
-    if len(bujigejiancelist) != 0:
-        for ii in range(len(bujigejiancelist)):
-            res4[ii].update({'bujici': kemushu[ii]})
-    print(res4)
+    tab1 = search4stulist(stu_ywbjg_tup)
+    tab2 = search4stulist(stu_sxbjg_tup)
+    tab3 = search4stulist(stu_yybjg_tup)
 
-
-
-    return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
-
+    return render(request, 'servermaterial/list1.html', {'chart1': json.dumps(cha1), 'table1': json.dumps(tab1), 'table2': json.dumps(tab2), 'table3': json.dumps(tab3)})
 
 def list2(request):
-    global bujigeyujinglist
-    global no3
-    global yes3
-    no3d = {'value': no3, 'name': '不及格'}
-    yes3d = {'value': yes3, 'name': '及格'}
-    cha1 = [no3d, yes3d]
-    retu = {'cha1': cha1}
+    stu_ywbjg_tup = tuple(stu_ywbjg_)
+    stu_sxbjg_tup = tuple(stu_sxbjg_)
+    stu_yybjg_tup = tuple(stu_yybjg_)
 
-    ###表格
-    res4 = []
-    for stuid in bujigeyujinglist:
-        objs4 = Basic.objects.filter(StuID=stuid)[0]
-        data = {
-            'StuID': objs4.StuID,
-            'School': objs4.School,
-            'Major': objs4.Major,
-            'classNo': objs4.classNo
-        }
-        res4.append(data)
-    print(res4)
+    tab1 = search4stulist(stu_ywbjg_tup)
+    tab2 = search4stulist(stu_sxbjg_tup)
+    tab3 = search4stulist(stu_yybjg_tup)
 
-    return render(request, 'servermaterial/list2.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
-
+    return render(request, 'servermaterial/list2.html', {'chart2': json.dumps(cha2), 'table1': json.dumps(tab1), 'table2': json.dumps(tab2), 'table3': json.dumps(tab3)})
 
 def list3(request):
-    global tuixuelist
-    global no5
-    global yes5
-    no5d = {'value': no5, 'name': '有退学风险'}
-    yes5d = {'value': yes5, 'name': '无退学风险'}
-    cha1 = [no5d, yes5d]
-    retu = {'cha1': cha1}
+    stu_bjg_tup = tuple(stu_bjg)
 
-    ###表格
-    res4 = []
-    for stuid in tuixuelist:
-        objs4 = Basic.objects.filter(StuID=stuid)[0]
-        data = {
-            'StuID': objs4.StuID,
-            'School': objs4.School,
-            'Major': objs4.Major,
-            'classNo': objs4.classNo
-        }
-        res4.append(data)
-    print(res4)
+    tab1 = search4stulist(stu_bjg_tup)
 
-    return render(request, 'servermaterial/list3.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+    return render(request, 'servermaterial/list3.html', {'chart3': json.dumps(cha3), 'table1': json.dumps(tab1)})
 
 
-def list4(request):
-    global guilvlist
-    global no1
-    global yes1
-    no1d = {'value': no1, 'name': '不规律'}
-    yes1d = {'value': yes1, 'name': '规律'}
-    cha1 = [no1d, yes1d]
-    retu = {'cha1': cha1}
 
-    ###表格
-    res4 = []
-    for stuid in guilvlist:
-        objs4 = Basic.objects.filter(StuID=stuid)[0]
-        data = {
-            'StuID': objs4.StuID,
-            'School': objs4.School,
-            'Major': objs4.Major,
-            'classNo': objs4.classNo
-        }
-        res4.append(data)
-    print(res4)
-
-    return render(request, 'servermaterial/list4.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
-
-
-def list5(request):
-    global jiankangjiancelist
-    global no4
-    global yes4
-    no4d = {'value': no4, 'name': '不健康'}
-    yes4d = {'value': yes4, 'name': '健康'}
-    cha1 = [no4d, yes4d]
-    retu = {'cha1': cha1}
-
-    ###表格
-    res4 = []
-    for stuid in jiankangjiancelist:
-        objs4 = Basic.objects.filter(StuID=stuid)
-        res4 = [obj.as_dict() for obj in objs4]
-    print(res4)
-
-    return render(request, 'servermaterial/list5.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+# def list1(request):
+#     global bujigejiancelist
+#     global kemushu
+#     global no2
+#     global yes2
+#     no2d = {'value': no2, 'name': '不及格'}
+#     yes2d = {'value': yes2, 'name': '及格'}
+#     cha1 = [no2d, yes2d]
+#     retu = {'cha1': cha1}
+#
+#     ###表格
+#     res4 = []
+#     for stuid in bujigejiancelist:
+#         objs4 = Basic.objects.filter(StuID=stuid)[0]
+#         data = {
+#             'StuID': objs4.StuID,
+#             'School': objs4.School,
+#             'Major': objs4.Major,
+#             'classNo': objs4.classNo
+#         }
+#         res4.append(data)
+#
+#     if len(bujigejiancelist) != 0:
+#         for ii in range(len(bujigejiancelist)):
+#             res4[ii].update({'bujici': kemushu[ii]})
+#     print(res4)
+#
+#
+#
+#     return render(request, 'servermaterial/list1.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+#
+#
+# def list2(request):
+#     global bujigeyujinglist
+#     global no3
+#     global yes3
+#     no3d = {'value': no3, 'name': '不及格'}
+#     yes3d = {'value': yes3, 'name': '及格'}
+#     cha1 = [no3d, yes3d]
+#     retu = {'cha1': cha1}
+#
+#     ###表格
+#     res4 = []
+#     for stuid in bujigeyujinglist:
+#         objs4 = Basic.objects.filter(StuID=stuid)[0]
+#         data = {
+#             'StuID': objs4.StuID,
+#             'School': objs4.School,
+#             'Major': objs4.Major,
+#             'classNo': objs4.classNo
+#         }
+#         res4.append(data)
+#     print(res4)
+#
+#     return render(request, 'servermaterial/list2.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+#
+#
+# def list3(request):
+#     global tuixuelist
+#     global no5
+#     global yes5
+#     no5d = {'value': no5, 'name': '有退学风险'}
+#     yes5d = {'value': yes5, 'name': '无退学风险'}
+#     cha1 = [no5d, yes5d]
+#     retu = {'cha1': cha1}
+#
+#     ###表格
+#     res4 = []
+#     for stuid in tuixuelist:
+#         objs4 = Basic.objects.filter(StuID=stuid)[0]
+#         data = {
+#             'StuID': objs4.StuID,
+#             'School': objs4.School,
+#             'Major': objs4.Major,
+#             'classNo': objs4.classNo
+#         }
+#         res4.append(data)
+#     print(res4)
+#
+#     return render(request, 'servermaterial/list3.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+#
+#
+# def list4(request):
+#     global guilvlist
+#     global no1
+#     global yes1
+#     no1d = {'value': no1, 'name': '不规律'}
+#     yes1d = {'value': yes1, 'name': '规律'}
+#     cha1 = [no1d, yes1d]
+#     retu = {'cha1': cha1}
+#
+#     ###表格
+#     res4 = []
+#     for stuid in guilvlist:
+#         objs4 = Basic.objects.filter(StuID=stuid)[0]
+#         data = {
+#             'StuID': objs4.StuID,
+#             'School': objs4.School,
+#             'Major': objs4.Major,
+#             'classNo': objs4.classNo
+#         }
+#         res4.append(data)
+#     print(res4)
+#
+#     return render(request, 'servermaterial/list4.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
+#
+#
+# def list5(request):
+#     global jiankangjiancelist
+#     global no4
+#     global yes4
+#     no4d = {'value': no4, 'name': '不健康'}
+#     yes4d = {'value': yes4, 'name': '健康'}
+#     cha1 = [no4d, yes4d]
+#     retu = {'cha1': cha1}
+#
+#     ###表格
+#     res4 = []
+#     for stuid in jiankangjiancelist:
+#         objs4 = Basic.objects.filter(StuID=stuid)
+#         res4 = [obj.as_dict() for obj in objs4]
+#     print(res4)
+#
+#     return render(request, 'servermaterial/list5.html', {'retu': json.dumps(retu), 'res4': json.dumps(res4)})
 
 
 def data_import_export(request):
