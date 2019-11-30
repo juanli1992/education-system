@@ -20,6 +20,8 @@ urlpatterns = [
     path('visualization2/', visualization2), ###new p2
     path('visualization4/', visualization4), ###new p4
     # path('query_hw/', get_vdata),
+
+    #path('query_hw/', get_vdata),
     path('query_zz/', query_zz), ###new p4
     
     path('query_nianji/', query_nianji),
@@ -43,11 +45,12 @@ urlpatterns = [
     path('index/', index),
     path('tt', tt),
     path('monitor/', monitor),
-    path('monitor_engine/', monitor_engine),
+    #path('monitor_engine/', monitor_engine),
+    path('monitor_engine/', monitor_enginev2), ###new
     # path('result1/', result1),
     path('list1/', list1),
     path('list2/', list2),
     path('list3/', list3),
-    path('list4/', list4),
-    path('list5/', list5),
+    # path('list4/', list4),
+    # path('list5/', list5),
 ]

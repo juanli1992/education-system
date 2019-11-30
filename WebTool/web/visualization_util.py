@@ -642,6 +642,26 @@ def get_huodongrenshulis(njdm_tot, count_huodong, njdm_huodong):
         relis[ind] += count_huodong[i]
     return relis
 
+def get_huodongrenshulisMax(njdm_tot, count_huodong, njdm_huodong):
+    """
+    得到参加活动np list count-grade
+    :param njdm_tot:
+    :param count_dushujie:
+    :param njdm_dushujie:
+    :return:
+    """
+    nj_num = len(njdm_tot)
+    relis = np.zeros(nj_num)
+
+    count_huodong = np.array(count_huodong,dtype='float')
+
+    le = len(njdm_huodong)
+    for i in range(le):
+        ind = njdm_tot.index(njdm_huodong[i])
+        if relis[ind] < count_huodong[i]:
+            relis[ind] = count_huodong[i]
+    return relis
+
 def get_tiyan_data(study_period):
     """
 
@@ -739,7 +759,53 @@ def get_tiyan_data(study_period):
         cursor.execute(
             "SELECT count(*),info.XBDM,NAME,PositionTypeCode,XDDM FROM student_db.experience_schoolmanagement, student_xj as xj, student_info as info, experience_schoolposition_code where experience_schoolmanagement.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and PositionTypeCode=experience_schoolposition_code.ID and XDDM={} group by XDDM,PositionTypeCode,info.XBDM order by XDDM,PositionTypeCode,info.XBDM,XDDM;".format(study_period))
     results7 = cursor.fetchall()
-    print(results7)
+    #print(results7)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+        cursor.execute( # count() #10 是总共10个学校
+            "SELECT count(distinct(SchoolID))/10,XD,PositionCode FROM student_db.experience_schoolpositionsetting,nj_xd where GradeCode=nj_xd.NJ group by PositionCode,XD order by PositionCode,XD;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(distinct(SchoolID))/10,XD,PositionCode FROM student_db.experience_schoolpositionsetting,nj_xd where GradeCode=nj_xd.NJ and XD={} group by PositionCode,XD order by PositionCode,XD;".format(study_period))
+    results8 = cursor.fetchall()
+    #print(results8)
+
+    #if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+    cursor.execute( # count() #10 是总共10个学校
+            "SELECT count(*),XD,Duration FROM student_db.experience_schoolpositionsetting,nj_xd where GradeCode=nj_xd.NJ group by Duration,XD order by Duration,XD;")
+    #else:  # 查询指定学段的学生(比如: 只查高中生)
+        #cursor.execute(
+            #"SELECT count(*),XD,Duration FROM student_db.experience_schoolpositionsetting,nj_xd where GradeCode=nj_xd.NJ and XD={} group by Duration,XD order by Duration,XD;".format(study_period))
+    results9 = cursor.fetchall()
+    #print(results9)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 参与率
+        cursor.execute( # count()
+            "SELECT count(*),xj.NJDM,XDDM,SocialPracticeCode,NAME FROM student_db.experience_socialpractices, student_xj as xj, student_info as info, experience_practicetype_code where experience_socialpractices.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and SocialPracticeCode=experience_practicetype_code.ID group by xj.NJDM,SocialPracticeCode order by SocialPracticeCode,XDDM,xj.NJDM;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(*),xj.NJDM,XDDM,SocialPracticeCode,NAME FROM student_db.experience_socialpractices, student_xj as xj, student_info as info, experience_practicetype_code where experience_socialpractices.StudentID = xj.STUDENTID and info.ID = xj.STUDENTID and SocialPracticeCode=experience_practicetype_code.ID and XDDM={} group by xj.NJDM,SocialPracticeCode order by SocialPracticeCode,XDDM,xj.NJDM;".format(study_period))
+    results10 = cursor.fetchall()
+    #print(results10)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+        cursor.execute( # count() #7 是总共10个学校
+            "SELECT count(distinct SchoolID)/10,GradeCode,XD,PracticeCode FROM student_db.experience_schoolpracticesetting,nj_xd where GradeCode=NJ group by PracticeCode,GradeCode order by PracticeCode,XD,GradeCode;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(distinct SchoolID)/10,GradeCode,XD,PracticeCode FROM student_db.experience_schoolpracticesetting,nj_xd where GradeCode=NJ and XD={} group by PracticeCode,GradeCode order by PracticeCode,XD,GradeCode;".format(study_period))
+    results11 = cursor.fetchall()
+    #print(results11)
+
+    if study_period == '-1':  # 查询所有学段的学生 总人数 4 覆盖率
+        cursor.execute( # count() #7 是总共10个学校
+            "SELECT count(distinct SchoolID)/10,PracticeCode FROM student_db.experience_schoolpracticesetting,nj_xd where GradeCode=NJ group by PracticeCode order by PracticeCode;")
+    else:  # 查询指定学段的学生(比如: 只查高中生)
+        cursor.execute(
+            "SELECT count(distinct SchoolID)/10,PracticeCode FROM student_db.experience_schoolpracticesetting,nj_xd where GradeCode=NJ and XD={} group by PracticeCode order by PracticeCode;".format(study_period))
+    results111 = cursor.fetchall()
+    #print(results111)
+
 
 
     # 获得绘图数据
@@ -1042,12 +1108,101 @@ def get_tiyan_data(study_period):
         row = [it1, '参与率', '总体', it2, it3, it4,it5, it6, it7]
         tab_rows4s.append(row)
 
-    # fugailv_t, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2]==1])
-    # fugailv_x, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2] == 2])
-    # fugailv_z, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results6 if row[2] == 3])
-    # for it1, it2, it3, it4 in zip(xd_nm, fugailv_t, fugailv_x, fugailv_z):
-    #     row = [it1, '覆盖率', '总体', it2, it3, it4]
-    #     tab_rows.append(row)
+    fugailv_sj, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results8 if row[2]==1])
+    fugailv_sg, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results8 if row[2] == 2])
+    fugailv_sl, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results8 if row[2] == 3])
+    fugailv_sq, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results8 if row[2] == 4])
+    fugailv_sgb, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results8 if row[2] == 5])
+    fugailv_sqt, xd, pc = zip(*[(row[0], row[1], row[2]) for row in results8 if row[2] == 6])
+    for it1, it2, it3, it4,it5, it6, it7 in zip(xd_nm, fugailv_sj, fugailv_sg, fugailv_sl, fugailv_sq, fugailv_sgb, fugailv_sqt):
+        row = [it1, '覆盖率', '总体', it2, it3, it4,it5, it6, it7]
+        tab_rows4s.append(row)
+
+    ## 岗位轮岗情况图
+    cnt_x, xb_x, dur_x = zip(*[(row[0], row[1], row[2]) for row in results9 if row[1]== 1])#小学
+    cnt_c, xb_c, dur_c = zip(*[(row[0], row[1], row[2]) for row in results9 if row[1] == 2])
+    cnt_g, xb_g, dur_g = zip(*[(row[0], row[1], row[2]) for row in results9 if row[1] == 3])
+    cnt_t_x = np.array(cnt_x).sum()
+    cnt_t_c = np.array(cnt_c).sum()
+    cnt_t_g = np.array(cnt_g).sum()
+    cnt_x_4, xb_x_4, dur_x_4 = zip(*[(row[0], row[1], row[2]) for row in results9 if row[1] == 1 and row[2] in [1,2,3,4]]) #小学 四周及以下
+    cnt_x_6, xb_x_6, dur_x_6 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 1 and row[2] in [5,6]])
+    cnt_x_12, xb_x_12, dur_x_12 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 1 and row[2] >= 7 and row[2] <= 12])
+    cnt_x_24, xb_x_24, dur_x_24 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 1 and row[2] >= 13 and row[2] <= 24])
+    cnt_t_x_4 = np.array(cnt_x_4).sum()
+    cnt_t_x_6 = np.array(cnt_x_6).sum()
+    cnt_t_x_12 = np.array(cnt_x_12).sum()
+    cnt_t_x_24 = np.array(cnt_x_24).sum()
+    cnt_c_4, xb_c_4, dur_c_4 = zip(*[(row[0], row[1], row[2]) for row in results9 if row[1] == 2 and row[2] in [1,2,3,4]]) #初中 四周及以下
+    cnt_c_6, xb_c_6, dur_c_6 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 2 and row[2] in [5,6]])
+    cnt_c_12, xb_c_12, dur_c_12 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 2 and row[2] >= 7 and row[2] <= 12])
+    cnt_c_24, xb_c_24, dur_c_24 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 2 and row[2] >= 13 and row[2] <= 24])
+    cnt_t_c_4 = np.array(cnt_c_4).sum()
+    cnt_t_c_6 = np.array(cnt_c_6).sum()
+    cnt_t_c_12 = np.array(cnt_c_12).sum()
+    cnt_t_c_24 = np.array(cnt_c_24).sum()
+    cnt_g_4, xb_g_4, dur_g_4 = zip(*[(row[0], row[1], row[2]) for row in results9 if row[1] == 3 and row[2] in [1,2,3,4]]) #高中 四周及以下
+    cnt_g_6, xb_g_6, dur_g_6 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 3 and row[2] in [5,6]])
+    cnt_g_12, xb_g_12, dur_g_12 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 3 and row[2] >= 7 and row[2] <= 12])
+    cnt_g_24, xb_g_24, dur_g_24 = zip(
+        *[(row[0], row[1], row[2]) for row in results9 if row[1] == 3 and row[2] >= 13 and row[2] <= 24])
+    cnt_t_g_4 = np.array(cnt_g_4).sum()
+    cnt_t_g_6 = np.array(cnt_g_6).sum()
+    cnt_t_g_12 = np.array(cnt_g_12).sum()
+    cnt_t_g_24 = np.array(cnt_g_24).sum()
+
+    xxgwlg = [cnt_t_x_4/cnt_t_x, cnt_t_x_6/cnt_t_x, cnt_t_x_12/cnt_t_x, cnt_t_x_24/cnt_t_x]
+    czgwlg = [cnt_t_c_4 / cnt_t_c, cnt_t_c_6 / cnt_t_c, cnt_t_c_12 / cnt_t_c, cnt_t_c_24 / cnt_t_c]
+    gzgwlg = [cnt_t_g_4 / cnt_t_g, cnt_t_g_6 / cnt_t_g, cnt_t_g_12 / cnt_t_g, cnt_t_g_24 / cnt_t_g]
+
+
+    ## 社会实践活动开展情况
+    #参与率
+    cnt, nj, xd, spc, nm = zip(*[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] != 0])  # 参加了社会实践
+    count_shsj_lis = get_huodongrenshulis(njdm_tot, cnt, nj)
+    cnt, nj, xd, spc, nm = zip(*[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 0])
+    count_shsj0_lis = get_huodongrenshulis(njdm_tot, cnt, nj)
+    count_shsj0totN = count_shsj0_lis.sum()
+    tt = count_shsj_lis + count_shsj0totN
+    canyulv_shsj = list(count_shsj_lis / tt)
+    # 覆盖率
+    fgl, nj, xd, pc = zip(
+        *[(row[0], row[1], row[2], row[3]) for row in results11 if row[2] != 0])
+    fugailv_shsj_lis = get_huodongrenshulisMax(njdm_tot, fgl, nj)
+    fugailv_shsj_lis = list(fugailv_shsj_lis)
+
+    #参与率
+    cnt, nj, xd, spc, nm = zip(*[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 1])  # 参加了科技文化
+    count_kjwhN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 2])  # 参加了
+    count_jdsjN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 3])  # 参加了
+    count_jzslN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 4])  # 参加了
+    count_cgkcN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 5])  # 参加了
+    count_zyfwN = np.array(cnt).sum()
+    cnt, nj, xd, spc, nm = zip(
+        *[(row[0], row[1], row[2], row[3], row[4]) for row in results10 if row[3] == 6])  # 参加了
+    count_qtN = np.array(cnt).sum()
+    ttN = tt.sum()
+    cyllist = [count_kjwhN/ttN, count_jdsjN/ttN, count_jzslN/ttN, count_cgkcN/ttN, count_zyfwN/ttN, count_qtN/ttN]
+    # 覆盖率
+    fgllist, _ = zip(
+        *[(row[0], row[1]) for row in results111 if row[1] != 0])
+
 
 
 
@@ -1059,7 +1214,7 @@ def get_tiyan_data(study_period):
 
 
 
-    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui, 'dataoOther':[canyulv_others,fugailv_others], 'data4Job':datRows, 'tableJob':tab_rows, 'data4Sjob':datRows4s, 'tableSjob':tab_rows4s}
+    data = {'dataP':[grade_name_list, canyulv_dushujie, fugailv_dushujie, canyulv_kejijie, fugailv_kejijie, canyulv_tiyujie, fugailv_tiyujie, canyulv_yishujie, fugailv_yishujie], 'dataH':res4xiaoyunhui, 'dataoOther':[canyulv_others,fugailv_others], 'data4Job':datRows, 'tableJob':tab_rows, 'data4Sjob':datRows4s, 'tableSjob':tab_rows4s, 'data4gwlg':[xxgwlg, czgwlg, gzgwlg], 'data4shsj':[grade_name_list, canyulv_shsj, fugailv_shsj_lis], 'data4shsj2':[cyllist, fgllist]}
     return data
 
 
