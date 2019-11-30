@@ -1264,52 +1264,6 @@ def base(request):
     return render(request, 'servermaterial/base.html')
 
 
-
-def visualization(request):
-    """
-    可视化模块页面的接口
-    :param request:
-    :return:
-    """
-    return render(request, 'servermaterial/supervision_v2.html')
-
-
-def get_vdata_p1(request):
-    """
-    获取可视化第一部分展示的所有数据
-    :param request:
-    :return: 可视化的数据(json数据格式)
-    """
-    study_period = request.POST["sp"]                        # 获取对应学段
-    hw_data = get_hw_data(study_period=int(study_period))    # 得到体重身高数据
-    bmi_data = []
-    es_data = get_es_data()
-    tt_data = get_tt_data()
-    lung_data = get_lung_data()
-    atest_data = get_atest_data()
-    overall_data = get_overall_data()
-    data = [hw_data, bmi_data, es_data, tt_data, lung_data, atest_data, overall_data]
-    return JsonResponse(data=data, safe=False)
-
-
-def get_vdata_p3(request):
-    """
-    获取可视化第三部分展示的所有数据
-    :param request:
-    :return: 可视化的数据(json数据格式)
-    """
-    study_period = request.POST["sp"]                        # 获取对应学段
-    course_data_p1 = get_cd_p1()
-    comp_data_p1 = get_comp_p1()
-    comp_data_p2 = get_comp_p2()
-    comp_data_p3 = get_comp_p3()
-    comp_data_p4 = get_comp_p4()
-
-    data = [course_data_p1, comp_data_p1, comp_data_p2, comp_data_p3, comp_data_p4]
-    return JsonResponse(data=data, safe=False)
-
-
-
 ###学业进步
 def visualization2(request):
     """
@@ -2427,3 +2381,49 @@ def query_vdata(request):
 #         addlist.append(obj)
 #     PredScore.objects.bulk_create(addlist)
 #     # print('inssssssssssssssssssssss')
+
+
+def visualization(request):
+    """
+    可视化模块页面的接口
+    :param request:
+    :return:
+    """
+    return render(request, 'servermaterial/supervision_v2.html')
+
+
+def query_vdata_p1(request):
+    """
+    获取可视化第一部分展示的所有数据
+    :param request:
+    :return: 可视化的数据(json数据格式)
+    """
+    sp = int(request.POST["sp"])                       # 获取对应学段
+    hw_data = get_hw_data(study_period=sp)    # 得到体重身高数据
+    bmi_data = []
+    es_data, tt_data = get_es_data(sp), get_tt_data(sp)
+    #---------------------------------  体能测试数据  ---------------------------------
+    lung_data, atest_data = get_lung_data(sp), get_atest_data(sp)
+    overall_data = get_overall_data(sp)
+
+    data = [hw_data, bmi_data, es_data, tt_data, lung_data, atest_data, overall_data]
+    return JsonResponse(data=data, safe=False)
+
+
+def query_vdata_p3(request):
+    """
+    获取可视化第三部分展示的所有数据
+    :param request:
+    :return: 可视化的数据(json数据格式)
+    """
+    sp = int(request.POST["sp"])                        # 获取对应学段
+    # ---------------------------------  课程部分数据  ---------------------------------
+    course_data_p1, course_data_p2 = get_cd_p1(sp), get_cd_p2(sp)
+    course_data_p3, course_data_p4 = get_cd_p3(sp), get_cd_p4(sp)
+    # ---------------------------------  竞赛部分数据  ---------------------------------
+    comp_data_p1, comp_data_p2 = get_comp_p1(sp), get_comp_p2(sp)
+    comp_data_p3, comp_data_p4 = get_comp_p3(sp), get_comp_p4(sp)
+
+    data = [course_data_p1, comp_data_p1, comp_data_p2, comp_data_p3, comp_data_p4, course_data_p2, (course_data_p3, course_data_p4)]
+    return JsonResponse(data=data, safe=False)
+

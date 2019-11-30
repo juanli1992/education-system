@@ -97,10 +97,12 @@ def get_es_data(sp=-1):
     :param sp:
     :return:
     """
+    query_sp = ["1", "2", "3"] if sp == -1 else [str(sp)]
     es_level = ['不近视', '轻度近视', '中度近视', '重度近视']
     cursor = connection.cursor()
     cursor.execute("select xj.XDDM, info.XBDM, GREATEST(cast(es.ZYLSL as double), cast(es.YYLSL as double)) from health_eyesight as es,\
-                    student_xj as xj, student_info as info where es.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID;")
+                    student_xj as xj, student_info as info where es.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID "\
+                   "and xj.XDDM in ({});".format(','.join(query_sp)))
     result = cursor.fetchall()
     sp_list, gender_list, es_list = zip(*result)
     es_list = list(map(lambda x: ((1 if x >= 5.0 else 2) if x >= 4.9 else 3) if x >= 4.6 else 4, es_list))
@@ -130,10 +132,11 @@ def get_tt_data(sp=-1):
     :param sp:
     :return:
     """
+    query_sp = ["1", "2", "3"] if sp == -1 else [str(sp)]
     tt_level = ['良好', '尚可', '较差', '严重']
     cursor = connection.cursor()
     cursor.execute("select xj.XDDM, info.XBDM, cast(tt.HQYS as double) from health_tooth as tt, student_xj as xj, student_info as info \
-                    where tt.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID;")
+                    where tt.STUDENTID = xj.STUDENTID and info.ID = xj.STUDENTID and xj.XDDM in ({});".format(','.join(query_sp)))
     result = cursor.fetchall()
     sp_list, gender_list, tt_list = zip(*result)
     tt_list = list(map(lambda x: ((1 if x == 0 else 2) if x <= 2 else 3) if x <= 5 else 4, tt_list))
@@ -166,9 +169,11 @@ def get_lung_data(sp=-1):
     :param sp:
     :return:
     """
+    query_sp = ["1", "2", "3"] if sp == -1 else [str(sp)]
     cursor = connection.cursor()
-    cursor.execute("select xj.XDDM, info.XBDM, hp.DJ, count(*) from health_physicalfitness as hp, student_info as info, student_xj as xj  where hp.STUDENTID\
-                    = info.ID and info.ID = xj.STUDENTID and hp.XMID='20' group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ")
+    cursor.execute("select xj.XDDM, info.XBDM, hp.DJ, count(*) from health_physicalfitness as hp, student_info as info, student_xj as xj  where hp.STUDENTID " \
+                   "= info.ID and info.ID = xj.STUDENTID and hp.XMID='20' and xj.XDDM in ({})"\
+                   "group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ".format(','.join(query_sp)))
     result = cursor.fetchall()
     all_dict = {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}  # 绘制饼图数据
     sp_lung_dict = {}
@@ -196,9 +201,11 @@ def get_naili_data(sp=-1):
     :param sp:
     :return:
     """
+    query_sp = ["1", "2", "3"] if sp == -1 else [str(sp)]
     cursor = connection.cursor()
     cursor.execute("select xj.XDDM, info.XBDM, hp.DJ, count(*) from health_physicalfitness as hp, student_info as info, student_xj as xj  where hp.STUDENTID\
-                    = info.ID and info.ID = xj.STUDENTID and hp.XMLBID='5' group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ")
+                    = info.ID and info.ID = xj.STUDENTID and hp.XMLBID='5' and xj.XDDM in ({})"
+                   " group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ".format(','.join(query_sp)))
     result = cursor.fetchall()
     all_dict = {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}  # 绘制饼图数据
     sp_naili_dict = {}
@@ -228,9 +235,12 @@ def get_speed_data(sp=-1):
     :param sp:
     :return:
     """
+    query_sp = ["1", "2", "3"] if sp == -1 else [str(sp)]
+
     cursor = connection.cursor()
     cursor.execute("select xj.XDDM, info.XBDM, hp.DJ, count(*) from health_physicalfitness as hp, student_info as info, student_xj as xj  where hp.STUDENTID\
-                    = info.ID and info.ID = xj.STUDENTID and hp.XMLBID='8' group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ")
+                    = info.ID and info.ID = xj.STUDENTID and hp.XMLBID='8' and xj.XDDM in ({})"
+                   "group by xj.XDDM, info.XBDM, hp.DJ order by xj.XDDM, info.XBDM, hp.DJ".format(','.join(query_sp)))
     result = cursor.fetchall()
     all_dict = {'不及格': 0, '及格': 0, '良好': 0, '优秀': 0}  # 绘制饼图数据
     sp_speed_dict = {}
@@ -260,8 +270,8 @@ def get_atest_data(sp=-1):
     :param sp:
     :return:
     """
-    naili_data = get_naili_data()
-    speed_data=  get_speed_data()
+    naili_data = get_naili_data(sp)
+    speed_data=  get_speed_data(sp)
     data = {'naili': naili_data, 'speed': speed_data}
     return data
 
@@ -272,10 +282,11 @@ def get_overall_data(sp=-1):
     :param sp: 
     :return: 
     """
+    query_sp = ["1", "2", "3"] if sp == -1 else [str(sp)]
     grade_level = ['不及格', '及格', '良好', '优秀']
     cursor = connection.cursor()
     cursor.execute("select xj.XDDM, info.XBDM, avg(FS) from health_physicalfitness as hp, student_info as info, student_xj as xj \
-                    where hp.STUDENTID = info.ID and info.ID = xj.STUDENTID group by xj.STUDENTID;")
+                    where hp.STUDENTID = info.ID and info.ID = xj.STUDENTID and xj.XDDM in ({}) group by xj.STUDENTID;".format(','.join(query_sp)))
     result = cursor.fetchall()
 
     sp_list, gender_list, grade_list = zip(*result)
@@ -1066,7 +1077,9 @@ def get_tiyan_data(study_period):
 if __name__ == '__main__':
     # get_hw_data(-1)
     # calc_bmi_coeffi()
-    # get_es_data()
-    # get_tt_data()
-    # get_lung_data()
-    get_speed_data()
+    # get_es_data(3)
+    # get_tt_data(1)
+    # get_lung_data(-1)
+    get_naili_data(-1)
+    # get_speed_data()
+    # get_overall_data(3)
