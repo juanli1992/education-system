@@ -76,9 +76,15 @@ function draw_jcbjg(data) {
     var myChart = echarts.init(document.getElementById('chart-1'));
     // alert('here');
 	option = {
-		title: {
-				text: '监测不及格情况'
-			},
+		// title: {
+		// 		text: '监测不及格情况'
+		// 	},
+        // textStyle: {//主标题文本样式{"fontSize": 18,"fontWeight": "bolder","color": "#333"}
+        //     fontFamily: 'Arial, Verdana, sans...',
+        //     fontSize: 12,
+        //     fontStyle: 'normal',
+        //     fontWeight: 'normal'
+        // },
 		legend: {},
 		tooltip: {},
 		dataset: {
@@ -107,9 +113,9 @@ function draw_ycbjg(data) {
     var myChart = echarts.init(document.getElementById('chart-2'));
     // alert('here');
 	option = {
-		title: {
-				text: '预测不及格情况'
-			},
+		// title: {
+		// 		text: '预测不及格情况'
+		// 	},
 		legend: {},
 		tooltip: {},
 		dataset: {
@@ -138,10 +144,10 @@ function draw_jcst(dat) {
     var myChart = echarts.init(document.getElementById('chart-3'));
 
     option = {
-        title: {
-            text: '监测身体综合素质',
-            x:'center'
-        },
+        // title: {
+        //     text: '监测身体综合素质',
+        //     x:'center'
+        // },
         // toolbox: {
         //     feature: {
         //         dataView: {show: true, readOnly: false},
@@ -243,7 +249,7 @@ function draw_jcst(dat) {
 
         <div class="col-lg-12 detailed">
           <div class="row content-panel">
-            <h4>不及格监测</h4>
+            <h4>监测不及格情况</h4>
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-4 detailed">
@@ -261,7 +267,7 @@ function draw_jcst(dat) {
 
        <div class="col-lg-12 detailed">
           <div class="row content-panel">
-            <h4>不及格预警</h4>
+            <h4>预测不及格情况</h4>
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-4 detailed">
@@ -279,7 +285,7 @@ function draw_jcst(dat) {
 
        <div class="col-lg-12 detailed">
           <div class="row content-panel">
-            <h4>身体健康监测</h4>
+            <h4>监测身体综合素质</h4>
 
                   <div class="row mt">
                     <div class="col-lg-5 col-lg-offset-4 detailed">

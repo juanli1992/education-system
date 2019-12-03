@@ -421,7 +421,13 @@ function draw_qita(dat) {
 
     option = {
         title: {
-            text: '其他主题活动开展情况图'
+            text: '其他主题活动开展情况'
+        },
+        textStyle: {//主标题文本样式{"fontSize": 18,"fontWeight": "bolder","color": "#333"}
+            // fontFamily: 'Arial, Verdana, sans...',
+            fontSize: 11,
+            fontStyle: 'bolder',
+            // fontWeight: 'normal'
         },
         toolbox: {
             feature: {
@@ -766,7 +772,11 @@ function draw_shsj2(dat) {
 
     option = {
         title: {
-            text: '各类社会实践活动开展情况图'
+            text: '各类社会实践活动开展情况'
+        },
+        textStyle: {//主标题文本样式{"fontSize": 18,"fontWeight": "bolder","color": "#333"}
+            fontSize: 11,
+            fontStyle: 'bolder',
         },
         toolbox: {
             feature: {
