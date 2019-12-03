@@ -16,6 +16,7 @@ import xlwt
 import numpy as np
 import datetime
 # from datetime import *
+from web.recommend_util import *
 from django.db.models import Count, Avg, Max, Min, Sum
 import numpy as np
 from web.visualization_util import *
@@ -2404,14 +2405,14 @@ def recommend(request):
         stu_id = stu_dict[str(idr)]
         return JsonResponse(data=book_name_list, safe=False)
     recommend_dict = {}
-    school_query_list = Basic.objects.values('School')
-    school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
-    print(school_list)
-    major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
-    major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
+    # school_query_list = Basic.objects.values('School')
+    # school_list = list(set([tmp['School'] for tmp in school_query_list if tmp['School'] != '']))
+    # print(school_list)
+    # major_query_list = Basic.objects.filter(School=school_list[0]).values('Major')
+    # major_list = list(set([tmp['Major'] for tmp in major_query_list if tmp['Major'] != '']))
     return render(request, 'servermaterial/recommend.html', context={'recommend_dict': recommend_dict,
-                                                                     'school_list': school_list,
-                                                                     'major_list': major_list, })
+                                                                     'school_list': [],
+                                                                     'major_list': [], })
 
 
 def tt(request):

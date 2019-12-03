@@ -132,7 +132,6 @@ def get_cd_p4(sp=-1):
     sp_dict = {sp_tmp: {gender: [int(value / sp_all_dict[sp_tmp][gender] * 100) for value in sp_dict[sp_tmp][gender].values()]
                         for gender in sp_dict[sp_tmp]} for sp_tmp in sp_dict}
 
-    print(sp_dict)
     data = {'all': all_list, 'sp_dict': sp_dict, 'category': category_list}
     return data
 
@@ -193,7 +192,6 @@ def get_comp_p2(sp=-1):
     all_tuple = (list(all_dict[1].keys()), list(all_dict[1].values()), list(all_dict[2].keys()), list(all_dict[2].values()))
 
     data = {'all': all_tuple, 'sp_type_dict': sp_type_dict, 'all_st_dict': all_st_dict}
-    print(data)
     return data
 
 

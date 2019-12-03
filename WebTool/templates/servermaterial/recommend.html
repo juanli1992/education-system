@@ -26,7 +26,7 @@
     <script src="/templates/servermaterial/js/echarts-wordcloud.min.js"></script>
     <script>
         var topKData;
-        var isCloud = True;
+        var isCloud = true;
     </script>
     <script>
 
@@ -614,12 +614,13 @@
                                         <div id="chart-library-1" style="width: 450px;height:400px;"></div>
                                     </div>
                                     <div class="col-lg-5">
-                                        <div id="chart-library-2" style="width: 450px;height:400px;"></div>
+{#                                        <div id="chart-library-2" style="width: 450px;height:400px;"></div>#}
+                                        <div id="top5BookChart" class="center-block"
+                                          style="width: 450px;height:400px;"></div>
                                     </div>
                                 </div>
                                 <div class="row mt">
-                                    <div id="top5BookChart" class="center-block"
-                                         style="width: 700px;height:400px"></div>
+
                                 </div>
 
                                 <script>window._bd_share_config = {
@@ -668,7 +669,7 @@
 
     option = {
         title: {
-            text: 'top5%最常借的五本书',
+            text: 'top5%最常借的书',
             x: 'center'
         },
         tooltip: {
@@ -864,7 +865,7 @@
                 var char2_data = new Array();
 
                 for (var i = 0; i < result.length; i++) {
-                    char2_data.push({"name": result[i], "value": parseInt(Math.random() * (30 - 20 + 1) + 20)});
+                    char2_data.push({"name": '小学', "value": parseInt(Math.random() * (30 - 20 + 1) + 20)});
                 }
                 myChart2.setOption({
                     series: [{data: char2_data}]

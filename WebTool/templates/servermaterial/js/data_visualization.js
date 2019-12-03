@@ -193,7 +193,7 @@ function draw_std_height(data) {
     var myChart = echarts.init(document.getElementById('chart-grade-2'));
     option = {
         title: {
-            text: '各年纪男女身高标准差',
+            text: '男女身高标准差',
             x: 'center'
         },
         tooltip: {
