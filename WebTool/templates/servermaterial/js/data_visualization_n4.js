@@ -3,7 +3,7 @@ $(document).ready(function () {
     $.ajax({
         url: '/web/query_zz/',
         type: 'POST',
-        data: {'sp': '-1'},
+        data: {'sp':  $("#spppp").val()},
         // dataType: 'JSON',
         // contentType: 'application/json;charset=utf-8',
         success: function (result) {
@@ -31,7 +31,7 @@ $(document).ready(function () {
         $.ajax({
             url: '/web/query_zz/',
             type: 'POST',
-            data: {'sp': $("#sp").val()},
+            data: {'sp': $("#spppp").val()},
             // dataType: 'JSON',
             // contentType: 'application/json;charset=utf-8',
             success: function (result) {
