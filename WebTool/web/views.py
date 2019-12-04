@@ -1308,7 +1308,7 @@ def query_zz(request):
     :return: 可视化的数据(json数据格式)
     """
 
-    study_period = request.POST["sp"]   # 获取对应学段
+    study_period = request.POST['sp']   # 获取对应学段
     print(study_period)
     tiyan_data = get_tiyan_data(study_period)
 

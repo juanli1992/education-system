@@ -4,7 +4,7 @@ $(document).ready(function () {
     $.ajax({
         url: '/web/query_xy/',
         type: 'POST',
-        data: {'sp': $("#sp").val(), 'grade__': $("#grade__").val()},
+        data: {'sp': '-1'},
         // dataType: 'JSON',
         // contentType: 'application/json;charset=utf-8',
         success: function (result) {
@@ -27,7 +27,7 @@ $(document).ready(function () {
         $.ajax({
             url: '/web/query_xy/',
             type: 'POST',
-            data: {'sp': $("#sp").val(), 'grade__': $("#grade__").val()},
+            data: {'sp': $("#sp").val(), 'grade__': $("#grade__").val().val()},
             // dataType: 'JSON',
             // contentType: 'application/json;charset=utf-8',
             success: function (result) {

@@ -1,10 +1,9 @@
 $(document).ready(function () {
 
-    // alert(sp);
     $.ajax({
         url: '/web/query_zz/',
         type: 'POST',
-        data: {'sp': $("#sp").val()},
+        data: {'sp': '-1'},
         // dataType: 'JSON',
         // contentType: 'application/json;charset=utf-8',
         success: function (result) {
@@ -28,7 +27,7 @@ $(document).ready(function () {
     });
 
 
-    $("#sp").change(function () {
+    $("#spppp").change(function () {
         $.ajax({
             url: '/web/query_zz/',
             type: 'POST',
